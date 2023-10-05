@@ -4,6 +4,7 @@ const User=require("../models/user");
 
 
 routes.get("/",async(req,res)=>{
+    
     const mac=new Map();
     const users=await User.find();
     
@@ -29,6 +30,7 @@ routes.get("/",async(req,res)=>{
 })
 
 routes.get("/:id",async(req,res)=>{
+    if(req.body==null)return res.send("invalid user");
     const user=await User.findOne({_id:req.params.id});
     const maches=[];
     var i=0

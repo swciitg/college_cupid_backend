@@ -13,18 +13,19 @@ const verifyToken=(token)=>{
         return payload;
     }
     catch(err){
-        res.send("Invalid user")
+        return null;
     }
 }
 
 function  authorisation(req,res,next){
-    const cookietoken=req.cookies?.token;
-    if(!cookietoken)return next();
+    req.body=null;
+    console.log(req.cookies);
+    const cookietoken=req.cookies["token"];
+    if(cookietoken===null)return next();
     const token=cookietoken;
     const user=verifyToken(token);
-    req.user=user;
+    req.body=user;
     next();
-
 }
 
 module.exports={createToken,verifyToken,authorisation};

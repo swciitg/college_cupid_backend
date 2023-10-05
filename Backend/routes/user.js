@@ -28,27 +28,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 
-
-routes.post("/login",async(req,res)=>{
-    const user=await User.find({email:req.body});
-    if(!user)throw err("wrong email");
-    const token=createToken({email:user.email,pubicKey:user.publicKey});
-    res.cookie("token",token);
-    res.json({user})
-})
-
-// get all users
-
-routes.get('/',async(req,res)=>{
-    const user=await User.find();
-    res.json({user});
-})
-
 // sign in and take profile details from user
 
 routes.post("/signin",upload.single('dp'),async(req,res)=>{
     
     const user=req.body;
+    if(!user)res.send("no user");
 
     try {
         const b64 = Buffer.from(req.file.buffer).toString("base64");
@@ -62,7 +47,8 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
         await User.create(user);
         const token=createToken({email:user.email,pubicKey:user.publicKey});
         res.cookie("token",token);
-        res.send(user);
+        res.send({user,g:process.env.G_value});
+
     } catch (error) {
         console.log(error);
         res.send({
@@ -71,14 +57,85 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
     }
 });
 
+routes.post("/login",async(req,res)=>{
+    const user=await User.find({email:req.body});
+    if(!user)throw err("wrong email");
+    const token=createToken({email:user.email,pubicKey:user.publicKey});
+    res.cookie("token",token);
+    res.json({user,g:process.env.G_value});
+})
+
+//update your profile
+
+routes.put('/profile',async(req,res)=>{
+    if(req.body==null)return res.send("invalid")
+    const payload=verifyToken(req.cookies["token"],process.env.SECRET);
+    const user=await User.findOneAndUpdate({email:payload.email},req.body);
+    try{
+        res.send(user);
+    }
+    catch(err){
+        res.send(err);
+    }
+})
+// get all users
+
+routes.get('/',async(req,res)=>{
+    if(req.body==null)return res.send("invalid")
+    console.log(req.body);
+    const user=await User.find();
+    res.json({user});
+})
+
+// open particular user
+
+routes.get('/:id',async(req,res)=>{
+    if(req.body==null)return res.send("invalid")
+    const user=await User.findById(req.params.id);
+    try{
+        res.send({user});
+    }
+    catch(err){
+        res.send(err);
+    }
+})
+
 // add a new crush
 
 routes.put('/addCrush/:id',async(req,res)=>{
-    
+    if(req.body==null)return res.send("invalid")
     const user=await User.findOneAndUpdate({_id:req.params.id},{$push:{crushes:req.body._id}});
-    // res.send(user);
-    console.log(req.params.id);
-    res.send("hello");
+    res.send(user);
 })
 
+// delete crush
+
+routes.delete("/deleteCrush/:id",async(req,res)=>{
+    if(req.body==null)return res.send("invalid")
+    function arrayRemove(arr, value) {
+        return arr.filter(function (geeks) {
+            return geeks != value;
+        });
+    }
+    const user=await User.findById(req.params.id);
+    const list=user.crushes;
+    const encryptlist=user.encryptCrushes;
+    const newlist=arrayRemove(list,req.body.crush);
+    const newencryptlist=arrayRemove(encryptlist,req.body.encryptCrush)
+    const userupdate=await User.findByIdAndUpdate(req.params.id,{crushes:newlist,encryptCrushes:newencryptlist});
+    res.send(userupdate);
+})
+
+// get all crushes
+
+routes.get("/allCrushes/:id",async(req,res)=>{
+    if(req.body==null)return res.send("invalid")
+    const user=User.findById(req.params.id);
+    try{
+        res.send(user.encryptCrushes);
+    }
+    catch(err){
+        res.send(err);
+    }
+})
 module.exports=routes;

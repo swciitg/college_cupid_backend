@@ -23,7 +23,7 @@ const userSchema=new Schema({
         required:true
     },
 
-    "dp":{
+    "imagePic":{
         type:String,
     },
 
@@ -56,6 +56,9 @@ const userSchema=new Schema({
 
     "crushes":[
         {type:Number},
+    ],
+    "encryptCrushes":[
+        {type:String}
     ],
 
     "matches":[
