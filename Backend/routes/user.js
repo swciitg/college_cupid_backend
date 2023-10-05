@@ -57,6 +57,8 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
     }
 });
 
+// login user
+
 routes.post("/login",async(req,res)=>{
     const user=await User.find({email:req.body});
     if(!user)throw err("wrong email");
