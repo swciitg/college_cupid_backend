@@ -1,6 +1,4 @@
 const {Schema,model }=require("mongoose");
-const {createHmac,randomBytes}=require("crypto");
-const {createToken,verifyToken}=require("../authentication/jwt");
 const userSchema=new Schema({
     "name":{
         type: String,
@@ -18,24 +16,24 @@ const userSchema=new Schema({
     },
 
   
-    "password":{
+    "hashedPassword":{
         type:String,
         required:true
     },
 
-    "imagePic":{
+    "profilePicUrl":{
         type:String,
     },
 
     "program":{
-        enum:["btech","mtech","phd"]
+        enum:["btech","mtech", "bdes","phd"]
     },
 
     "year":{
         enum:["1","2","3","4","5"]
     },
 
-    "interest":[
+    "interests":[
         {type :String}
     ],
 
@@ -45,19 +43,21 @@ const userSchema=new Schema({
     },
 
     "publicKey":{
-        type:Number,
-        required:true
+        type:String,
+        // required:true,
+        default: ""
     },
 
-    "privateKey":{
+    "encryptedPrivateKey":{
         type:String,
-        required:true
+        // required:true,
+        default: ""
     },
 
     "crushes":[
-        {type:Number},
+        {type:String},
     ],
-    "encryptCrushes":[
+    "encryptedCrushes":[
         {type:String}
     ],
 
