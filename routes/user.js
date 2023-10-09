@@ -31,7 +31,7 @@ const upload = multer({ storage: storage });
 // sign in and take profile details from user
 
 routes.post("/signin",upload.single('dp'),async(req,res)=>{
-    
+    console.log("signin");
     const user=req.body;
     if(!user)res.send("no user");
 
@@ -50,13 +50,14 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
         const accessToken = createAccessToken(user.email);
         const refreshToken = createRefreshToken(user.email);
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            path: '/user/refresh_token'
-        });
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true,
+        //     path: '/user/refresh_token'
+        // });
 
         res.status(200).send({
             accessToken, 
+            refreshToken,
             gValue: process.env.G_VALUE
         });
 
