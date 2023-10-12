@@ -29,4 +29,4 @@ jobs:
             git checkout main
             git fetch
             git pull
-            DOCKER_BUILDKIT=0 docker compose -f ./docker-compose.prod.yml up -d --build
+            docker compose -f docker-compose.prod.yml up -d --build
