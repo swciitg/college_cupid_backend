@@ -8,7 +8,7 @@ jobs:
     name: View Logs
     runs-on: ubuntu-latest
     steps:
-    - name: Establish connection and deploy
+    - name: Get the logs
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
