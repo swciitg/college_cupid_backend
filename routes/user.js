@@ -36,12 +36,12 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
     if(!user)res.send("no user");
 
     try {
-        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        if(req.file){const b64 = Buffer.from(req.file.buffer).toString("base64");
         let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
         const cldRes = await handleUpload(dataURI);
         console.log(cldRes.url);
         var url = cldRes.url;
-        user.profilePicUrl = url;
+        user.profilePicUrl = url;}
         console.log(user);
 
         const newUser = new User(user);
@@ -57,8 +57,7 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
 
         res.status(200).send({
             accessToken, 
-            refreshToken,
-            gValue: process.env.G_VALUE
+            refreshToken
         });
 
     } catch (error) {
