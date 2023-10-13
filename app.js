@@ -2,6 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
+var morgan = require('morgan');
 
 const cookieParser=require('cookie-parser');
 app.use(express.json());
@@ -18,6 +19,8 @@ mongoose.connect(
 
 const userRouter=require("./routes/user");
 const resultsRouter=require("./routes/results");
+
+app.use(morgan('dev'));
 
 app.use('/user', userRouter);
 app.use("/results", resultsRouter);
