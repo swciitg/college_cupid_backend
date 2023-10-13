@@ -108,7 +108,24 @@ routes.get('/', authenticateToken, async(req,res) => {
 
     try {
         const users = await User.find();
-        res.json({users: users});
+        var usersInfo = [];
+        users.forEach((user) => {
+            usersInfo.push({
+                email: user.email,
+                name: user.name,
+                profilePicUrl: user.profilePicUrl ?? '',
+                publicKey: user.publicKey,
+                gender: user.gender,
+                bio: user.bio,
+                yearOfStudy: user.yearOfStudy,
+                program: user.program,
+                interests: user.interests
+            });
+        });
+
+        console.log(usersInfo);
+
+        res.json({users: usersInfo});
     } catch (error) {
         res.send(error);
     }

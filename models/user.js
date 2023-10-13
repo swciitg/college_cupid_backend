@@ -6,7 +6,7 @@ const userSchema=new Schema({
     },
     
     "gender":{
-        enum:["male","female"]
+        type: String
     },
 
     "email":{
@@ -26,11 +26,11 @@ const userSchema=new Schema({
     },
 
     "program":{
-        enum:["btech","mtech", "bdes","phd"]
+        type: String,
     },
 
-    "year":{
-        enum:["1","2","3","4","5"]
+    "yearOfStudy":{
+        type: String
     },
 
     "interests":[
