@@ -22,6 +22,10 @@ const resultsRouter=require("./routes/results");
 app.use('/user', userRouter);
 app.use("/results", resultsRouter);
 
+app.get('/', (req, res) => {
+    res.send('<h1>Welcome to CollegeCupid</h1>')
+});
+
 app.listen(process.env.PORT, () => {
     console.log('Server listening on port ' + process.env.PORT);
 });
