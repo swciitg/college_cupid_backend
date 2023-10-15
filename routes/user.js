@@ -1,6 +1,6 @@
 const {Router}=require("express");
 const routes=Router();
-const {createAccessToken, createRefreshToken, authenticateToken}=require("../controllers/authController.js");
+const {createAccessToken, createRefreshToken, authenticateToken}=require("../controllers/jwtAuthController.js");
 const User=require("../models/user");
 
 const multer = require("multer");
@@ -9,8 +9,8 @@ const cloudinary = require("cloudinary").v2;
 // Cloudinary Config
 cloudinary.config({
     cloud_name: process.env.CLOUDNAME,
-    api_key: process.env.APIKEY,
-    api_secret: process.env.APISECRET,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
   });
   
   // File Upload
@@ -133,10 +133,10 @@ routes.get('/', authenticateToken, async(req,res) => {
 
 // open particular user
 
-routes.get('/of/:id', authenticateToken, async(req,res)=>{
+routes.get('/:email', authenticateToken, async(req,res)=>{
     if(req.body==null)return res.send("invalid")
     try{
-        const user=await User.findById(req.params.id);
+        const user=await User.findOne({email: req.params.email});
         res.send({user});
     }
     catch(err){
@@ -146,12 +146,12 @@ routes.get('/of/:id', authenticateToken, async(req,res)=>{
 
 // add a new crush
 
-routes.put('/addCrush/:id', authenticateToken, async(req,res)=>{
+routes.put('/addCrush', authenticateToken, async(req,res)=>{
     if(req.body==null)return res.send("invalid")
 
     try {
-        const user = await User.findOneAndUpdate({email:req.email},
-            {$push:{crushes:req.params.id}
+        await User.findOneAndUpdate({email:req.email},
+            {$push:{crushes:req.body.sharedSecret}, $push: {encryptedCrushes: req.body.encryptedCrushEmail}
         });
         
         res.send({message: "Crush added successfully"});

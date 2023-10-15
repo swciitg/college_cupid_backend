@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1B1B1D;
+        }
+
+        .mainDiv {
+            display: grid;
+            justify-content: center;
+            align-content: center;
+            text-align: center;
+            height: 100vh;
+        }
+
+        p.userTokens {
+            color: #1B1B1D;
+        }
+
+        #appLogo {
+            margin: auto;
+            width: 45vw;
+            max-width: 160px;
+        }
+
+        .confirmText {
+            margin-top: 6px;
+            display: inline;
+            color: #767676;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        #confirmIcon{
+            margin: auto;
+            width: 10vw;
+            max-width: 32px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainDiv">
+        <img src="../../appLogo" id="appLogo">
+        <% if(status==="ERROR"){ %> <p class="confirmText"> Oops!! Something went wrong :( </p> <% } else {%> <p class="confirmText"> Successfully signed in </p> <img src="../../confirmicon" id="confirmIcon"><%}%>
+    </div>
+    <p id="status" hidden><%= status %></p>
+    <p id= "email" hidden><%= email %></p>
+    <p id="accessToken" class="userTokens" hidden><%= accessToken %></p>
+    <p id="refreshToken" class="userTokens" hidden><%= refreshToken %></p>
+</body>
+
+</html>

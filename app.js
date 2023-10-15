@@ -8,6 +8,8 @@ const cookieParser=require('cookie-parser');
 app.use(express.json());
 app.use(cookieParser());
 
+app.set('view engine', 'ejs');
+
 //connect to db
 mongoose.connect(
     process.env.MONGO_URL + 'college_cupid'
@@ -19,9 +21,11 @@ mongoose.connect(
 
 const userRouter=require("./routes/user");
 const resultsRouter=require("./routes/results");
+// const authRouter = require('./routes/auth');
 
 app.use(morgan('dev'));
 
+// app.use('/auth/microsoft', authRouter);
 app.use('/user', userRouter);
 app.use("/results", resultsRouter);
 

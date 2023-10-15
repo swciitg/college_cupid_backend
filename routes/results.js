@@ -1,7 +1,7 @@
 const {Router}=require("express");
 const routes=Router();
 const User=require("../models/user");
-const { authenticateToken } = require("../controllers/authController");
+const { authenticateToken } = require("../controllers/jwtAuthController");
 
 
 routes.get("/", authenticateToken, async(req,res)=>{
