@@ -27,6 +27,17 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 
+// delete all users
+routes.delete('/clear', async(req, res) => {
+    try{
+        await User.deleteMany({});
+        res.send('success');
+    }catch(e){
+        console.log(e);
+        res.send(e.message);
+    }
+});
+
 
 // sign in and take profile details from user
 
