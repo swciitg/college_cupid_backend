@@ -1,6 +1,6 @@
 const msal = require('@azure/msal-node');
 const request = require('request');
-const { createAccessToken, createRefreshToken } = require('./jwtAuthController');
+const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
 
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
 const tenantId = 'https://login.microsoftonline.com/' + process.env.MICROSOFT_GRAPH_TENANT_ID;
