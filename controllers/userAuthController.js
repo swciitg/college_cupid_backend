@@ -5,7 +5,7 @@ const { createAccessToken, createRefreshToken } = require('./jwtAuthController')
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
 const tenantId = 'https://login.microsoftonline.com/' + process.env.MICROSOFT_GRAPH_TENANT_ID;
 const clientSecret = process.env.MICROSOFT_GRAPH_CLIENT_SECRET;
-const REDIRECT_URI = 'localhost:3000/auth/microsoft/redirect';
+const REDIRECT_URI = 'https://swc.iitg.ac.in/collegeCupid/auth/microsoft/redirect';
 
 const config = {
     auth: {

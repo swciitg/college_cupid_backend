@@ -21,11 +21,11 @@ mongoose.connect(
 
 const userRouter=require("./routes/user");
 const resultsRouter=require("./routes/results");
-// const authRouter = require('./routes/auth');
+const authRouter = require('./routes/auth');
 
 app.use(morgan('dev'));
 
-// app.use('/auth/microsoft', authRouter);
+app.use('/auth/microsoft', authRouter);
 app.use('/user', userRouter);
 app.use("/results", resultsRouter);
 

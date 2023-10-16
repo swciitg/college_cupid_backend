@@ -47,12 +47,14 @@ routes.post("/signin",upload.single('dp'),async(req,res)=>{
     if(!user)res.send("no user");
 
     try {
-        if(req.file){const b64 = Buffer.from(req.file.buffer).toString("base64");
-        let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-        const cldRes = await handleUpload(dataURI);
-        console.log(cldRes.url);
-        var url = cldRes.url;
-        user.profilePicUrl = url;}
+        if(req.file){
+            const b64 = Buffer.from(req.file.buffer).toString("base64");
+            let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+            const cldRes = await handleUpload(dataURI);
+            console.log(cldRes.url);
+            var url = cldRes.url;
+            user.profilePicUrl = url;
+        }
         console.log(user);
 
         const newUser = new User(user);
