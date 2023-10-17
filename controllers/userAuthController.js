@@ -77,7 +77,7 @@ exports.microsoftLoginRedirect = (req, res) => {
                 status: 'SUCCESS', 
                 accessToken, 
                 refreshToken, 
-                email: userInfo.email
+                email: userInfo.mail
             });
         });
     });
