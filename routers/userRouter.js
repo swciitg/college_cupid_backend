@@ -17,7 +17,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 userRouter.delete('/user/clear', userController.clearUsers);
-userRouter.post('/user', upload.single('dp'), userController.postUserInfo);
+userRouter.post('/user', authenticateToken, upload.single('dp'), userController.postUserInfo);
 userRouter.post('/user/login', userController.loginUser);
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateProfile);
 userRouter.get('/user/', authenticateToken, userController.getAllUsers);

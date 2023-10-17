@@ -20,13 +20,7 @@ exports.postUserInfo = async (req, res) => {
         const newUser = new User(user);
         await newUser.save();
 
-        const accessToken = createAccessToken(user.email);
-        const refreshToken = createRefreshToken(user.email);
-
-        res.status(200).send({
-            accessToken, 
-            refreshToken
-        });
+        res.status(200).send(newUser);
 
     } catch (error) {
         console.log(error);

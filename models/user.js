@@ -4,66 +4,59 @@ const userSchema=new Schema({
         type: String,
         required : true
     },
-    
     "gender":{
-        type: String
+        type: String,
+        required: true
     },
-
     "email":{
         type:String,
         required:true,
         unique:true
-    },
-
-  
+    },  
     "hashedPassword":{
         type:String,
         required:true
     },
-
     "profilePicUrl":{
         type:String,
+        default: ''
     },
-
     "program":{
         type: String,
+        required: true
     },
-
     "yearOfStudy":{
-        type: String
+        type: String,
+        required: true
     },
-
-    "interests":[
-        {type :String}
-    ],
-
+    "interests": {
+        type: [String],
+        default: [],
+    },
     "bio":{
         type:String,
-        required:true
+        default:''
     },
-
     "publicKey":{
         type:String,
-        // required:true,
-        default: ""
+        required:true,
     },
-
     "encryptedPrivateKey":{
         type:String,
-        // required:true,
-        default: ""
+        required:true,
     },
-
-    "crushes":[
-        {type:String},
-    ],
-    "encryptedCrushes":[
-        {type:String}
-    ],
-
-    "matches":[
-        {type:String}
-    ]
+    "crushes":{
+        type: [String],
+        default: [],
+    },
+    "encryptedCrushes":{
+        type: [String],
+        default: [],
+    },
+    "matches":{
+        type: [String],
+        default: [],
+    }
 });
 
 
