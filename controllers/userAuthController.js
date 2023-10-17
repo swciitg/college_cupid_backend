@@ -57,7 +57,14 @@ exports.microsoftLoginRedirect = (req, res) => {
             console.log('here');
             if(err){
                 console.log(err);
-                return res.render('authSuccessView.ejs', {status: 'ERROR', accessToken: '', refreshToken: '', email: ''});
+                return res.render('authSuccessView.ejs', {
+                    status: 'ERROR', 
+                    accessToken: '', 
+                    refreshToken: '', 
+                    email: '',
+                    displayName: '',
+                    surname: '',
+                });
             }
             const userInfo = JSON.parse(body);
             console.log(userInfo);
@@ -66,7 +73,9 @@ exports.microsoftLoginRedirect = (req, res) => {
                     status: 'ERROR', 
                     accessToken: '', 
                     refreshToken: '', 
-                    email: ''
+                    email: '',
+                    displayName: '',
+                    surname: '',
                 });
             }
             
@@ -77,7 +86,9 @@ exports.microsoftLoginRedirect = (req, res) => {
                 status: 'SUCCESS', 
                 accessToken, 
                 refreshToken, 
-                email: userInfo.mail
+                email: userInfo.mail,
+                displayName: userInfo.displayName,
+                surname: userInfo.surname,
             });
         });
     });
