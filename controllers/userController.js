@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
 const { uploadImage } = require('../handlers/uploadImage');
-const NotFoundError = require('../errors/notFoundError');
+const {NotFoundError} = require('../errors/notFoundError');
 
 exports.clearUsers = async (req, res) => {
     try{
@@ -104,17 +104,13 @@ exports.loginUser = async(req, res) => {
 
 exports.getPersonalInfo = async(req, res) => {
     try {
-        console.log('heehhere');
         const user = await User.findOne({email: req.email});
-        console.log('user' + user);
         if(user){
-            console.log('here');
             res.send({personalInfo: user});
         } else {
-            console.log('here2');
-            throw NotFoundError('User not found');
+            throw new NotFoundError('User not found');
         }
     } catch (error) {
-        res.send(error.message);
+        res.status(error.statusCode).send(error.message);
     }
 };

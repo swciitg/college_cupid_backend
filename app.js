@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 app.use('/', router.authRouter);
 app.use('/', router.userRouter);
 app.use('/', router.crushRouter);
-app.use("/", router.matchRouter);
+app.use('/', router.matchRouter);
 
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to CollegeCupid</h1>')
