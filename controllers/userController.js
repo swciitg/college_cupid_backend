@@ -105,11 +105,7 @@ exports.loginUser = async(req, res) => {
 exports.getPersonalInfo = async(req, res) => {
     try {
         const user = await User.findOne({email: req.email});
-        if(user){
-            res.send({personalInfo: user});
-        } else {
-            throw new NotFoundError('User not found');
-        }
+        res.send({personalInfo: user});
     } catch (error) {
         res.status(error.statusCode).send(error.message);
     }
