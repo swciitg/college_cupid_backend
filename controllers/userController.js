@@ -104,13 +104,17 @@ exports.loginUser = async(req, res) => {
 
 exports.getPersonalInfo = async(req, res) => {
     try {
+        console.log('heehhere');
         const user = await User.findOne({email: req.email});
+        console.log('user' + user);
         if(user){
-            return res.json({personalInfo: user});
+            console.log('here');
+            res.send({personalInfo: user});
         } else {
+            console.log('here2');
             throw NotFoundError('User not found');
         }
     } catch (error) {
-        res.json(error.message);
+        res.send(error.message);
     }
 };

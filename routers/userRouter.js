@@ -21,7 +21,7 @@ userRouter.post('/user', authenticateToken, upload.single('dp'), userController.
 userRouter.post('/user/login', userController.loginUser);
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateProfile);
 userRouter.get('/user/', authenticateToken, userController.getAllUsers);
-userRouter.get('/user/:email', authenticateToken, userController.getUserInfo);
+userRouter.get('/user/email/:email', authenticateToken, userController.getUserInfo);
 userRouter.get('/user/personalInfo', authenticateToken, userController.getPersonalInfo);
 
 module.exports = { userRouter };
