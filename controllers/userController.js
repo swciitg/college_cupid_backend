@@ -1,7 +1,4 @@
 const User = require('../models/user');
-const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
-const { uploadImage } = require('../handlers/uploadImage');
-const {NotFoundError} = require('../errors/notFoundError');
 
 exports.clearUsers = async (req, res) => {
     try{
@@ -15,7 +12,7 @@ exports.clearUsers = async (req, res) => {
 exports.postUserInfo = async (req, res) => {
     var user=req.body;
     try {
-        user.profilePicUrl = await uploadImage(req);
+        user.profilePicUrl = req.imageUrl;
         console.log(user);
 
         const newUser = new User(user);
@@ -80,26 +77,13 @@ exports.getUserInfo = async(req, res) => {
 exports.updateProfile = async(req, res) => {
     var user = req.body;
     try{
-        user.profilePicUrl = await uploadImage(req);
+        // user.profilePicUrl = await uploadImage(req);
         await User.findOneAndUpdate({email: req.email}, user);
         res.send({message: "Profile updated successfully"});
     }
     catch(err){
         res.send(err);
     }
-};
-
-exports.loginUser = async(req, res) => {
-    const user = await User.find({email: req.body.email});
-    if(!user)throw err("wrong email");
-    
-    const accessToken = createAccessToken({email:user.email});
-    const refreshToken = createRefreshToken({email:user.email});
-
-    res.json({
-        accessToken,
-        refreshToken
-    });
 };
 
 exports.getPersonalInfo = async(req, res) => {

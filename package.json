@@ -8,11 +8,10 @@
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
-  "author": "",
+  "author": "Students' Web Committee, IIT Guwahati",
   "license": "ISC",
   "dependencies": {
     "@azure/msal-node": "^2.2.0",
-    "cloudinary": "^1.41.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
@@ -21,7 +20,8 @@
     "mongoose": "^7.5.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
