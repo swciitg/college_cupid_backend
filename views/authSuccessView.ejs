@@ -39,7 +39,7 @@
     <div class="splash-text">
         <div>CollegeCupid</div>
         <div style="height: 18px;"></div>
-        <% if(status==="ERROR"){ %> <p class="confirmText"> Oops!! Something went wrong :( </p> <% } else {%> <p class="confirmText"> Successfully signed in. </p> <img src="../../confirmicon" id="confirmIcon"><%}%>
+        <% if(status==="ERROR"){ %> <p> Oops!! Something went wrong :( </p> <% } else {%> <p> Successfully signed in. </p><%}%>
         
         <p id="status" hidden><%= status %></p>
         <p id="email" hidden><%= email %></p>
