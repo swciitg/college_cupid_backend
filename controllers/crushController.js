@@ -4,10 +4,11 @@ exports.addCrush = async(req, res) => {
     if(req.body==null)return res.send("invalid")
 
     try {
-        await User.findOneAndUpdate({email:req.email}, {
-            $push: {crushes:req.body.sharedSecret}, 
-            $push: {encryptedCrushes: req.body.encryptedCrushEmail}
-        });
+        const user = await User.findOne({email: req.email});
+        user.crushes.push(req.body.sharedSecret);
+        user.encryptedCrushes.push(req.body.encryptedCrushEmail);
+
+        await User.findOneAndUpdate({email:req.email}, user);
         
         res.send({message: "Crush added successfully"});
     } catch (error) {
@@ -28,7 +29,7 @@ exports.removeCrush = async(req, res) => {
     const encryptedCrushList = user.encryptedCrushes;
 
     const newCrushList = arrayRemove(crushList,req.query.sharedSecret);
-    const newEncryptedCrushList = arrayRemove(encryptedCrushList, req.query.encryptedSharedSecret);
+    const newEncryptedCrushList = arrayRemove(encryptedCrushList, req.query.encryptedCrushEmail);
 
     try {
         await User.findOneAndUpdate({email: req.email}, {

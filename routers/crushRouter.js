@@ -4,7 +4,7 @@ const {Router} = require('express');
 const crushRouter = Router();
 
 crushRouter.put('/crush/add', authenticateToken, crushController.addCrush);
-crushRouter.delete('/crush/remove/:sharedSecret', authenticateToken, crushController.removeCrush);
+crushRouter.delete('/crush/remove', authenticateToken, crushController.removeCrush);
 crushRouter.get('/crush', authenticateToken, crushController.getAllCrushes);
 
 module.exports = {crushRouter};
