@@ -25,16 +25,16 @@ exports.removeCrush = async(req, res) => {
         });
     }
     const user = await User.findOne({email: req.email});
-    const crushList = user.crushes;
-    const encryptedCrushList = user.encryptedCrushes;
+    const crushes = user.crushes;
+    const encryptedCrushes = user.encryptedCrushes;
 
-    const newCrushList = arrayRemove(crushList,req.query.sharedSecret);
-    const newEncryptedCrushList = arrayRemove(encryptedCrushList, req.query.encryptedCrushEmail);
+    const newCrushes = arrayRemove(crushes,req.query.sharedSecret);
+    const newEncryptedCrushes = arrayRemove(encryptedCrushes, req.query.encryptedCrushEmail);
 
     try {
         await User.findOneAndUpdate({email: req.email}, {
-            crushes: newCrushList,
-            encryptedCrushList: newEncryptedCrushList
+            crushes: newCrushes,
+            encryptedCrushes: newEncryptedCrushes
         });
 
         res.send({message: 'Crush deleted successfully'});
