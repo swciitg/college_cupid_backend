@@ -1,96 +1,83 @@
-const User = require('../models/user');
+const PersonalInfo = require('../models/PersonalInfo');
+const UserProfile = require('../models/UserProfile');
 
 exports.clearUsers = async (req, res) => {
-    try{
-        await User.deleteMany({});
+    try {
+        await PersonalInfo.deleteMany({});
+        await UserProfile.deleteMany({});
         res.send('success');
-    }catch(e){
-        res.send({message: e});
+    } catch (e) {
+        res.send({ message: e });
     }
 }
 
-exports.postUserInfo = async (req, res) => {
-    var user=req.body;
+exports.postUserProfile = async (req, res) => {
+    var userProfile = req.body;
     try {
-        user.profilePicUrl = req.imageUrl;
-        console.log(user);
+        userProfile.profilePicUrl = req.imageUrl;
+        console.log(userProfile);
 
-        const newUser = new User(user);
-        await newUser.save();
+        const newUserProfile = new UserProfile(userProfile);
+        await newUserProfile.save();
 
-        res.status(200).send(newUser);
+        res.status(200).send(newUserProfile);
 
     } catch (error) {
         console.log(error);
-        res.send({
-            message: error.message,
-        });
+        res.send({ message: error });
     }
 };
 
-exports.getAllUsers = async(req, res) => {
+exports.getUserProfile = async (req, res) => {
     try {
-        const users = await User.find();
-        var usersInfo = [];
-        users.forEach((user) => {
-            usersInfo.push({
-                email: user.email,
-                name: user.name,
-                profilePicUrl: user.profilePicUrl ?? '',
-                publicKey: user.publicKey,
-                gender: user.gender,
-                bio: user.bio,
-                yearOfStudy: user.yearOfStudy,
-                program: user.program,
-                interests: user.interests
-            });
-        });
-
-        console.log(usersInfo);
-
-        res.json({users: usersInfo});
-    } catch (error) {
-        res.send({message: error});
+        const userProfile = await UserProfile.findOne({ email: req.params.email });
+        res.send({userProfile: userProfile});
+    }
+    catch (err) {
+        res.send({ message: err });
     }
 };
 
-exports.getUserInfo = async(req, res) => {
-    try{
-        const user = await User.findOne({email: req.params.email});
-        res.send({
-            email: user.email,
-            name: user.name,
-            profilePicUrl: user.profilePicUrl ?? '',
-            publicKey: user.publicKey,
-            gender: user.gender,
-            bio: user.bio,
-            yearOfStudy: user.yearOfStudy,
-            program: user.program,
-            interests: user.interests
-        });
-    }
-    catch(err){
-        res.send({message: err});
-    }
-};
-
-exports.updateProfile = async(req, res) => {
-    var user = req.body;
-    try{
-        // user.profilePicUrl = await uploadImage(req);
-        await User.findOneAndUpdate({email: req.email}, user);
-        res.send({message: "Profile updated successfully"});
-    }
-    catch(err){
-        res.send(err);
-    }
-};
-
-exports.getPersonalInfo = async(req, res) => {
+exports.getAllUserProfiles = async (req, res) => {
     try {
-        const user = await User.findOne({email: req.email});
-        res.send({personalInfo: user});
+        const userProfiles = await UserProfile.find();
+        console.log(userProfiles);
+
+        res.send({ users: userProfiles });
     } catch (error) {
-        res.status(error.statusCode).send(error.message);
+        res.send({ message: error });
+    }
+};
+
+exports.updateUserProfile = async (req, res) => {
+    var profileChanges = req.body;
+    try {
+        if (req.imageUrl) {
+            profileChanges.profilePicUrl = req.imageUrl;
+        }
+        await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges);
+        res.send({ message: "Profile updated successfully" });
+    }
+    catch (err) {
+        res.send({ message: err });
+    }
+};
+
+exports.postPersonalInfo = async (req, res) => {
+    try {
+        const myInfo = new PersonalInfo(req.body);
+        await myInfo.save();
+        res.send({ message: 'Data uploaded successfully' });
+    } catch (err) {
+        res.send({ message: err });
+    }
+};
+
+exports.getPersonalInfo = async (req, res) => {
+    try {
+        const user = await PersonalInfo.findOne({ email: req.email });
+        res.send({ personalInfo: user });
+    } catch (error) {
+        res.status(error.statusCode).send({ message: err });
     }
 };

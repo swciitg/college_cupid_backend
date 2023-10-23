@@ -1,8 +1,8 @@
-const {Router}=require("express");
+const { Router } = require("express");
 const userController = require('../controllers/userController.js');
 const userRouter = Router();
 const multer = require("multer");
-const {authenticateToken}=require('../middlewares/jwtAuthHandler.js');
+const { authenticateToken } = require('../middlewares/jwtAuthHandler.js');
 const uuid = require('uuid');
 
 // multer config
@@ -21,10 +21,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 userRouter.delete('/user/clear', userController.clearUsers);
-userRouter.post('/user', authenticateToken, upload.single('dp'), userController.postUserInfo);
-userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateProfile);
-userRouter.get('/user', authenticateToken, userController.getAllUsers);
-userRouter.get('/user/email/:email', authenticateToken, userController.getUserInfo);
+
+userRouter.post('/user/profile', authenticateToken, upload.single('dp'), userController.postUserProfile);
+userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateUserProfile);
+userRouter.get('/user/profile/:email', authenticateToken, userController.getUserProfile);
+userRouter.get('/user/profile/all', authenticateToken, userController.getAllUserProfiles);
+
+userRouter.post('/user/personalInfo', authenticateToken, userController.postPersonalInfo);
 userRouter.get('/user/personalInfo', authenticateToken, userController.getPersonalInfo);
 
 module.exports = { userRouter };
