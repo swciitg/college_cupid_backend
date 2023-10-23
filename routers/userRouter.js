@@ -24,7 +24,7 @@ userRouter.delete('/user/clear', userController.clearUsers);
 
 userRouter.post('/user/profile', authenticateToken, upload.single('dp'), userController.postUserProfile);
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateUserProfile);
-userRouter.get('/user/profile/:email', authenticateToken, userController.getUserProfile);
+userRouter.get('/user/profile/email/:email', authenticateToken, userController.getUserProfile);
 userRouter.get('/user/profile/all', authenticateToken, userController.getAllUserProfiles);
 
 userRouter.post('/user/personalInfo', authenticateToken, userController.postPersonalInfo);
