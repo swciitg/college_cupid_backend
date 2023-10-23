@@ -23,7 +23,7 @@ const upload = multer({ storage: storage });
 userRouter.delete('/user/clear', userController.clearUsers);
 userRouter.post('/user', authenticateToken, upload.single('dp'), userController.postUserInfo);
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateProfile);
-userRouter.get('/user/', authenticateToken, userController.getAllUsers);
+userRouter.get('/user', authenticateToken, userController.getAllUsers);
 userRouter.get('/user/email/:email', authenticateToken, userController.getUserInfo);
 userRouter.get('/user/personalInfo', authenticateToken, userController.getPersonalInfo);
 
