@@ -56,7 +56,8 @@ exports.updateUserProfile = async (req, res) => {
             profileChanges.profilePicUrl = req.imageUrl;
         }
         await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges);
-        res.send({ message: "Profile updated successfully", profilePicUrl: req.imageUrl });
+        const user = await UserProfile.findOne({ email: req.email });
+        res.send({ message: "Profile updated successfully", profilePicUrl:  user.profilePicUrl});
     }
     catch (err) {
         res.send({ message: err });
