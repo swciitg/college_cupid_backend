@@ -26,8 +26,8 @@ exports.removeCrush = async(req, res) => {
         const crushes = user.crushes;
         const encryptedCrushes = user.encryptedCrushes;
 
-        const newCrushes = arrayRemove(crushes,req.query.sharedSecret);
-        const newEncryptedCrushes = arrayRemove(encryptedCrushes, req.query.encryptedCrushEmail);
+        const newCrushes = arrayRemove(crushes,crushes[req.query.index]);
+        const newEncryptedCrushes = arrayRemove(encryptedCrushes, encryptedCrushes[req.query.index]);
 
         await PersonalInfo.findOneAndUpdate({email: req.email}, {
             crushes: newCrushes,
