@@ -5,6 +5,7 @@ const matchRouter = Router();
 
 
 matchRouter.post('/match/find', authenticateToken, matchController.findMatches);
+matchRouter.delete('/match/clear', authenticateToken, matchController.clearMatches);
 matchRouter.get('/match', authenticateToken, matchController.getMatches);
 
 module.exports = {matchRouter};

@@ -1,46 +1,63 @@
 const PersonalInfo = require("../models/PersonalInfo");
 
-exports.findMatches = async(req, res) => {
+exports.findMatches = async (req, res) => {
     try {
-        const mac = new Map();
+        const sharedSecretMap = new Map();
         const users = await PersonalInfo.find();
         console.log('Total users = ', users.length);
-        
-        users.map((user)=>{
-        
-            user.crushes.map((crush)=>{
-                if(!mac.has(crush)){
-                    mac.set(crush);
-                    mac[crush]=[];
+
+        users.map((user) => {
+
+            user.crushes.map((crush) => {
+                if (!sharedSecretMap.has(crush)) {
+                    sharedSecretMap.set(crush);
+                    sharedSecretMap[crush] = [];
                 }
-                mac[crush].push(user.email);
+                sharedSecretMap[crush].push(user.email);
             });
         })
-        const totalPairs = Object.keys(mac).length;
-        for(var i = 0; i < totalPairs; i++){
-            const key = Object.keys(mac)[i];
-            if(mac[key].length>1){
-                console.log(mac[key]);
-                await PersonalInfo.findOneAndUpdate({email: mac[key][0]},{$push: {matches:mac[key][1]}});
-                await PersonalInfo.findOneAndUpdate({email :mac[key][1]},{$push: {matches:mac[key][0]}});
+        const totalPairs = Object.keys(sharedSecretMap).length;
+        for (var i = 0; i < totalPairs; i++) {
+            const key = Object.keys(sharedSecretMap)[i];
+            if (sharedSecretMap[key].length > 1) {
+                console.log(sharedSecretMap[key]);
+                await PersonalInfo.findOneAndUpdate(
+                    {email: sharedSecretMap[key][0]}, 
+                    {$push: {matches: sharedSecretMap[key][1]}}
+                );
+                await PersonalInfo.findOneAndUpdate(
+                    {email: sharedSecretMap[key][1]}, 
+                    {$push: {matches: sharedSecretMap[key][0]}}
+                );
             }
-            console.log('Processed ', i+1, ' of ', totalPairs, ' pairs.');
+            console.log('Processed ', i + 1, ' of ', totalPairs, ' pairs.');
         }
-
-        // Object.keys(mac).map(async(key)=>{
-            
-        // });
-        res.send({message: 'Found all matches'});
+        res.send({ message: 'Found all matches' });
     } catch (error) {
-        res.send(error);
+        res.send({message: error});
     }
 };
 
-exports.getMatches = async(req, res) => {
-    try {
-        const user = await PersonalInfo.findOne({email: req.email});
-        res.send({matches: user.matches});
+exports.clearMatches = async (req, res) => {
+    try{
+        const users = await PersonalInfo.find();
+        for(var i = 0; i < users.length; i++){
+            const user = users[i];
+            await PersonalInfo.findOneAndUpdate({email: user.email}, {matches: []});
+            console.log('Matches cleared: ', i + 1, ' of ', users.length);
+        }
+
+        res.send({message: 'Cleared all matches'});
     } catch (error) {
-        res.send(error);
+        res.send({message: error});
     }
-}
+};
+
+exports.getMatches = async (req, res) => {
+    try {
+        const user = await PersonalInfo.findOne({ email: req.email });
+        res.send({ matches: user.matches });
+    } catch (error) {
+        res.send({message: error});
+    }
+};

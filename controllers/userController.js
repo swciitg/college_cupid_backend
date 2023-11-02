@@ -9,7 +9,7 @@ exports.clearUsers = async (req, res) => {
     } catch (e) {
         res.send({ message: e });
     }
-}
+};
 
 exports.postUserProfile = async (req, res) => {
     var userProfile = req.body;
