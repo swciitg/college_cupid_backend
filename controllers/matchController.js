@@ -21,8 +21,8 @@ exports.findMatches = async(req, res) => {
             const key = Object.keys(mac)[i];
             if(mac[key].length>1){
                 console.log(mac[key]);
-                await PersonalInfo.findOneAndUpdate({_id:mac[key][0]},{$push:{matches:mac[key][1]}});
-                await PersonalInfo.findOneAndUpdate({_id:mac[key][1]},{$push:{matches:mac[key][0]}});
+                await PersonalInfo.findOneAndUpdate({email: mac[key][0]},{$push: {matches:mac[key][1]}});
+                await PersonalInfo.findOneAndUpdate({email :mac[key][1]},{$push: {matches:mac[key][0]}});
             }
             console.log('Processed ', i+1, ' of ', totalPairs, ' pairs.');
         }
