@@ -4,6 +4,7 @@ const userRouter = Router();
 const multer = require("multer");
 const { authenticateToken } = require('../middlewares/jwtAuthHandler.js');
 const uuid = require('uuid');
+const asyncErrorHandler = require("../handlers/asyncErrorHandler.js");
 
 // multer config
 const storage = multer.diskStorage({
@@ -20,14 +21,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-userRouter.delete('/user/clear', userController.clearUsers);
+userRouter.delete('/user/clear', asyncErrorHandler(userController.clearUsers));
 
-userRouter.post('/user/profile', authenticateToken, upload.single('dp'), userController.postUserProfile);
-userRouter.put('/user/profile', authenticateToken, upload.single('dp'), userController.updateUserProfile);
-userRouter.get('/user/profile/email/:email', authenticateToken, userController.getUserProfile);
-userRouter.get('/user/profile/all', authenticateToken, userController.getAllUserProfiles);
+userRouter.post('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.createUserProfile));
+userRouter.put('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.updateUserProfile));
+userRouter.get('/user/profile/email/:email', authenticateToken, asyncErrorHandler(userController.getUserProfile));
+userRouter.get('/user/profile/all', authenticateToken, asyncErrorHandler(userController.getAllUserProfiles));
 
-userRouter.post('/user/personalInfo', authenticateToken, userController.postPersonalInfo);
-userRouter.get('/user/personalInfo', authenticateToken, userController.getPersonalInfo);
+userRouter.post('/user/personalInfo', authenticateToken, asyncErrorHandler(userController.postPersonalInfo));
+userRouter.get('/user/personalInfo', authenticateToken, asyncErrorHandler(userController.getPersonalInfo));
 
 module.exports = { userRouter };

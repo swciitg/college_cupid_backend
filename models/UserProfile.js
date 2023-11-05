@@ -1,45 +1,44 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 const userProfileSchema = new Schema({
-    "name": {
+    'name': {
         type: String,
-        required: true
+        required: [true, 'Name is a required field!']
     },
-    "gender": {
+    'gender': {
         type: String,
-        required: true
+        required: [true, 'Gender is a required field!']
     },
-    "email": {
+    'email': {
         type: String,
-        required: true,
+        required: [true, 'Email is a required field!'],
         unique: true
     },
-    "profilePicUrl": {
+    'profilePicUrl': {
         type: String,
         default: ''
     },
-    "program": {
+    'program': {
         type: String,
-        required: true
+        required: [true, 'Program is a required field!']
     },
-    "yearOfStudy": {
+    'yearOfStudy': {
         type: String,
-        required: true
+        required: [true, 'Year of study is a required field!']
     },
-    "interests": {
+    'interests': {
         type: [String],
         default: [],
     },
-    "bio": {
+    'bio': {
         type: String,
         default: ''
     },
-    "publicKey": {
+    'publicKey': {
         type: String,
-        required: true,
+        required: [true, 'Public Key is a required field!'],
     },
 });
 
 
-
-const UserProfile = model("UserProfile", userProfileSchema);
+const UserProfile = model('UserProfile', userProfileSchema);
 module.exports = UserProfile;

@@ -1,6 +1,6 @@
 const path = require('path');
 
-exports.getImage = async(req, res) => {
+exports.getImage = (req, res, next) => {
     const imagePath = path.resolve(
         __dirname + '/../images/' + req.query.photoId + '.png'
     );

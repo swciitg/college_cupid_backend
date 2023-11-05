@@ -2,15 +2,14 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
-const cookieParser=require('cookie-parser');
 const { errorHandler } = require('./middlewares/errorHandler');
 const morgan = require('morgan');
 const router = require('./routers/router');
+const { NotFoundError } = require('./errors/notFoundError');
 
 app.set('view engine', 'ejs');
 
 app.use(express.json());
-app.use(cookieParser());
 app.use(morgan('dev'));
 
 // API Routers
@@ -23,6 +22,11 @@ app.use('/', router.searchRouter);
 
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to CollegeCupid</h1>')
+});
+
+app.all('*', (req, res, next) => {
+    const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
+    next(err);
 });
 
 app.use(errorHandler);

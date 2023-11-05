@@ -1,36 +1,36 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 const personalInfoSchema = new Schema({
-    "email": {
+    'email': {
         type: String,
-        required: true,
+        required: [true, 'Email is a required field!'],
         unique: true
     },
-    "hashedPassword": {
+    'hashedPassword': {
         type: String,
-        required: true
+        required: [true, 'Hashed Password is a required field!']
     },
-    "publicKey": {
+    'publicKey': {
         type: String,
-        required: true,
+        required: [true, 'Public key is a required field!'],
     },
-    "encryptedPrivateKey": {
+    'encryptedPrivateKey': {
         type: String,
-        required: true,
+        required: [true, 'Encrypted Private Key is a required field!'],
     },
-    "crushes": {
+    'crushes': {
         type: [String],
         default: [],
     },
-    "encryptedCrushes": {
+    'encryptedCrushes': {
         type: [String],
         default: [],
     },
-    "matches": {
+    'matches': {
         type: [String],
         default: [],
     }
 });
 
-const PersonalInfo = model("PersonalInfo", personalInfoSchema);
+const PersonalInfo = model('PersonalInfo', personalInfoSchema);
 module.exports = PersonalInfo;
