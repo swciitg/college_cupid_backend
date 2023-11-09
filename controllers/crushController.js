@@ -2,8 +2,10 @@ const PersonalInfo = require('../models/PersonalInfo');
 
 exports.addCrush = async(req, res, next) => {
     const user = await PersonalInfo.findOne({email: req.email});
-    user.crushes.push(req.body.sharedSecret);
-    user.encryptedCrushes.push(req.body.encryptedCrushEmail);
+    if(user.crushes.includes(sharedSecret)==false){
+        user.crushes.push(req.body.sharedSecret);
+        user.encryptedCrushes.push(req.body.encryptedCrushEmail);
+    }
 
     await PersonalInfo.findOneAndUpdate({email:req.email}, user);
     
