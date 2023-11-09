@@ -2,7 +2,7 @@ const PersonalInfo = require('../models/PersonalInfo');
 
 exports.addCrush = async(req, res, next) => {
     const user = await PersonalInfo.findOne({email: req.email});
-    if(user.crushes.includes(sharedSecret)==false){
+    if(user.crushes.includes(req.body.sharedSecret)==false){
         user.crushes.push(req.body.sharedSecret);
         user.encryptedCrushes.push(req.body.encryptedCrushEmail);
     }
