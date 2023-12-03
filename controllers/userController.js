@@ -29,8 +29,17 @@ exports.getAllUserProfiles = async (req, res, next) => {
     res.json({ users: userProfiles });
 };
 
+exports.getUserProfilesPages = async (req, res, next) => {
+    const userProfiles = await UserProfile.find();
+    console.log(userProfiles);
+
+    const startIndex = req.params.pageNumber * 10;
+
+    res.json({ users: userProfiles.slice(startIndex, startIndex + 10) });
+};
+
 exports.updateUserProfile = async (req, res, next) => {
-    var profileChanges = req.body;
+    const profileChanges = req.body;
     if (req.imageUrl) {
         profileChanges.profilePicUrl = req.imageUrl;
     }
