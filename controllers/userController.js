@@ -32,10 +32,11 @@ exports.getAllUserProfiles = async (req, res, next) => {
 exports.getUserProfilesPages = async (req, res, next) => {
     const userProfiles = await UserProfile.find();
     console.log(userProfiles);
+    const newUserProfiles = userProfiles.filter(profile => profile.email !== req.email);
 
     const startIndex = req.params.pageNumber * 10;
 
-    res.json({ users: userProfiles.slice(startIndex, startIndex + 10) });
+    res.json({ users: newUserProfiles.slice(startIndex, startIndex + 10) });
 };
 
 exports.updateUserProfile = async (req, res, next) => {
