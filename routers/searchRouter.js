@@ -6,5 +6,6 @@ const asyncErrorHandler = require('../handlers/asyncErrorHandler');
 
 searchRouter.get('/search/filter', authenticateToken, asyncErrorHandler(searchController.filterUsers));
 searchRouter.get('/search/user', authenticateToken, asyncErrorHandler(searchController.searchUsers));
+searchRouter.get('/search/user/page', authenticateToken, asyncErrorHandler(searchController.searchUsersPaginated));
 
 module.exports = {searchRouter};
