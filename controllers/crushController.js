@@ -9,6 +9,8 @@ exports.addCrush = async(req, res, next) => {
         if(user.crushes.includes(req.body.sharedSecret)==false){
             user.crushes.push(req.body.sharedSecret);
             user.encryptedCrushes.push(req.body.encryptedCrushEmail);
+        }else{
+            res.json({success: false, message: "User is already added as your crush."});
         }
     
         await PersonalInfo.findOneAndUpdate({email:req.email}, user);
