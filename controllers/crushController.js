@@ -2,14 +2,19 @@ const PersonalInfo = require('../models/PersonalInfo');
 
 exports.addCrush = async(req, res, next) => {
     const user = await PersonalInfo.findOne({email: req.email});
-    if(user.crushes.includes(req.body.sharedSecret)==false){
-        user.crushes.push(req.body.sharedSecret);
-        user.encryptedCrushes.push(req.body.encryptedCrushEmail);
-    }
 
-    await PersonalInfo.findOneAndUpdate({email:req.email}, user);
+    if(user.crushes.length == 5){
+        res.json({success: false, message: "You cannot add more than five crushes."});
+    } else {
+        if(user.crushes.includes(req.body.sharedSecret)==false){
+            user.crushes.push(req.body.sharedSecret);
+            user.encryptedCrushes.push(req.body.encryptedCrushEmail);
+        }
     
-    res.send({message: "Crush added successfully"});
+        await PersonalInfo.findOneAndUpdate({email:req.email}, user);
+        
+        res.json({success: true, message: "Crush added successfully"});
+    }
 };
 
 exports.removeCrush = async(req, res, next) => {
