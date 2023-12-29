@@ -30,7 +30,7 @@ exports.getAllUserProfiles = async (req, res, next) => {
 };
 
 exports.getUserProfilesPages = async (req, res, next) => {
-    const userProfiles = await UserProfile.find();
+    const userProfiles = await UserProfile.find(req.query);
     console.log(userProfiles);
     const newUserProfiles = userProfiles.filter(profile => profile.email !== req.email);
 
