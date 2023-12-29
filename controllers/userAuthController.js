@@ -89,7 +89,7 @@ exports.microsoftLoginRedirect = (req, res) => {
                 refreshToken, 
                 email: userInfo.mail,
                 displayName: userInfo.displayName,
-                surname: userInfo.surname,
+                rollNumber: userInfo.surname,
             });
         });
     });

@@ -2,7 +2,7 @@ const { Router } = require("express");
 const userController = require('../controllers/userController.js');
 const userRouter = Router();
 const multer = require("multer");
-const { authenticateToken } = require('../middlewares/jwtAuthHandler.js');
+const { authenticateToken, verifyAdmin } = require('../middlewares/jwtAuthHandler.js');
 const uuid = require('uuid');
 const asyncErrorHandler = require("../handlers/asyncErrorHandler.js");
 
@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-userRouter.delete('/user/clear', asyncErrorHandler(userController.clearUsers));
+userRouter.delete('/user/clear', authenticateToken, verifyAdmin, asyncErrorHandler(userController.clearUsers));
 
 userRouter.post('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.createUserProfile));
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.updateUserProfile));

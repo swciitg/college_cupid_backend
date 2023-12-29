@@ -1,0 +1,1 @@
+exports.AdminList = ["r.hardikd@iitg.ac.in"];

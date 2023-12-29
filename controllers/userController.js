@@ -36,7 +36,7 @@ exports.getUserProfilesPages = async (req, res, next) => {
 
     const startIndex = req.params.pageNumber * 10;
 
-    res.json({ users: newUserProfiles.slice(startIndex, startIndex + 10) });
+    res.json({ totalCount: userProfiles.length - 1, users: newUserProfiles.slice(startIndex, startIndex + 10) });
 };
 
 exports.updateUserProfile = async (req, res, next) => {

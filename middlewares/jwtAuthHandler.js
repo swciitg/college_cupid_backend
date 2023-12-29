@@ -1,17 +1,19 @@
 const jwt = require('jsonwebtoken');
 const {AccessTokenError} = require('../errors/jwtAuthError');
 const {RequestValidationError} = require('../errors/requestValidationError');
+const {ForbiddenResourceError} = require('../errors/forbiddenResourceError');
+const { AdminList } = require('../shared/constants');
 
 exports.authenticateToken = (req, res, next) => {
     const authorization = req.headers['authorization'];
     if(!authorization) {
-        return next(new RequestValidationError('Access Token is not passed'));
+        return next(new RequestValidationError('Access Token is not passed.'));
     }
 
     const token = authorization.split(' ')[1];
 
     if(token == null) {
-        return next(new RequestValidationError('Access Token is not passed'));
+        return next(new RequestValidationError('Access Token is not passed.'));
     }
 
 
@@ -25,3 +27,13 @@ exports.authenticateToken = (req, res, next) => {
         next();
     });
 };
+
+exports.verifyAdmin = (req, res, next) => {
+    if(!req.email){
+        next(new RequestValidationError('User is not authenticated.'));
+    }
+    if(AdminList.includes(req.email) == false){
+        next(new ForbiddenResourceError('User cannot access the API.'));
+    }
+    next();
+}
