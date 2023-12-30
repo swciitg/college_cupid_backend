@@ -30,8 +30,7 @@ exports.getAllUserProfiles = async (req, res, next) => {
 };
 
 exports.getUserProfilesPages = async (req, res, next) => {
-    const userProfiles = await UserProfile.find(req.query);
-    console.log(userProfiles);
+    const userProfiles = (await UserProfile.find(req.query)).reverse();
     const newUserProfiles = userProfiles.filter(profile => profile.email !== req.email);
 
     const startIndex = req.params.pageNumber * 10;
