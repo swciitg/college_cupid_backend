@@ -21,9 +21,9 @@ const userProfileSchema = new Schema({
         type: String,
         required: [true, 'Program is a required field!']
     },
-    'yearOfStudy': {
-        type: String,
-        required: [true, 'Year of study is a required field!']
+    'yearOfJoin': {
+        type: Number,
+        required: [true, 'Year of join is a required field!']
     },
     'interests': {
         type: [String],

@@ -1,1 +1,1 @@
-exports.AdminList = ["r.hardikd@iitg.ac.in"];
+exports.AdminList = ["r.hardik@iitg.ac.in"];
