@@ -32,9 +32,8 @@ exports.getAllUserProfiles = async (req, res, next) => {
 exports.getUserProfilesPages = async (req, res, next) => {
     const userProfiles = (await UserProfile.find(req.query))
         .reverse().filter(profile => profile.email !== req.email);
-    const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10);
-
     const startIndex = req.params.pageNumber * 10;
+    const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10);
 
     res.json({ totalCount: newUserProfiles.length, users: newUserProfiles });
 };
