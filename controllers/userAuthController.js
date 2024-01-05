@@ -27,70 +27,65 @@ const config = {
 
 const pca = new msal.ConfidentialClientApplication(config);
 
-exports.microsoftLogin = (req, res) => {
+exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
         scopes: ['user.read'],
         redirectUri: REDIRECT_URI,
     };
 
-    pca.getAuthCodeUrl(authCodeUrlParameters)
-    .then((response) => {
-        console.log(response);
-        res.redirect(response);
-    }).catch((err) => console.log(JSON.stringify(err)));
+    const url = await pca.getAuthCodeUrl(authCodeUrlParameters);
+    res.redirect(url);
 };
 
-exports.microsoftLoginRedirect = (req, res) => {
+exports.microsoftLoginRedirect = async (req, res) => {
     const tokenRequest = {
         code: req.query.code,
         scopes: ['user.read'],
         redirectUri: REDIRECT_URI
     };
 
-    pca.acquireTokenByCode(tokenRequest)
-    .then(async response => {
-        request.get({
-            url: 'https://graph.microsoft.com/v1.0/me',
-            headers: {
-                'Authorization': 'Bearer ' + response.accessToken
-            }
-        }, async function (err, resp, body) {
-            console.log('here');
-            if(err){
-                console.log(err);
-                return res.render('authSuccessView.ejs', {
-                    status: 'ERROR', 
-                    accessToken: '', 
-                    refreshToken: '', 
-                    email: '',
-                    displayName: '',
-                    surname: '',
-                });
-            }
-            const userInfo = JSON.parse(body);
-            console.log(userInfo);
-            if(!userInfo.displayName || !userInfo.mail || !userInfo.surname){
-                return res.render('authSuccessView.ejs', {
-                    status: 'ERROR', 
-                    accessToken: '', 
-                    refreshToken: '', 
-                    email: '',
-                    displayName: '',
-                    surname: '',
-                });
-            }
-            
-            const accessToken = createAccessToken(userInfo.mail);
-            const refreshToken = createRefreshToken(userInfo.mail);
-
+    const response = await pca.acquireTokenByCode(tokenRequest);
+    request.get({
+        url: 'https://graph.microsoft.com/v1.0/me',
+        headers: {
+            'Authorization': 'Bearer ' + response.accessToken
+        }
+    }, async function (err, resp, body) {
+        console.log('here');
+        if(err){
+            console.log(err);
             return res.render('authSuccessView.ejs', {
-                status: 'SUCCESS', 
-                accessToken, 
-                refreshToken, 
-                email: userInfo.mail,
-                displayName: userInfo.displayName,
-                rollNumber: userInfo.surname,
+                status: 'ERROR', 
+                accessToken: '', 
+                refreshToken: '', 
+                email: '',
+                displayName: '',
+                rollNumber: '',
             });
+        }
+        const userInfo = JSON.parse(body);
+        console.log(userInfo);
+        if(!userInfo.displayName || !userInfo.mail || !userInfo.surname){
+            return res.render('authSuccessView.ejs', {
+                status: 'ERROR', 
+                accessToken: '', 
+                refreshToken: '', 
+                email: '',
+                displayName: '',
+                rollNumber: '',
+            });
+        }
+        
+        const accessToken = createAccessToken(userInfo.mail);
+        const refreshToken = createRefreshToken(userInfo.mail);
+
+        return res.render('authSuccessView.ejs', {
+            status: 'SUCCESS', 
+            accessToken, 
+            refreshToken, 
+            email: userInfo.mail,
+            displayName: userInfo.displayName,
+            rollNumber: userInfo.surname,
         });
     });
 };

@@ -5,8 +5,8 @@ const asyncErrorHandler = require('../handlers/asyncErrorHandler');
 
 const authRouter = express.Router();
 
-authRouter.get('/auth/microsoft', microsoftController.microsoftLogin);
-authRouter.get('/auth/microsoft/redirect', microsoftController.microsoftLoginRedirect);
+authRouter.get('/auth/microsoft', asyncErrorHandler(microsoftController.microsoftLogin));
+authRouter.get('/auth/microsoft/redirect', asyncErrorHandler(microsoftController.microsoftLoginRedirect));
 authRouter.post('/auth/refreshToken', asyncErrorHandler(jwtController.regenerateToken));
 
 module.exports = {authRouter};
