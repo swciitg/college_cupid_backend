@@ -26,8 +26,7 @@ userRouter.delete('/user/clear', authenticateToken, verifyAdmin, asyncErrorHandl
 userRouter.post('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.createUserProfile));
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.updateUserProfile));
 userRouter.get('/user/profile/email/:email', authenticateToken, asyncErrorHandler(userController.getUserProfile));
-userRouter.get('/user/profile/all', authenticateToken, asyncErrorHandler(userController.getAllUserProfiles));
-userRouter.get('/user/profile/page/:pageNumber', authenticateToken, asyncErrorHandler(userController.getUserProfilesPages));
+userRouter.get('/user/profile/page/:pageNumber', authenticateToken, asyncErrorHandler(userController.getUserProfilePages));
 
 userRouter.post('/user/personalInfo', authenticateToken, asyncErrorHandler(userController.postPersonalInfo));
 userRouter.get('/user/personalInfo', authenticateToken, asyncErrorHandler(userController.getPersonalInfo));
