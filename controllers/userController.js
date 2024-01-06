@@ -24,7 +24,10 @@ exports.getUserProfile = async (req, res, next) => {
 };
 
 exports.getUserProfilePages = async (req, res, next) => {
-    const userProfiles = (await UserProfile.find(req.query))
+    const {name, ...filters} = req.query;
+    const newFilters = {name: {$regex: name, $options: 'i'}, ...filters};
+    console.log(newFilters);
+    const userProfiles = (await UserProfile.find(newFilters))
         .reverse().filter(profile => profile.email !== req.email);
 
     const shuffledUserProfiles = shuffleArray(userProfiles);
