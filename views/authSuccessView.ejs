@@ -40,7 +40,7 @@
         <div>CollegeCupid</div>
         <div style="height: 10px;"></div>
         <% if(status==="ERROR"){ %> <p> Oops!! Something went wrong :( </p> <% } else {%> <p> Successfully signed in. </p><%}%>
-        
+        <p id="status" hidden><%= status %></p>
         <p id="outlookInfo" hidden><%= outlookInfo %></p>
     </div>
 </body>
