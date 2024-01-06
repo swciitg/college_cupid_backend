@@ -56,8 +56,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
         if(err){
             console.log(err);
             return res.render('authSuccessView.ejs', {
+                status: 'ERROR',
                 outlookInfo: JSON.stringify({
-                    status: 'ERROR', 
                     accessToken: '', 
                     refreshToken: '', 
                     email: '',
@@ -70,8 +70,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
         console.log(userInfo);
         if(!userInfo.displayName || !userInfo.mail || !userInfo.surname){
             return res.render('authSuccessView.ejs', {
+                status: 'ERROR',
                 outlookInfo: JSON.stringify({
-                    status: 'ERROR', 
                     accessToken: '', 
                     refreshToken: '', 
                     email: '',
@@ -85,8 +85,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
         const refreshToken = createRefreshToken(userInfo.mail);
 
         return res.render('authSuccessView.ejs', {
+            status: 'SUCCESS', 
             outlookInfo: JSON.stringify({
-                status: 'SUCCESS', 
                 accessToken, 
                 refreshToken, 
                 email: userInfo.mail,
