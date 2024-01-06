@@ -1,6 +1,7 @@
 const msal = require('@azure/msal-node');
 const request = require('request');
 const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
+const { json } = require('express');
 
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
 const tenantId = 'https://login.microsoftonline.com/' + process.env.MICROSOFT_GRAPH_TENANT_ID;
@@ -55,24 +56,28 @@ exports.microsoftLoginRedirect = async (req, res) => {
         if(err){
             console.log(err);
             return res.render('authSuccessView.ejs', {
-                status: 'ERROR', 
-                accessToken: '', 
-                refreshToken: '', 
-                email: '',
-                displayName: '',
-                rollNumber: '',
+                outlookInfo: JSON.stringify({
+                    status: 'ERROR', 
+                    accessToken: '', 
+                    refreshToken: '', 
+                    email: '',
+                    displayName: '',
+                    rollNumber: ''
+                })
             });
         }
         const userInfo = JSON.parse(body);
         console.log(userInfo);
         if(!userInfo.displayName || !userInfo.mail || !userInfo.surname){
             return res.render('authSuccessView.ejs', {
-                status: 'ERROR', 
-                accessToken: '', 
-                refreshToken: '', 
-                email: '',
-                displayName: '',
-                rollNumber: '',
+                outlookInfo: JSON.stringify({
+                    status: 'ERROR', 
+                    accessToken: '', 
+                    refreshToken: '', 
+                    email: '',
+                    displayName: '',
+                    rollNumber: ''
+                })
             });
         }
         
@@ -80,12 +85,14 @@ exports.microsoftLoginRedirect = async (req, res) => {
         const refreshToken = createRefreshToken(userInfo.mail);
 
         return res.render('authSuccessView.ejs', {
-            status: 'SUCCESS', 
-            accessToken, 
-            refreshToken, 
-            email: userInfo.mail,
-            displayName: userInfo.displayName,
-            rollNumber: userInfo.surname,
+            outlookInfo: JSON.stringify({
+                status: 'SUCCESS', 
+                accessToken, 
+                refreshToken, 
+                email: userInfo.mail,
+                displayName: userInfo.displayName,
+                rollNumber: userInfo.surname
+            })
         });
     });
 };
