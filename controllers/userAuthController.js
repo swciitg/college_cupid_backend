@@ -2,6 +2,7 @@ const msal = require('@azure/msal-node');
 const request = require('request');
 const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
 const { json } = require('express');
+const { GuestEmails, GuestUserInfo } = require('../shared/constants');
 
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
 const tenantId = 'https://login.microsoftonline.com/' + process.env.MICROSOFT_GRAPH_TENANT_ID;
@@ -66,8 +67,22 @@ exports.microsoftLoginRedirect = async (req, res) => {
                 })
             });
         }
+
         const userInfo = JSON.parse(body);
         console.log(userInfo);
+
+        if(GuestEmails.includes(userInfo.mail)){
+            return res.render('authSuccessView.ejs', {
+                status: 'SUCCESS',
+                outlookInfo: JSON.stringify({
+                    accessToken: createAccessToken(userInfo.mail),
+                    refreshToken: createRefreshToken(userInfo.mail),
+                    email: userInfo.mail,
+                    ...GuestUserInfo
+                })
+            });
+        }
+
         if(!userInfo.displayName || !userInfo.mail || !userInfo.surname){
             return res.render('authSuccessView.ejs', {
                 status: 'ERROR',
