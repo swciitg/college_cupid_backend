@@ -19,8 +19,12 @@ app.use('/', router.crushRouter);
 app.use('/', router.matchRouter);
 app.use('/', router.imageRouter);
 
-app.get('/', (req, res) => {
-    res.send('<h1>Welcome to CollegeCupid</h1>')
+app.get('/terms', (_req, res) => {
+    res.render('termsOfUse');
+});
+
+app.get('/', (_req, res) => {
+    res.send('<h1>Welcome to CollegeCupid</h1>');
 });
 
 app.all('*', (req, res, next) => {
