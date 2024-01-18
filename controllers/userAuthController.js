@@ -7,8 +7,7 @@ const { GuestEmails, GuestUserInfo } = require('../shared/constants');
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
 const tenantId = 'https://login.microsoftonline.com/' + process.env.MICROSOFT_GRAPH_TENANT_ID;
 const clientSecret = process.env.MICROSOFT_GRAPH_CLIENT_SECRET;
-// const REDIRECT_URI = process.env.BASE_URL + '/auth/microsoft/redirect';
-const REDIRECT_URI = 'https://swc.iitg.ac.in/collegeCupid/auth/microsoft/redirect';
+const REDIRECT_URI = process.env.BASE_URL + '/auth/microsoft/redirect';
 
 const config = {
     auth: {

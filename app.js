@@ -6,18 +6,22 @@ const { errorHandler } = require('./middlewares/errorHandler');
 const morgan = require('morgan');
 const router = require('./routers/router');
 const { NotFoundError } = require('./errors/notFoundError');
+const corsMiddleware = require('./middlewares/corsMiddleware');
+const securityKeyMiddleware = require('./middlewares/securityKeyMiddleware');
 
 app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(corsMiddleware);
+app.use(securityKeyMiddleware);
 
 // API Routers
-app.use('/', router.authRouter);
-app.use('/', router.userRouter);
-app.use('/', router.crushRouter);
-app.use('/', router.matchRouter);
-app.use('/', router.imageRouter);
+app.use(process.env.API_URL, router.authRouter);
+app.use(process.env.API_URL, router.userRouter);
+app.use(process.env.API_URL, router.crushRouter);
+app.use(process.env.API_URL, router.matchRouter);
+app.use(process.env.API_URL, router.imageRouter);
 
 app.get('/terms', (_req, res) => {
     res.render('termsOfUse');

@@ -1,1 +1,1 @@
-# CampusCupid
+# CollegeCupid
