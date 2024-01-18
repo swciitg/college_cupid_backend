@@ -18,6 +18,12 @@ app.use(corsMiddleware);
 // API Routers
 app.use('/', router.authRouter);
 app.use(process.env.API_URL, router.imageRouter);
+app.get('/terms', (_req, res) => {
+    res.render('termsOfUse');
+});
+app.get('/', (_req, res) => {
+    res.send('<h1>Welcome to CollegeCupid</h1>');
+});
 
 app.use(securityKeyMiddleware);
 
@@ -25,14 +31,6 @@ app.use(securityKeyMiddleware);
 app.use(process.env.API_URL, router.userRouter);
 app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
-
-app.get('/terms', (_req, res) => {
-    res.render('termsOfUse');
-});
-
-app.get('/', (_req, res) => {
-    res.send('<h1>Welcome to CollegeCupid</h1>');
-});
 
 app.all('*', (req, res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
