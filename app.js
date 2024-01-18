@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(corsMiddleware);
 
 // API Routers
-app.use(process.env.API_URL, router.authRouter);
+app.use('/', router.authRouter);
 app.use(process.env.API_URL, router.imageRouter);
 
 app.use(securityKeyMiddleware);
