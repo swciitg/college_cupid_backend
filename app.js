@@ -14,14 +14,17 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(corsMiddleware);
-app.use(securityKeyMiddleware);
 
 // API Routers
 app.use(process.env.API_URL, router.authRouter);
+app.use(process.env.API_URL, router.imageRouter);
+
+app.use(securityKeyMiddleware);
+
+// API Routers
 app.use(process.env.API_URL, router.userRouter);
 app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
-app.use(process.env.API_URL, router.imageRouter);
 
 app.get('/terms', (_req, res) => {
     res.render('termsOfUse');
