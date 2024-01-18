@@ -13,8 +13,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, callback) => {
         const imageId = uuid.v4();
-        // const imageUrl = process.env.BASE_URL + '/getImage/?photoId=' + imageId;
-        const imageUrl = 'https://swc.iitg.ac.in/collegeCupid/getImage/?photoId=' + imageId;
+        const imageUrl = process.env.BASE_URL + process.env.API_URL + '/getImage/?photoId=' + imageId;
+        // const imageUrl = 'https://swc.iitg.ac.in/collegeCupid/getImage/?photoId=' + imageId;
         callback(null, imageId + '.png');
         req.imageUrl = imageUrl;
     }
