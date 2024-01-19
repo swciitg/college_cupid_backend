@@ -31,6 +31,7 @@ app.use(securityKeyMiddleware);
 app.use(process.env.API_URL, router.userRouter);
 app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
+app.use(process.env.API_URL, router.reportUserRouter);
 
 app.all('*', (req, res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
