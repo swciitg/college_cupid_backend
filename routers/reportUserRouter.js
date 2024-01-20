@@ -5,7 +5,8 @@ const asyncErrorHandler = require("../handlers/asyncErrorHandler");
 const reportUserRouter = Router();
 
 
-reportUserRouter.post('/report/add', authenticateToken, asyncErrorHandler(reportUserController.reportAUser));
-// reportUserRouter.get('/report/all', authenticateToken, verifyAdmin, asyncErrorHandler(matchController.getMatches));
+reportUserRouter.post('/report/add', authenticateToken, 
+    asyncErrorHandler(reportUserController.reportAUser)
+);
 
 module.exports = {reportUserRouter};

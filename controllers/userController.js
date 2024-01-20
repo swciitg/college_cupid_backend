@@ -1,6 +1,7 @@
 const shuffleArray = require('shuffle-array');
 const PersonalInfo = require('../models/PersonalInfo');
 const UserProfile = require('../models/UserProfile');
+const BlockedUserList = require('../models/BlockedUserList');
 
 exports.clearUsers = async (req, res, next) => {
     await PersonalInfo.deleteMany({});
@@ -26,9 +27,16 @@ exports.getUserProfile = async (req, res, next) => {
 exports.getUserProfilePages = async (req, res, next) => {
     const {name, ...filters} = req.query;
     const newFilters = {name: {$regex: name, $options: 'i'}, ...filters};
-    console.log(newFilters);
-    const userProfiles = (await UserProfile.find(newFilters))
+    
+    let userProfiles = (await UserProfile.find(newFilters))
         .reverse().filter(profile => profile.email !== req.email);
+
+    const user = await BlockedUserList.findOne({email: req.email});
+    if(user){
+        userProfiles = userProfiles.filter(
+            profile => user.blockedUsers.includes(profile.email) === false
+        );
+    }
 
     const shuffledUserProfiles = shuffleArray(userProfiles);
 
