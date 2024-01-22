@@ -8,5 +8,11 @@ const reportUserRouter = Router();
 reportUserRouter.post('/report/add', authenticateToken, 
     asyncErrorHandler(reportUserController.reportAUser)
 );
+reportUserRouter.get('/report/blockedUsers', authenticateToken, 
+    asyncErrorHandler(reportUserController.getBlockedUsers)
+);
+reportUserRouter.delete('/report/unblock', authenticateToken, 
+    asyncErrorHandler(reportUserController.unblockUser)
+);
 
 module.exports = {reportUserRouter};

@@ -28,3 +28,28 @@ exports.reportAUser = async(req, res, next) => {
         });
     }
 }
+
+exports.unblockUser = async(req, res, next) => {
+    function arrayRemove(arr, value) {
+        return arr.filter(function (item) {
+            return item != value;
+        });
+    }
+
+    const user = await BlockedUserList.findOne({email: req.email});
+    const blockedUsers = user.blockedUsers;
+
+    const newBlockedUsers = arrayRemove(blockedUsers, blockedUsers[req.query.index]);
+
+    await BlockedUserList.findOneAndUpdate({email: req.email}, {
+        blockedUsers: newBlockedUsers,
+    });
+
+    res.send({message: `Unblocked ${blockedUsers[req.query.index]}`});
+};
+
+exports.getBlockedUsers = async(req, res, next) => {
+    const user = await BlockedUserList.findOne({email: req.email});
+
+    res.send({blockedUsers: user.blockedUsers});
+};
