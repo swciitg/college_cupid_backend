@@ -50,6 +50,9 @@ exports.unblockUser = async(req, res, next) => {
 
 exports.getBlockedUsers = async(req, res, next) => {
     const user = await BlockedUserList.findOne({email: req.email});
-
-    res.send({blockedUsers: user.blockedUsers});
+    if(user){
+        res.json({blockedUsers: user.blockedUsers});
+    }else{
+        res.json({blockedUsers: []});
+    }
 };
