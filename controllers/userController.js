@@ -4,8 +4,8 @@ const UserProfile = require('../models/UserProfile');
 const BlockedUserList = require('../models/BlockedUserList');
 
 exports.removeUserFromDB = async(req, res, next) => {
-    await UserProfile.deleteOne({email: req.query.email});
-    await PersonalInfo.deleteOne({email: req.query.email});
+    const res1 = await UserProfile.deleteOne({email: req.params.email});
+    const res2 = await PersonalInfo.deleteOne({email: req.params.email});
 
     res.json({
         success: true,
