@@ -21,8 +21,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// userRouter.delete('/user/clear', authenticateToken, verifyAdmin, asyncErrorHandler(userController.clearUsers));
-
 userRouter.post('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.createUserProfile));
 userRouter.put('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.updateUserProfile));
 userRouter.get('/user/profile/email/:email', authenticateToken, asyncErrorHandler(userController.getUserProfile));

@@ -68,7 +68,6 @@ exports.microsoftLoginRedirect = async (req, res) => {
         }
 
         const userInfo = JSON.parse(body);
-        console.log(userInfo);
 
         if(GuestEmails.includes(userInfo.mail)){
             return res.render('authSuccessView.ejs', {

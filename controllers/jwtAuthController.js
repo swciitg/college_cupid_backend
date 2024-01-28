@@ -24,6 +24,9 @@ exports.regenerateToken = async (req, res, next) => {
         }
         const accessToken = createAccessToken(user.email);
 
-        res.status(200).json({ accessToken: accessToken });
+        res.status(200).json({
+            success: true,
+            accessToken: accessToken
+        });
     });
 };

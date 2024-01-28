@@ -3,12 +3,6 @@ const PersonalInfo = require('../models/PersonalInfo');
 const UserProfile = require('../models/UserProfile');
 const BlockedUserList = require('../models/BlockedUserList');
 
-exports.clearUsers = async (req, res, next) => {
-    await PersonalInfo.deleteMany({});
-    await UserProfile.deleteMany({});
-    res.json({message: 'success'});    
-};
-
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
     userProfile.profilePicUrl = req.imageUrl;
@@ -16,12 +10,18 @@ exports.createUserProfile = async (req, res, next) => {
 
     const newUserProfile = await UserProfile.create(userProfile);
 
-    res.json(newUserProfile);
+    res.json({
+        success: true,
+        newUserProfile
+    });
 };
 
 exports.getUserProfile = async (req, res, next) => {
     const userProfile = await UserProfile.findOne({ email: req.params.email });
-    res.json({userProfile: userProfile});
+    res.json({
+        success: true,
+        userProfile: userProfile
+    });
 };
 
 exports.getUserProfilePages = async (req, res, next) => {
@@ -43,7 +43,11 @@ exports.getUserProfilePages = async (req, res, next) => {
     const startIndex = req.params.pageNumber * 10;
     const newUserProfiles = shuffledUserProfiles.slice(startIndex, startIndex + 10);
 
-    res.json({ totalCount: newUserProfiles.length, users: newUserProfiles });
+    res.json({
+        success: true,
+        totalCount: newUserProfiles.length, 
+        users: newUserProfiles
+    });
 };
 
 exports.updateUserProfile = async (req, res, next) => {
@@ -53,16 +57,26 @@ exports.updateUserProfile = async (req, res, next) => {
     }
     await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges);
     const user = await UserProfile.findOne({ email: req.email });
-    res.json({ message: "Profile updated successfully", profilePicUrl:  user.profilePicUrl});
+    res.json({
+        success: true,
+        message: "Profile updated successfully", 
+        profilePicUrl:  user.profilePicUrl
+    });
 };
 
 exports.postPersonalInfo = async (req, res, next) => {
     const myInfo = new PersonalInfo(req.body);
     await myInfo.save();
-    res.json({ message: 'Data uploaded successfully' });
+    res.json({
+        success: true,
+        message: 'Data uploaded successfully'
+    });
 };
 
 exports.getPersonalInfo = async (req, res, next) => {
     const user = await PersonalInfo.findOne({ email: req.email });
-    res.json({ personalInfo: user });
+    res.json({
+        success: true,
+        personalInfo: user
+    });
 };

@@ -45,14 +45,23 @@ exports.unblockUser = async(req, res, next) => {
         blockedUsers: newBlockedUsers,
     });
 
-    res.send({message: `Unblocked ${blockedUsers[req.query.index]}`});
+    res.send({
+        success: true,
+        message: `Unblocked ${blockedUsers[req.query.index]}`
+    });
 };
 
 exports.getBlockedUsers = async(req, res, next) => {
     const user = await BlockedUserList.findOne({email: req.email});
     if(user){
-        res.json({blockedUsers: user.blockedUsers});
+        res.json({
+            success: true,
+            blockedUsers: user.blockedUsers
+        });
     }else{
-        res.json({blockedUsers: []});
+        res.json({
+            success: true,
+            blockedUsers: []
+        });
     }
 };
