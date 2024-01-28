@@ -3,6 +3,16 @@ const PersonalInfo = require('../models/PersonalInfo');
 const UserProfile = require('../models/UserProfile');
 const BlockedUserList = require('../models/BlockedUserList');
 
+exports.removeUserFromDB = async(req, res, next) => {
+    await UserProfile.deleteOne({email: req.query.email});
+    await PersonalInfo.deleteOne({email: req.query.email});
+
+    res.json({
+        success: true,
+        message: 'Removed user from database!'
+    });
+};
+
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
     userProfile.profilePicUrl = req.imageUrl;
