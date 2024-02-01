@@ -21,16 +21,23 @@ const personalInfoSchema = new Schema({
     'crushes': {
         type: [String],
         default: [],
+        validate: [crushArrayLimit, 'Crushes must not exceed five!'],
     },
     'encryptedCrushes': {
         type: [String],
         default: [],
+        validate: [crushArrayLimit, 'Encrypted crushes must not exceed five!']
     },
     'matches': {
         type: [String],
         default: [],
+        validate: [crushArrayLimit, 'Matches must not exceed five!']
     }
 });
+
+function crushArrayLimit(val) {
+    return val.length <= 5;
+  }
 
 const PersonalInfo = model('PersonalInfo', personalInfoSchema);
 module.exports = PersonalInfo;

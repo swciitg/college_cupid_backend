@@ -28,6 +28,7 @@ const userProfileSchema = new Schema({
     'interests': {
         type: [String],
         default: [],
+        validate: [interestArrayLimit, 'Interests must lie in the range of 5 to 20!']
     },
     'bio': {
         type: String,
@@ -39,6 +40,9 @@ const userProfileSchema = new Schema({
     },
 });
 
+function interestArrayLimit(val) {
+    return val.length <= 20 && val.length >= 5;
+  }
 
 const UserProfile = model('UserProfile', userProfileSchema);
 module.exports = UserProfile;

@@ -7,16 +7,23 @@ exports.removeUserFromDB = async(req, res, next) => {
     const res1 = await UserProfile.deleteOne({email: req.params.email});
     const res2 = await PersonalInfo.deleteOne({email: req.params.email});
 
-    res.json({
-        success: true,
-        message: 'Removed user from database!'
-    });
+    if(res1.acknowledged && res2.acknowledged && res1.deletedCount === 1){
+        res.json({
+            success: true,
+            message: 'Removed user from database!'
+        });
+    }else{
+        res.json({
+            success: false,
+            message: 'User not found in the database!'
+        });
+    }
 };
 
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
     userProfile.profilePicUrl = req.imageUrl;
-    console.log(userProfile);
+    userProfile.email = req.email;
 
     const newUserProfile = await UserProfile.create(userProfile);
 
@@ -75,8 +82,10 @@ exports.updateUserProfile = async (req, res, next) => {
 };
 
 exports.postPersonalInfo = async (req, res, next) => {
-    const myInfo = new PersonalInfo(req.body);
-    await myInfo.save();
+    var info = new PersonalInfo(req.body);
+    info.email = req.email;
+
+    await info.save();
     res.json({
         success: true,
         message: 'Data uploaded successfully'

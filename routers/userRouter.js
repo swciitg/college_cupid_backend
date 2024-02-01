@@ -14,7 +14,6 @@ const storage = multer.diskStorage({
     filename: (req, file, callback) => {
         const imageId = uuid.v4();
         const imageUrl = process.env.BASE_URL + process.env.API_URL + '/getImage/?photoId=' + imageId;
-        // const imageUrl = 'https://swc.iitg.ac.in/collegeCupid/getImage/?photoId=' + imageId;
         callback(null, imageId + '.png');
         req.imageUrl = imageUrl;
     }
@@ -24,12 +23,24 @@ const upload = multer({ storage: storage });
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
 
-userRouter.post('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.createUserProfile));
-userRouter.put('/user/profile', authenticateToken, upload.single('dp'), asyncErrorHandler(userController.updateUserProfile));
-userRouter.get('/user/profile/email/:email', authenticateToken, asyncErrorHandler(userController.getUserProfile));
-userRouter.get('/user/profile/page/:pageNumber', authenticateToken, asyncErrorHandler(userController.getUserProfilePages));
+userRouter.post('/user/profile', authenticateToken, upload.single('dp'), 
+    asyncErrorHandler(userController.createUserProfile)
+);
+userRouter.put('/user/profile', authenticateToken, upload.single('dp'), 
+    asyncErrorHandler(userController.updateUserProfile)
+);
+userRouter.get('/user/profile/email/:email', authenticateToken, 
+    asyncErrorHandler(userController.getUserProfile)
+);
+userRouter.get('/user/profile/page/:pageNumber', authenticateToken, 
+    asyncErrorHandler(userController.getUserProfilePages)
+);
 
-userRouter.post('/user/personalInfo', authenticateToken, asyncErrorHandler(userController.postPersonalInfo));
-userRouter.get('/user/personalInfo', authenticateToken, asyncErrorHandler(userController.getPersonalInfo));
+userRouter.post('/user/personalInfo', authenticateToken, 
+    asyncErrorHandler(userController.postPersonalInfo)
+);
+userRouter.get('/user/personalInfo', authenticateToken, 
+    asyncErrorHandler(userController.getPersonalInfo)
+);
 
 module.exports = { userRouter };
