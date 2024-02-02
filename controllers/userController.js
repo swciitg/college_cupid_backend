@@ -7,14 +7,18 @@ exports.removeUserFromDB = async(req, res, next) => {
     const res1 = await UserProfile.deleteOne({email: req.params.email});
     const res2 = await PersonalInfo.deleteOne({email: req.params.email});
 
-    if(res1.acknowledged && res2.acknowledged && res1.deletedCount === 1){
+    if(res1.acknowledged && res2.acknowledged){
         res.json({
             success: true,
+            userProfileResponse: res1,
+            personalInfoResponse: res2,
             message: 'Removed user from database!'
         });
     }else{
         res.json({
             success: false,
+            userProfileResponse: res1,
+            personalInfoResponse: res2,
             message: 'User not found in the database!'
         });
     }
