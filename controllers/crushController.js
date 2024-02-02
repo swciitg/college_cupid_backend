@@ -1,3 +1,4 @@
+const CrushesCount = require('../models/CrushesCount');
 const PersonalInfo = require('../models/PersonalInfo');
 
 exports.addCrush = async(req, res, next) => {
@@ -24,6 +25,57 @@ exports.addCrush = async(req, res, next) => {
         });
     }
 };
+
+exports.increaseCount = async(req, res, next) => {
+    const user = await CrushesCount.findOne({email: req.query.crushEmail});
+    if(user){
+        await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
+            crushesCount: user.crushesCount + 1
+        });
+    }else{
+        await CrushesCount.create({
+            email: req.query.crushEmail,
+            crushesCount: 1
+        });
+    }
+    res.json({
+        success: true,
+        message: 'Count updated successfully!'
+    });
+}
+
+exports.decreaseCount = async(req, res, next) => {
+    const user = await CrushesCount.findOne({email: req.query.crushEmail});
+    if(user && user.crushesCount > 0){
+        await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
+            crushesCount: user.crushesCount - 1
+        });
+    }else{
+        res.json({
+            success: false,
+            message: 'Count cannot be negative!'
+        });
+    }
+    res.json({
+        success: true,
+        message: 'Count updated successfully!'
+    });
+}
+
+exports.getCount = async(req, res, next) => {
+    const user = await CrushesCount.findOne({email: req.email});
+    if(user){
+        res.json({
+            success: true,
+            crushesCount: user.crushesCount
+        })
+    }else{
+        res.json({
+            success: true,
+            crushesCount: 0
+        });
+    }
+}
 
 exports.removeCrush = async(req, res, next) => {
     function arrayRemove(arr, value) {
