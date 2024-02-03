@@ -26,9 +26,23 @@ exports.removeUserFromDB = async(req, res, next) => {
 
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
-    userProfile.profilePicUrl = req.imageUrl;
     userProfile.email = req.email;
+    if(req.imageUrl){
+        userProfile.profilePicUrl = req.imageUrl;
+    }else{
+        delete userProfile.imageUrl
+    }
 
+    const user = await UserProfile.findOne({email: req.email});
+    if(user){
+        const resp = await UserProfile.findOneAndUpdate({
+            email: req.email}, userProfile, {new: true});
+
+        return res.json({
+            success: true,
+            newUserProfile: resp
+        });
+    }
     const newUserProfile = await UserProfile.create(userProfile);
 
     res.json({
@@ -86,12 +100,23 @@ exports.updateUserProfile = async (req, res, next) => {
 };
 
 exports.postPersonalInfo = async (req, res, next) => {
-    var info = new PersonalInfo(req.body);
+    var info = req.body;
     info.email = req.email;
 
-    await info.save();
+    const user = await PersonalInfo.findOne({email: req.email});
+    if(user){
+        const resp = await PersonalInfo.findOneAndUpdate({email: req.email}, info, {new: true});
+        return res.json({
+            success: true,
+            personalInfo: resp,
+            message: 'Data uploaded successfully'
+        });
+    }
+
+    const resp2 = await PersonalInfo.create(info);
     res.json({
         success: true,
+        personalInfo: resp2,
         message: 'Data uploaded successfully'
     });
 };
