@@ -17,7 +17,7 @@ exports.addCrush = async(req, res, next) => {
             res.json({success: false, message: "User is already added as your crush."});
         }
     
-        await PersonalInfo.findOneAndUpdate({email:req.email}, user);
+        await PersonalInfo.findOneAndUpdate({email:req.email}, user, {runValidators: true});
         
         res.json({
             success: true, 
@@ -30,8 +30,8 @@ exports.increaseCount = async(req, res, next) => {
     const user = await CrushesCount.findOne({email: req.query.crushEmail});
     if(user){
         await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
-            crushesCount: user.crushesCount + 1
-        });
+            crushesCount: user.crushesCount + 1 }, {runValidators: true}
+        );
     }else{
         await CrushesCount.create({
             email: req.query.crushEmail,
@@ -48,8 +48,8 @@ exports.decreaseCount = async(req, res, next) => {
     const user = await CrushesCount.findOne({email: req.query.crushEmail});
     if(user && user.crushesCount > 0){
         await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
-            crushesCount: user.crushesCount - 1
-        });
+            crushesCount: user.crushesCount - 1 }, {runValidators: true}
+        );
     }else{
         res.json({
             success: false,
@@ -94,7 +94,7 @@ exports.removeCrush = async(req, res, next) => {
     await PersonalInfo.findOneAndUpdate({email: req.email}, {
         crushes: newCrushes,
         encryptedCrushes: newEncryptedCrushes
-    });
+    }, {runValidators: true});
 
     res.json({
         success: true,

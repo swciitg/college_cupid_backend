@@ -34,11 +34,13 @@ exports.findMatches = async (req, res, next) => {
 
             await PersonalInfo.findOneAndUpdate(
                 {email: sharedSecretMap[key][0]}, 
-                {$push: {matches: sharedSecretMap[key][1]}}
+                {$push: {matches: sharedSecretMap[key][1]}},
+                {runValidators: true}
             );
             await PersonalInfo.findOneAndUpdate(
                 {email: sharedSecretMap[key][1]}, 
-                {$push: {matches: sharedSecretMap[key][0]}}
+                {$push: {matches: sharedSecretMap[key][0]}},
+                {runValidators: true}
             );
         }
         console.log('Processed ', i + 1, ' of ', totalPairs, ' pairs.');

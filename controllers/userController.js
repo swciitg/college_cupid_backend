@@ -33,10 +33,13 @@ exports.createUserProfile = async (req, res, next) => {
         delete userProfile.imageUrl
     }
 
+    const interests = new Set(userProfile.interests);
+    userProfile.interests = Array.from(interests);
+
     const user = await UserProfile.findOne({email: req.email});
     if(user){
         const resp = await UserProfile.findOneAndUpdate({
-            email: req.email}, userProfile, {new: true});
+            email: req.email}, userProfile, {new: true, runValidators: true});
 
         return res.json({
             success: true,
@@ -90,7 +93,7 @@ exports.updateUserProfile = async (req, res, next) => {
     if (req.imageUrl) {
         profileChanges.profilePicUrl = req.imageUrl;
     }
-    await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges);
+    await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges, {runValidators: true});
     const user = await UserProfile.findOne({ email: req.email });
     res.json({
         success: true,
@@ -105,7 +108,8 @@ exports.postPersonalInfo = async (req, res, next) => {
 
     const user = await PersonalInfo.findOne({email: req.email});
     if(user){
-        const resp = await PersonalInfo.findOneAndUpdate({email: req.email}, info, {new: true});
+        const resp = await PersonalInfo.findOneAndUpdate({email: req.email}, info, 
+            {new: true, runValidators: true});
         return res.json({
             success: true,
             personalInfo: resp,

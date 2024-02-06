@@ -41,6 +41,8 @@ const userProfileSchema = new Schema({
 });
 
 function interestArrayLimit(val) {
+    console.log("i was called");
+    console.log(val);
     return val.length <= 20 && val.length >= 5;
   }
 
