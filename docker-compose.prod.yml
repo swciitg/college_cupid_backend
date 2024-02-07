@@ -28,4 +28,3 @@ volumes:
 networks:
   default:
     driver: bridge
-    name: app
