@@ -9,22 +9,9 @@ services:
     volumes:
       - college_cupid_images:/usr/src/app/images
     ports:
-      - '3000'
+      - '8069:3000'
     env_file:
       - .env
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - app
-    ports:
-      - "8069:4000"
-
 volumes:
   college_cupid_images:
-
-networks:
-  default:
-    driver: bridge
