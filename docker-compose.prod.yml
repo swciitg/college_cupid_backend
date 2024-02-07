@@ -21,7 +21,7 @@ services:
       context : .
       dockerfile: Dockerfile2
     ports:
-      - "80:80"
+      - "900:80"
     networks:
       - loadbalancing
     depends_on:
