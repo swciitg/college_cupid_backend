@@ -8,14 +8,14 @@ exports.removeUserFromDB = async (req, res, next) => {
     const res2 = await PersonalInfo.deleteOne({ email: req.params.email });
 
     if (res1.acknowledged && res2.acknowledged) {
-        res.json({
+        return res.json({
             success: true,
             userProfileResponse: res1,
             personalInfoResponse: res2,
             message: 'Removed user from database!'
         });
     } else {
-        res.json({
+        return res.json({
             success: false,
             userProfileResponse: res1,
             personalInfoResponse: res2,
@@ -49,7 +49,7 @@ exports.createUserProfile = async (req, res, next) => {
     }
     const newUserProfile = await UserProfile.create(userProfile);
 
-    res.json({
+    return res.json({
         success: true,
         newUserProfile
     });

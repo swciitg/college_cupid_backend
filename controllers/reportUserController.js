@@ -14,14 +14,14 @@ exports.reportAUser = async(req, res, next) => {
             await BlockedUserList.findOneAndUpdate({email: req.email}, user);
         }
 
-        res.json({
+        return res.json({
             success: true, 
             reportContent: reportContent, 
             message: 'Successfully reported and blocked the user'
         });
     }else{
         await BlockedUserList.create({email: req.email, blockedUsers: [req.body.reportedEmail]});
-        res.json({
+        return res.json({
             success: true, 
             reportContent: reportContent, 
             message: 'Successfully reported and blocked the user'
@@ -54,12 +54,12 @@ exports.unblockUser = async(req, res, next) => {
 exports.getBlockedUsers = async(req, res, next) => {
     const user = await BlockedUserList.findOne({email: req.email});
     if(user){
-        res.json({
+        return res.json({
             success: true,
             blockedUsers: user.blockedUsers
         });
     }else{
-        res.json({
+        return res.json({
             success: true,
             blockedUsers: []
         });

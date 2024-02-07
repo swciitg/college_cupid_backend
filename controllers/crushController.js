@@ -5,7 +5,7 @@ exports.addCrush = async(req, res, next) => {
     const user = await PersonalInfo.findOne({email: req.email});
 
     if(user.crushes.length === 5){
-        res.json({
+        return res.json({
             success: false, 
             message: "You cannot add more than five crushes."
         });
@@ -14,12 +14,15 @@ exports.addCrush = async(req, res, next) => {
             user.crushes.push(req.body.sharedSecret);
             user.encryptedCrushes.push(req.body.encryptedCrushEmail);
         }else{
-            res.json({success: false, message: "User is already added as your crush."});
+            return res.json({
+                success: false, 
+                message: "User is already added as your crush."
+            });
         }
     
         await PersonalInfo.findOneAndUpdate({email:req.email}, user, {runValidators: true});
         
-        res.json({
+        return res.json({
             success: true, 
             message: "Crush added successfully"
         });
@@ -51,7 +54,7 @@ exports.decreaseCount = async(req, res, next) => {
             crushesCount: user.crushesCount - 1 }, {runValidators: true}
         );
     }else{
-        res.json({
+        return res.json({
             success: false,
             message: 'Count cannot be negative!'
         });
@@ -65,12 +68,12 @@ exports.decreaseCount = async(req, res, next) => {
 exports.getCount = async(req, res, next) => {
     const user = await CrushesCount.findOne({email: req.email});
     if(user){
-        res.json({
+        return res.json({
             success: true,
             crushesCount: user.crushesCount
         })
     }else{
-        res.json({
+        return res.json({
             success: true,
             crushesCount: 0
         });
