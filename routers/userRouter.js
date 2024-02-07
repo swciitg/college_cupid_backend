@@ -5,6 +5,7 @@ const multer = require("multer");
 const { authenticateToken, verifyAdmin } = require('../middlewares/jwtAuthHandler.js');
 const uuid = require('uuid');
 const asyncErrorHandler = require("../handlers/asyncErrorHandler.js");
+const compressImage = require("../middlewares/compressImage.js");
 
 // multer config
 const storage = multer.diskStorage({
@@ -14,8 +15,9 @@ const storage = multer.diskStorage({
     filename: (req, file, callback) => {
         const imageId = uuid.v4();
         const imageUrl = process.env.BASE_URL + process.env.API_URL + '/getImage/?photoId=' + imageId;
-        callback(null, imageId + '.png');
+        callback(null, imageId + '.jpg');
         req.imageUrl = imageUrl;
+        req.imageId = imageId;
     }
 });
 const upload = multer({ storage: storage });
@@ -23,10 +25,10 @@ const upload = multer({ storage: storage });
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
 
-userRouter.post('/user/profile', authenticateToken, upload.single('dp'), 
+userRouter.post('/user/profile', authenticateToken, upload.single('dp'), compressImage,
     asyncErrorHandler(userController.createUserProfile)
 );
-userRouter.put('/user/profile', authenticateToken, upload.single('dp'), 
+userRouter.put('/user/profile', authenticateToken, upload.single('dp'), compressImage,
     asyncErrorHandler(userController.updateUserProfile)
 );
 userRouter.get('/user/profile/email/:email', authenticateToken, 

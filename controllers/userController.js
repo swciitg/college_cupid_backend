@@ -3,18 +3,18 @@ const PersonalInfo = require('../models/PersonalInfo');
 const UserProfile = require('../models/UserProfile');
 const BlockedUserList = require('../models/BlockedUserList');
 
-exports.removeUserFromDB = async(req, res, next) => {
-    const res1 = await UserProfile.deleteOne({email: req.params.email});
-    const res2 = await PersonalInfo.deleteOne({email: req.params.email});
+exports.removeUserFromDB = async (req, res, next) => {
+    const res1 = await UserProfile.deleteOne({ email: req.params.email });
+    const res2 = await PersonalInfo.deleteOne({ email: req.params.email });
 
-    if(res1.acknowledged && res2.acknowledged){
+    if (res1.acknowledged && res2.acknowledged) {
         res.json({
             success: true,
             userProfileResponse: res1,
             personalInfoResponse: res2,
             message: 'Removed user from database!'
         });
-    }else{
+    } else {
         res.json({
             success: false,
             userProfileResponse: res1,
@@ -27,19 +27,20 @@ exports.removeUserFromDB = async(req, res, next) => {
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
     userProfile.email = req.email;
-    if(req.imageUrl){
+    if (req.imageUrl) {
         userProfile.profilePicUrl = req.imageUrl;
-    }else{
+    } else {
         delete userProfile.imageUrl
     }
 
     const interests = new Set(userProfile.interests);
     userProfile.interests = Array.from(interests);
 
-    const user = await UserProfile.findOne({email: req.email});
-    if(user){
+    const user = await UserProfile.findOne({ email: req.email });
+    if (user) {
         const resp = await UserProfile.findOneAndUpdate({
-            email: req.email}, userProfile, {new: true, runValidators: true});
+            email: req.email
+        }, userProfile, { new: true, runValidators: true });
 
         return res.json({
             success: true,
@@ -63,14 +64,14 @@ exports.getUserProfile = async (req, res, next) => {
 };
 
 exports.getUserProfilePages = async (req, res, next) => {
-    const {name, ...filters} = req.query;
-    const newFilters = {name: {$regex: name, $options: 'i'}, ...filters};
-    
+    const { name, ...filters } = req.query;
+    const newFilters = { name: { $regex: name, $options: 'i' }, ...filters };
+
     let userProfiles = (await UserProfile.find(newFilters))
         .reverse().filter(profile => profile.email !== req.email);
 
-    const user = await BlockedUserList.findOne({email: req.email});
-    if(user){
+    const user = await BlockedUserList.findOne({ email: req.email });
+    if (user) {
         userProfiles = userProfiles.filter(
             profile => user.blockedUsers.includes(profile.email) === false
         );
@@ -83,7 +84,7 @@ exports.getUserProfilePages = async (req, res, next) => {
 
     res.json({
         success: true,
-        totalCount: newUserProfiles.length, 
+        totalCount: newUserProfiles.length,
         users: newUserProfiles
     });
 };
@@ -93,12 +94,12 @@ exports.updateUserProfile = async (req, res, next) => {
     if (req.imageUrl) {
         profileChanges.profilePicUrl = req.imageUrl;
     }
-    await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges, {runValidators: true});
+    await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges, { runValidators: true });
     const user = await UserProfile.findOne({ email: req.email });
     res.json({
         success: true,
-        message: "Profile updated successfully", 
-        profilePicUrl:  user.profilePicUrl
+        message: "Profile updated successfully",
+        profilePicUrl: user.profilePicUrl
     });
 };
 
@@ -106,10 +107,10 @@ exports.postPersonalInfo = async (req, res, next) => {
     var info = req.body;
     info.email = req.email;
 
-    const user = await PersonalInfo.findOne({email: req.email});
-    if(user){
-        const resp = await PersonalInfo.findOneAndUpdate({email: req.email}, info, 
-            {new: true, runValidators: true});
+    const user = await PersonalInfo.findOne({ email: req.email });
+    if (user) {
+        const resp = await PersonalInfo.findOneAndUpdate({ email: req.email }, info,
+            { new: true, runValidators: true });
         return res.json({
             success: true,
             personalInfo: resp,
