@@ -18,7 +18,6 @@ module.exports = async(req, res, next) => {
         "-compressed.jpg"
     );
     const metadata = await sharp(imagePath).metadata();
-    console.log(metadata);
     await sharp(imagePath)
         .resize({
             height: metadata.height < 1000 ? metadata.height : 1000,
