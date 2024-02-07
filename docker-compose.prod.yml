@@ -21,10 +21,7 @@ services:
     networks:
       - loadbalancing
     depends_on:
-      - backend_1
-      - backend_2
-      - backend_3
-      - backend_4
+      - backend
 
 networks:
   loadbalancing:
