@@ -2,7 +2,9 @@ version: '3.5'
 
 services:
   backend:
-    build: Dockerfile
+    build: 
+      context : .
+      dockerfile: Dockerfile
     environment:
       - PORT=3000 
     deploy:
@@ -15,7 +17,9 @@ services:
       - .env
 
   nginx:
-    build: Dockerfile2
+    build: 
+      context : .
+      dockerfile: Dockerfile2
     ports:
       - "80:80"
     networks:
