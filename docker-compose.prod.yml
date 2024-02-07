@@ -5,7 +5,7 @@ services:
     build: 
       context : .
       dockerfile: Dockerfile
-    environment:
+    ports:
       - 3000 
     volumes:
       - college_cupid_images:/usr/src/app/images
