@@ -22,7 +22,7 @@ module.exports = async(req, res, next) => {
     await sharp(imagePath)
         .resize({
             height: metadata.height < 1000 ? metadata.height : 1000,
-            width: metadata.height < 1000 ? metadata.width : (metadata.width/metadata.height)*1000
+            width: metadata.height < 1000 ? metadata.width : Math.floor((metadata.width/metadata.height)*1000)
         })
         .withMetadata()
         .toFile(compressedImagePath);
