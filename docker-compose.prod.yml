@@ -1,65 +1,21 @@
 version: '3.5'
 
 services:
-  backend_1:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - college_cupid_images:/usr/src/app/images
+  backend:
+    build: Dockerfile
     environment:
       - PORT=3000 
+    deploy:
+      replicas: 4
     networks:
       - loadbalancing
-    env_file:
-      - .env
-  backend_2:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - college_cupid_images:/usr/src/app/images
-    environment:
-      - PORT=3000 
-    networks:
-      - loadbalancing
-    env_file:
-      - .env
-  backend_3:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - college_cupid_images:/usr/src/app/images
-    environment:
-      - PORT=3000 
-    networks:
-      - loadbalancing
-    env_file:
-      - .env
-  backend_4:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - college_cupid_images:/usr/src/app/images
-    environment:
-      - PORT=3000 
-    networks:
-      - loadbalancing
     env_file:
       - .env
 
   nginx:
-    build: ../nginx
+    build: Dockerfile2
     ports:
       - "80:80"
     networks:
