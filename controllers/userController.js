@@ -3,17 +3,6 @@ const PersonalInfo = require('../models/PersonalInfo');
 const UserProfile = require('../models/UserProfile');
 const BlockedUserList = require('../models/BlockedUserList');
 
-function sortByPositions(positions, objects) {
-    let max = Math.max(...positions);
-    console.log(max)
-    let objectMap = Array(positions.length).fill(null);
-  for (let i = 0; i < positions.length; i++) {
-    objectMap[i] = objects[positions[i]];
-  }
-  let neww = [...objects.slice(max+1), ...objectMap];
-  return neww;
-}
-
 exports.removeUserFromDB = async (req, res, next) => {
     const res1 = await UserProfile.deleteOne({ email: req.params.email });
     const res2 = await PersonalInfo.deleteOne({ email: req.params.email });
@@ -79,21 +68,7 @@ exports.getUserProfilePages = async (req, res, next) => {
     const newFilters = { name: { $regex: name, $options: 'i' }, ...filters };
 
     let userProfiles = (await UserProfile.find(newFilters))
-        .filter(profile => profile.email !== req.email);
-
-    let currTime = new Date();
-    currTime = currTime.getTime();
-    let currUser = await UserProfile.findOne({email: req.email});
-
-    if(currUser.shuffleOrder == undefined || currUser.lastShuffle - currTime == 1800000){
-        let positions = Array(userProfiles.length).fill(0).map((_, i) => i);
-        const shuffledPositions = shuffleArray(positions);
-        await UserProfile.findOneAndUpdate({
-            email: req.email}, {lastShuffle : currTime, shuffleOrder: shuffledPositions}, {runValidators: true});
-        userProfiles = sortByPositions(shuffledPositions, userProfiles);
-    }else{
-        userProfiles = sortByPositions(currUser.shuffleOrder, userProfiles);
-    }
+        .reverse().filter(profile => profile.email !== req.email);
 
     const user = await BlockedUserList.findOne({ email: req.email });
     if (user) {
@@ -102,8 +77,10 @@ exports.getUserProfilePages = async (req, res, next) => {
         );
     }
 
+    const shuffledUserProfiles = shuffleArray(userProfiles);
+
     const startIndex = req.params.pageNumber * 10;
-    const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10);
+    const newUserProfiles = shuffledUserProfiles.slice(startIndex, startIndex + 10);
 
     res.json({
         success: true,
