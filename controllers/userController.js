@@ -6,9 +6,14 @@ const BlockedUserList = require('../models/BlockedUserList');
 function sortByPositions(positions, objects) {
     let max = Math.max(...positions);
     console.log(max)
-    let objectMap = Array(positions.length).fill(null);
+    let objectMap = [];
   for (let i = 0; i < positions.length; i++) {
-    objectMap[i] = objects[positions[i]];
+    if(objects.length <= positions[i]+1){
+        objectMap.push(objects[positions[i]]);
+    }
+  }
+  if(max+1 >= objects.length){
+      return objectMap;
   }
   let neww = [...objects.slice(max+1), ...objectMap];
   return neww;
