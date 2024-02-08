@@ -8,7 +8,7 @@ function sortByPositions(positions, objects) {
     console.log(max)
     let objectMap = [];
   for (let i = 0; i < positions.length; i++) {
-    if(objects.length <= positions[i]+1){
+    if(objects.length > positions[i]){
         objectMap.push(objects[positions[i]]);
     }
   }
