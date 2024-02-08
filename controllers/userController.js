@@ -90,7 +90,7 @@ exports.getUserProfilePages = async (req, res, next) => {
     currTime = currTime.getTime();
     let currUser = await UserProfile.findOne({email: req.email});
 
-    if(currUser.shuffleOrder == undefined || currUser.lastShuffle - currTime >= 1800000){
+    if(currUser.shuffleOrder == undefined || currTime - currUser.lastShuffle >= 1800000){
         let positions = Array(userProfiles.length).fill(0).map((_, i) => i);
         const shuffledPositions = shuffleArray(positions);
         await UserProfile.findOneAndUpdate({
