@@ -2,6 +2,9 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
+const path = require('path');
+const fs = require('fs');
+
 const { errorHandler } = require('./middlewares/errorHandler');
 const morgan = require('morgan');
 const router = require('./routers/router');
@@ -26,7 +29,21 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/pdf', (_req, res) => {
-    res.send("puppylove.pdf");
+    const filePath = path.join(__dirname, 'puppylove.pdf');
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(404).send('File not found');
+        }
+
+        // Set the appropriate content type
+        res.setHeader('Content-Type', 'application/pdf');
+
+        // Stream the file to the client
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+    });
 });
 
 app.use(securityKeyMiddleware);
