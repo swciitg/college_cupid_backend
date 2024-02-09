@@ -25,6 +25,10 @@ app.get('/', (_req, res) => {
     res.send('<h1>Welcome to CollegeCupid</h1>');
 });
 
+app.get('/pdf', (_req, res) => {
+    res.send("puppylove.pdf");
+});
+
 app.use(securityKeyMiddleware);
 
 // API Routers
@@ -32,10 +36,6 @@ app.use(process.env.API_URL, router.userRouter);
 app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
 app.use(process.env.API_URL, router.reportUserRouter);
-
-app.get('/pdf', (_req, res) => {
-    res.send("puppylove.pdf")
-});
 
 app.all('*', (req, res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
