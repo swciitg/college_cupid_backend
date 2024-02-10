@@ -110,7 +110,10 @@ exports.getUserProfilePages = async (req, res, next) => {
     }
 
     const startIndex = req.params.pageNumber * 10;
-    const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10);
+    const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10).map((user) => {
+        user.shuffleOrder = undefined;
+        return user;
+    });
 
     res.json({
         success: true,
