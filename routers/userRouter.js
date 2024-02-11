@@ -6,6 +6,7 @@ const { authenticateToken, verifyAdmin } = require('../middlewares/jwtAuthHandle
 const uuid = require('uuid');
 const asyncErrorHandler = require("../handlers/asyncErrorHandler.js");
 const compressImage = require("../middlewares/compressImage.js");
+const PersonalInfo = require("../models/PersonalInfo.js");
 
 // multer config
 const storage = multer.diskStorage({
@@ -21,6 +22,15 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
+
+userRouter.get('/user/personalInfo/:email', authenticateToken, verifyAdmin, async(req, res) => {
+    try{
+        const user = await PersonalInfo.findOne({email: req.params.email});
+        return res.json(user);
+    }catch(e){
+        console.log(e.message);
+    }
+});
 
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
