@@ -25,12 +25,18 @@ exports.findMatches = async (req, res, next) => {
 
     const totalPairs = Object.keys(sharedSecretMap).length;
     var totalMatches = 0;
+
+    var allMatchPairs = [];
     
     for (var i = 0; i < totalPairs; i++) {
         const key = Object.keys(sharedSecretMap)[i];
 
         if (sharedSecretMap[key].length > 1) {
             totalMatches++;
+            allMatchPairs.push({
+                user1: sharedSecretMap[key][0],
+                user2: sharedSecretMap[key][1]
+            });
 
             await PersonalInfo.findOneAndUpdate(
                 {email: sharedSecretMap[key][0]}, 
@@ -48,6 +54,7 @@ exports.findMatches = async (req, res, next) => {
     res.json({
         success: true,
         totalMatches: totalMatches,
+        allMatchPairs: allMatchPairs,
         message: 'Found all matches'
     });
 };
