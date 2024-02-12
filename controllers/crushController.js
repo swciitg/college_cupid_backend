@@ -2,6 +2,10 @@ const CrushesCount = require('../models/CrushesCount');
 const PersonalInfo = require('../models/PersonalInfo');
 
 exports.addCrush = async(req, res, next) => {
+    return res.json({
+        success: false,
+        message: "You cannot add crushes anymore!"
+    });
     const user = await PersonalInfo.findOne({email: req.email});
 
     if(user.crushes.length === 5){
@@ -30,6 +34,10 @@ exports.addCrush = async(req, res, next) => {
 };
 
 exports.increaseCount = async(req, res, next) => {
+    return res.json({
+        success: false,
+        message: "You cannot add crushes anymore!"
+    });
     const user = await CrushesCount.findOne({email: req.query.crushEmail});
     if(user){
         await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
@@ -48,6 +56,10 @@ exports.increaseCount = async(req, res, next) => {
 }
 
 exports.decreaseCount = async(req, res, next) => {
+    return res.json({
+        success: false,
+        message: "You cannot remove crushes anymore!"
+    });
     const user = await CrushesCount.findOne({email: req.query.crushEmail});
     if(user && user.crushesCount > 0){
         await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
@@ -81,6 +93,10 @@ exports.getCount = async(req, res, next) => {
 }
 
 exports.removeCrush = async(req, res, next) => {
+    return res.json({
+        success: false,
+        message: "You cannot remove crushes anymore!"
+    });
     function arrayRemove(arr, value) {
         return arr.filter(function (item) {
             return item != value;
