@@ -3,15 +3,15 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - college_cupid_images:/usr/src/app/images
     ports:
-      - '8069:3000'
+      - '8068:3000'
     env_file:
-      - .env
+      - .env.dev
     networks:
       - one-stop-2021_default
 
