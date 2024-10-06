@@ -25,7 +25,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         username: ${{ secrets.SSH_USERNAME }}
         script: |
-            cd /webapps/college_cupid_backend
+            cd /webapps/test-servers/college_cupid_backend
             sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
             sudo chmod g+rwx "$HOME/.docker" -R
             git checkout dev
