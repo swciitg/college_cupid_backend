@@ -63,6 +63,6 @@ app.use(errorHandler);
 
 app.listen(process.env.PORT, async () => {
     console.log('Server listening on port ' + process.env.PORT);
-    await mongoose.connect(process.env.MONGO_URL + 'college_cupid');
+    await mongoose.connect(process.env.MONGO_URL + process.env.DB_NAME);
     console.log('Connected to database');
 });
