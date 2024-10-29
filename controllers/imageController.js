@@ -4,8 +4,9 @@ const sharp = require('sharp');
 
 exports.getImage = async(req, res, next) => {
     // INITIALLY WE WERE USING PNG IMAGES
-    // THIS CODE COMPRESSES THE IMAGES AND SAVES THEM IN JPG FORMAT 
-    // AS THEY ARE LIGHTER
+    // THIS CODE COMPRESSES THE PNG IMAGES AS THEY WERE NOT COMPRESSED WHILE UPLOADING
+    // AND SAVES THEM IN JPG FORMAT AS THEY ARE LIGHTER
+    
     // const isPng = fs.existsSync(path.resolve(
     //     __dirname + '/../images/' + req.query.photoId + '.png'
     // ));
