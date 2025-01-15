@@ -11,7 +11,7 @@ services:
     ports:
       - '8068:3000'
     env_file:
-      - .env
+      - .env.dev
     networks:
       - one-stop-2021_default
     restart: always
