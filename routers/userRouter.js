@@ -9,27 +9,15 @@ const compressImage = require("../middlewares/compressImage.js");
 const PersonalInfo = require("../models/PersonalInfo.js");
 
 // multer config
-const storage = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, './images');
-    },
-    filename: (req, file, callback) => {
-        const imageId = uuid.v4();
-        const imageUrl = process.env.BASE_URL + process.env.API_URL + '/getImage/?photoId=' + imageId;
-        callback(null, imageId + '.jpg');
-        req.imageUrl = imageUrl;
-        req.imageId = imageId;
-    }
-});
-const upload = multer({ storage: storage });
+
 
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
 
-userRouter.post('/user/profile', authenticateToken, upload.single('dp'), compressImage,
+userRouter.post('/user/profile', authenticateToken,  compressImage,
     asyncErrorHandler(userController.createUserProfile)
 );
-userRouter.put('/user/profile', authenticateToken, upload.single('dp'), compressImage,
+userRouter.put('/user/profile', authenticateToken, compressImage,
     asyncErrorHandler(userController.updateUserProfile)
 );
 userRouter.get('/user/profile/email/:email', authenticateToken, 

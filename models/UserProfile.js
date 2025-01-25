@@ -23,10 +23,19 @@ const userProfileSchema = new Schema({
       default: false,
     },
   },
-  'profilePicUrl': {
-    type: String,
-    default: ''
-},
+  profilePicUrls: [
+    {
+      Url: {
+        type: String,
+        default: "",
+      },
+      blurHash: {
+        type: String,
+        default: null,
+      },
+    },
+  ],
+  
   program: {
     type: String,
     required: [true, "Program is a required field!"],
@@ -47,17 +56,6 @@ const userProfileSchema = new Schema({
     type: String,
     default: "",
   },
-  datingPreference: {
-    gender: {
-      type: String,
-    },
-    course: {
-      type: String,
-    },
-    year: {
-      type: String,
-    },
-  },
   relationshipGoals: {
     goal: {
       type: String,
@@ -67,6 +65,10 @@ const userProfileSchema = new Schema({
       type: Boolean,
       default: false,
     },
+  },
+  personalityType: {
+    type: String,
+    default: "",
   },
   publicKey: {
     type: String,

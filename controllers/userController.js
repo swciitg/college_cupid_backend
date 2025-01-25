@@ -43,11 +43,11 @@ exports.removeUserFromDB = async (req, res, next) => {
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
     userProfile.email = req.email;
-    if (req.imageUrl) {
-        userProfile.profilePicUrl = req.imageUrl;
-    } else {
-        delete userProfile.imageUrl
-    }
+    // if (req.imageUrl) {
+    //     userProfile.profilePicUrl = req.imageUrl;
+    // } else {
+    //     delete userProfile.imageUrl
+    // }
 
     const interests = new Set(userProfile.interests);
     userProfile.interests = Array.from(interests);
@@ -124,9 +124,9 @@ exports.getUserProfilePages = async (req, res, next) => {
 
 exports.updateUserProfile = async (req, res, next) => {
     const profileChanges = req.body;
-    if (req.imageUrl) {
-        profileChanges.profilePicUrl = req.imageUrl;
-    }
+    // if (req.imageUrl) {
+    //     profileChanges.profilePicUrl = req.imageUrl;
+    // }
     await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges, { runValidators: true });
     const user = await UserProfile.findOne({ email: req.email });
     res.json({
