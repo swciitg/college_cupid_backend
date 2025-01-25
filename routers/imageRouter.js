@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-imageRouter.post("/uploadImage",authenticateToken, upload.single("dp"),asyncErrorHandler(compressImage,imageController.uploadImage));
+imageRouter.post("/uploadImage",authenticateToken, upload.single("dp"),compressImage,asyncErrorHandler(imageController.uploadImage));
 imageRouter.get("/getImage", imageController.getImage);
 imageRouter.delete("/deleteImage/:photoId",authenticateToken, asyncErrorHandler(imageController.deleteImage));
 
