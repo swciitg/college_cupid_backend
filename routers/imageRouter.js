@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 imageRouter.post("/uploadImage", upload.single("dp"),compressImage,imageController.uploadImage);
-
 imageRouter.get("/getImage", imageController.getImage);
+imageRouter.delete("/deleteImage/:photoId", imageController.deleteImage);
 
 module.exports = { imageRouter };
