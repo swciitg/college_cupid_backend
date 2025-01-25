@@ -14,10 +14,10 @@ const PersonalInfo = require("../models/PersonalInfo.js");
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
 
-userRouter.post('/user/profile', authenticateToken,  compressImage,
+userRouter.post('/user/profile', authenticateToken,
     asyncErrorHandler(userController.createUserProfile)
 );
-userRouter.put('/user/profile', authenticateToken, compressImage,
+userRouter.put('/user/profile', authenticateToken,
     asyncErrorHandler(userController.updateUserProfile)
 );
 userRouter.get('/user/profile/email/:email', authenticateToken, 

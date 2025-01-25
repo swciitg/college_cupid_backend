@@ -5,6 +5,7 @@ const multer = require("multer");
 const uuid = require("uuid");
 const compressImage = require("../middlewares/compressImage");
 const { authenticateToken } = require("../middlewares/jwtAuthHandler");
+const asyncErrorHandler = require("../handlers/asyncErrorHandler");
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -19,8 +20,8 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-imageRouter.post("/uploadImage",authenticateToken, upload.single("dp"),compressImage,imageController.uploadImage);
+imageRouter.post("/uploadImage",authenticateToken, upload.single("dp"),asyncErrorHandler(compressImage,imageController.uploadImage));
 imageRouter.get("/getImage", imageController.getImage);
-imageRouter.delete("/deleteImage/:photoId",authenticateToken, imageController.deleteImage);
+imageRouter.delete("/deleteImage/:photoId",authenticateToken, asyncErrorHandler(imageController.deleteImage));
 
 module.exports = { imageRouter };
