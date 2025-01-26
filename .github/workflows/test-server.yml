@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   push:
       branches:
-      - "dev"
+      - "dev2"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -28,7 +28,7 @@ jobs:
             cd /webapps/test-servers/college_cupid_backend
             sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
             sudo chmod g+rwx "$HOME/.docker" -R
-            git checkout dev
+            git checkout dev2
             git fetch
             git pull
             docker compose -f docker-compose.dev.yml up -d --build
