@@ -13,7 +13,8 @@ const PersonalInfo = require("../models/PersonalInfo.js");
 
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
-
+userRouter.delete('/user/removeAll', 
+    verifyAdmin, asyncErrorHandler(userController.removeAllUsersFromDB));
 userRouter.post('/user/profile', authenticateToken,
     asyncErrorHandler(userController.createUserProfile)
 );

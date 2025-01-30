@@ -39,6 +39,31 @@ exports.removeUserFromDB = async (req, res, next) => {
         });
     }
 };
+exports.removeAllUsersFromDB = async (req, res, next) => {
+    const deletedUserProfiles = await UserProfile.find({});
+    const deletedPersonalInfos = await PersonalInfo.find({});
+
+    const res1 = await UserProfile.deleteMany({});
+    const res2 = await PersonalInfo.deleteMany({});
+    
+    if (res1.acknowledged && res2.acknowledged) {
+        return res.json({
+            success: true,
+            userProfileResponse: res1,
+            personalInfoResponse: res2,
+            deletedUserProfiles,
+            deletedPersonalInfos,
+            message: 'Removed all users from database!'
+        });
+    } else {
+        return res.json({
+            success: false,
+            userProfileResponse: res1,
+            personalInfoResponse: res2,
+            message: 'No users found in the database!'
+        });
+    }
+}
 
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
