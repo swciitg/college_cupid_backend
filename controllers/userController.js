@@ -64,7 +64,15 @@ exports.removeAllUsersFromDB = async (req, res, next) => {
         });
     }
 }
-
+exports.listAllUsers = async (req, res, next) => {
+    const userProfiles = await UserProfile.find({});
+    const personalInfos = await PersonalInfo.find({});
+    res.json({
+        success: true,
+        userProfiles,
+        personalInfos
+    });
+};
 exports.createUserProfile = async (req, res, next) => {
     var userProfile = req.body;
     userProfile.email = req.email;

@@ -15,6 +15,8 @@ userRouter.delete('/user/remove/:email', authenticateToken,
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
 userRouter.delete('/user/removeAll', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeAllUsersFromDB));
+userRouter.get('/user/all', authenticateToken, 
+    verifyAdmin, asyncErrorHandler(userController.listAllUsers));
 userRouter.post('/user/profile', authenticateToken,
     asyncErrorHandler(userController.createUserProfile)
 );
