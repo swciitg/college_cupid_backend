@@ -68,7 +68,7 @@ const userProfileSchema = new Schema({
   },
   personalityType: {
     type: String,
-    default: "",
+    default: null,
   },
   publicKey: {
     type: String,
