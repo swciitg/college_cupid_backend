@@ -138,9 +138,10 @@ exports.getUserProfile = async (req, res, next) => {
           },
         ],
         program: "BTECH",
-        yearOfJoin: 25,
+        yearOfJoin: 24,
         interests: [],
         bio: " ",
+        publicKey: " ",
         personalityType: "estj",
       },
     });
