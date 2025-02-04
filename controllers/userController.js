@@ -151,22 +151,21 @@ exports.getUserProfile = async (req, res, next) => {
     userProfile: userProfile,
   });
 };
-exports.deleteUserProfile = async (req, res, next) => {
-    const user = await DeactivatedUsers.findOne({ email: req.email });
-    if (user) {
-        return res.json({
-            success: true,
-            message: "User already deactivated",
-        });
-    }
-    await DeactivatedUsers.create({ email: req.email });
-    res.json({
-        success: true,
-        user: req.email,
-        message: "User deactivated successfully",
+exports.deactivateUser = async (req, res, next) => {
+  const user = await DeactivatedUsers.findOne({ email: req.email });
+  if (user) {
+    return res.json({
+      success: true,
+      message: "User already deactivated",
     });
+  }
+  await DeactivatedUsers.create({ email: req.email });
+  res.json({
+    success: true,
+    user: req.email,
+    message: "User deactivated successfully",
+  });
 };
-
 
 // exports.getUserProfilePages = async (req, res, next) => {
 //     const { name, ...filters } = req.query;
@@ -233,11 +232,15 @@ exports.getUserProfilePages = async (req, res, next) => {
     );
   }
   const deactivatedUsers = await DeactivatedUsers.find({});
-    if (deactivatedUsers) {
-        userProfiles = userProfiles.filter(
-            (profile) => !deactivatedUsers.includes(profile.email)
-        );
-    }
+  if (deactivatedUsers) {
+    let deactivatedEmails = [];
+    deactivatedUsers.forEach((user) => {
+      deactivatedEmails.push(user.email);
+    });
+    userProfiles = userProfiles.filter(
+      (profile) => !deactivatedEmails.includes(profile.email)
+    );
+  }
   const computeDifference = (targetpersonalityType) => {
     let diff = 0;
     for (let i = 0; i < 4; i++) {
