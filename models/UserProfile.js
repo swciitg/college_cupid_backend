@@ -35,7 +35,19 @@ const userProfileSchema = new Schema({
       },
     },
   ],
-  
+  surpriseQuiz: [
+    {
+      question: {
+        type: String,
+        default: "",
+      },
+      answer: {
+        type: String,
+        default: "",
+      },
+    },
+  ],
+
   program: {
     type: String,
     required: [true, "Program is a required field!"],
@@ -56,6 +68,7 @@ const userProfileSchema = new Schema({
     type: String,
     default: "",
   },
+
   relationshipGoals: {
     goal: {
       type: String,
