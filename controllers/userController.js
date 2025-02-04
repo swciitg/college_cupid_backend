@@ -216,7 +216,7 @@ exports.getUserProfilePages = async (req, res, next) => {
 
     res.json({
         success: true,
-        totalCount: orderedUsers.length,
+        totalCount: paginatedUsers.length,
         users: paginatedUsers
     });
 };
