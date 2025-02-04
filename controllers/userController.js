@@ -197,7 +197,7 @@ exports.getUserProfilePages = async (req, res, next) => {
     });
 
     // Shuffle within each category
-    Object.values(categorizedUsers).forEach(group => shuffleArray(group));
+    // Object.values(categorizedUsers).forEach(group => shuffleArray(group));
 
     // Create priority ordered list
     const orderedUsers = [
@@ -217,7 +217,12 @@ exports.getUserProfilePages = async (req, res, next) => {
     res.json({
         success: true,
         totalCount: paginatedUsers.length,
-        users: paginatedUsers
+        users: paginatedUsers.map(user => ({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            personalityType: user.personalityType
+        }))
     });
 };
 
