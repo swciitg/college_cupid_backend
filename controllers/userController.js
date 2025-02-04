@@ -112,46 +112,112 @@ exports.getUserProfile = async (req, res, next) => {
     });
 };
 
+// exports.getUserProfilePages = async (req, res, next) => {
+//     const { name, ...filters } = req.query;
+//     const newFilters = { name: { $regex: name, $options: 'i' }, ...filters };
+
+//     let userProfiles = (await UserProfile.find(newFilters))
+//         .filter(profile => profile.email !== req.email);
+
+//     let currTime = new Date();
+//     currTime = currTime.getTime();
+//     let currUser = await UserProfile.findOne({email: req.email});
+
+//     if(currUser.shuffleOrder == undefined || currTime - currUser.lastShuffle >= 1800000){
+//         let positions = Array(userProfiles.length).fill(0).map((_, i) => i);
+//         const shuffledPositions = shuffleArray(positions);
+//         await UserProfile.findOneAndUpdate({
+//             email: req.email}, {lastShuffle : currTime, shuffleOrder: shuffledPositions},   
+//             {runValidators: true});
+
+//         userProfiles = sortByPositions(shuffledPositions, userProfiles);
+//     }else{
+//         userProfiles = sortByPositions(currUser.shuffleOrder, userProfiles);
+//     }
+
+//     const user = await BlockedUserList.findOne({ email: req.email });
+//     if (user) {
+//         userProfiles = userProfiles.filter(
+//             profile => user.blockedUsers.includes(profile.email) === false
+//         );
+//     }
+
+//     const startIndex = req.params.pageNumber * 10;
+//     const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10).map((user) => {
+//         user.shuffleOrder = undefined;
+//         return user;
+//     });
+
+//     res.json({
+//         success: true,
+//         totalCount: newUserProfiles.length,
+//         users: newUserProfiles
+//     });
+// };
 exports.getUserProfilePages = async (req, res, next) => {
     const { name, ...filters } = req.query;
     const newFilters = { name: { $regex: name, $options: 'i' }, ...filters };
 
+    const currUser = await UserProfile.findOne({ email: req.email });
+    if (!currUser || !currUser.personalityType) {
+        return res.status(400).json({ success: false, message: "User personalityType not found" });
+    }
+    const currentpersonalityType = currUser.personalityType.toUpperCase();
+
     let userProfiles = (await UserProfile.find(newFilters))
         .filter(profile => profile.email !== req.email);
 
-    let currTime = new Date();
-    currTime = currTime.getTime();
-    let currUser = await UserProfile.findOne({email: req.email});
-
-    if(currUser.shuffleOrder == undefined || currTime - currUser.lastShuffle >= 1800000){
-        let positions = Array(userProfiles.length).fill(0).map((_, i) => i);
-        const shuffledPositions = shuffleArray(positions);
-        await UserProfile.findOneAndUpdate({
-            email: req.email}, {lastShuffle : currTime, shuffleOrder: shuffledPositions}, 
-            {runValidators: true});
-
-        userProfiles = sortByPositions(shuffledPositions, userProfiles);
-    }else{
-        userProfiles = sortByPositions(currUser.shuffleOrder, userProfiles);
-    }
-
-    const user = await BlockedUserList.findOne({ email: req.email });
-    if (user) {
+    const blockedUsers = await BlockedUserList.findOne({ email: req.email });
+    if (blockedUsers) {
         userProfiles = userProfiles.filter(
-            profile => user.blockedUsers.includes(profile.email) === false
+            profile => !blockedUsers.blockedUsers.includes(profile.email)
         );
     }
 
-    const startIndex = req.params.pageNumber * 10;
-    const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10).map((user) => {
-        user.shuffleOrder = undefined;
-        return user;
+    const computeDifference = (targetpersonalityType) => {
+        let diff = 0;
+        for (let i = 0; i < 4; i++) {
+            if (currentpersonalityType[i] !== targetpersonalityType[i]) diff++;
+        }
+        return diff;
+    };
+
+    const categorizedUsers = {
+        0: [],
+        1: [],
+        2: [],
+        3: [],
+        4: []
+    };
+
+    userProfiles.forEach(user => {
+        if (!user.personalityType) return;
+        const diff = computeDifference(user.personalityType.toUpperCase());
+        categorizedUsers[diff].push(user);
     });
+
+    // Shuffle within each category
+    Object.values(categorizedUsers).forEach(group => shuffleArray(group));
+
+    // Create priority ordered list
+    const orderedUsers = [
+        ...categorizedUsers[0],
+        ...categorizedUsers[1],
+        ...categorizedUsers[2],
+        ...categorizedUsers[3],
+        ...categorizedUsers[4]
+    ];
+
+    // Pagination
+    const pageNumber = parseInt(req.params.pageNumber) || 0;
+    const startIndex = pageNumber * 10;
+    const endIndex = startIndex + 10;
+    const paginatedUsers = orderedUsers.slice(startIndex, endIndex);
 
     res.json({
         success: true,
-        totalCount: newUserProfiles.length,
-        users: newUserProfiles
+        totalCount: orderedUsers.length,
+        users: paginatedUsers
     });
 };
 
