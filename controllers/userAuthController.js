@@ -1,7 +1,6 @@
 const msal = require('@azure/msal-node');
 const request = require('request');
 const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
-const { json } = require('express');
 const { GuestEmails, GuestUserInfo } = require('../shared/constants');
 
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
@@ -30,7 +29,7 @@ const pca = new msal.ConfidentialClientApplication(config);
 
 exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ['user.read'],
+        scopes: ['User.Read', 'Files.ReadWrite'],
         redirectUri: REDIRECT_URI,
     };
 
@@ -41,7 +40,7 @@ exports.microsoftLogin = async (req, res) => {
 exports.microsoftLoginRedirect = async (req, res) => {
     const tokenRequest = {
         code: req.query.code,
-        scopes: ['user.read'],
+        scopes: ['User.Read', 'Files.ReadWrite'],
         redirectUri: REDIRECT_URI
     };
 
@@ -52,7 +51,6 @@ exports.microsoftLoginRedirect = async (req, res) => {
             'Authorization': 'Bearer ' + response.accessToken
         }
     }, async function (err, resp, body) {
-        console.log('here');
         if(err){
             console.log(err);
             return res.render('authSuccessView.ejs', {
@@ -62,7 +60,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
                     refreshToken: '', 
                     email: '',
                     displayName: '',
-                    rollNumber: ''
+                    rollNumber: '',
+                    outlookAccessToken: '',
                 })
             });
         }
@@ -76,6 +75,7 @@ exports.microsoftLoginRedirect = async (req, res) => {
                     accessToken: createAccessToken(userInfo.mail),
                     refreshToken: createRefreshToken(userInfo.mail),
                     email: userInfo.mail,
+                    outlookAccessToken: response.accessToken,
                     ...GuestUserInfo
                 })
             });
@@ -89,7 +89,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
                     refreshToken: '', 
                     email: '',
                     displayName: '',
-                    rollNumber: ''
+                    rollNumber: '',
+                    outlookAccessToken: '',
                 })
             });
         }
@@ -104,7 +105,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
                 refreshToken, 
                 email: userInfo.mail,
                 displayName: userInfo.displayName,
-                rollNumber: userInfo.surname
+                rollNumber: userInfo.surname,
+                outlookAccessToken: response.accessToken,
             })
         });
     });
