@@ -8,15 +8,14 @@ exports.addCrush = async(req, res, next) => {
     // });
     const user = await PersonalInfo.findOne({email: req.email});
 
-    if(user.crushes.length === 5){
+    if(user.sharedSecretList.length === 5){
         return res.json({
             success: false, 
             message: "You cannot add more than five crushes."
         });
     } else {
-        if(user.crushes.includes(req.body.sharedSecret)==false){
-            user.crushes.push(req.body.sharedSecret);
-            user.encryptedCrushes.push(req.body.encryptedCrushEmail);
+        if(user.sharedSecretList.includes(req.body.sharedSecret)==false){
+            user.sharedSecretList.push(req.body.sharedSecret);
         }else{
             return res.json({
                 success: false, 
@@ -104,28 +103,16 @@ exports.removeCrush = async(req, res, next) => {
     }
 
     const user = await PersonalInfo.findOne({email: req.email});
-    const crushes = user.crushes;
-    const encryptedCrushes = user.encryptedCrushes;
+    const sharedSecretList = user.sharedSecretList;
 
-    const newCrushes = arrayRemove(crushes,crushes[req.query.index]);
-    const newEncryptedCrushes = arrayRemove(encryptedCrushes, encryptedCrushes[req.query.index]);
+    const newSharedSecretList = arrayRemove(sharedSecretList,sharedSecretList[req.query.index]);
 
     await PersonalInfo.findOneAndUpdate({email: req.email}, {
-        crushes: newCrushes,
-        encryptedCrushes: newEncryptedCrushes
+        sharedSecretList: newSharedSecretList,
     }, {runValidators: true});
 
     res.json({
         success: true,
         message: 'Crush deleted successfully'
-    });
-};
-
-exports.getAllCrushes = async(req, res, next) => {
-    const user = await PersonalInfo.findOne({email: req.email});
-
-    res.json({
-        success: true,
-        encryptedCrushes: user.encryptedCrushes
     });
 };

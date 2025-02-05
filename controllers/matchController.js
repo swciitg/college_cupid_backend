@@ -4,7 +4,7 @@ exports.findMatches = async (req, res, next) => {
     const oldUsers = await PersonalInfo.find();
     for(var i = 0; i < oldUsers.length; i++){
         const user = oldUsers[i];
-        await PersonalInfo.findOneAndUpdate({email: user.email}, {matches: []});
+        await PersonalInfo.findOneAndUpdate({email: user.email}, {matchedEmailList: []});
         console.log('Matches cleared: ', i + 1, ' of ', oldUsers.length);
     }
 
@@ -14,7 +14,7 @@ exports.findMatches = async (req, res, next) => {
     const users = await PersonalInfo.find();
 
     users.map((user) => {
-        user.crushes.map((crush) => {
+        user.sharedSecretList.map((crush) => {
             if (!sharedSecretMap.has(crush)) {
                 sharedSecretMap.set(crush);
                 sharedSecretMap[crush] = [];
@@ -39,12 +39,12 @@ exports.findMatches = async (req, res, next) => {
 
             await PersonalInfo.findOneAndUpdate(
                 {email: sharedSecretMap[key][0]}, 
-                {$push: {matches: sharedSecretMap[key][1]}},
+                {$push: {matchedEmailList: sharedSecretMap[key][1]}},
                 {runValidators: true}
             );
             await PersonalInfo.findOneAndUpdate(
                 {email: sharedSecretMap[key][1]}, 
-                {$push: {matches: sharedSecretMap[key][0]}},
+                {$push: {matchedEmailList: sharedSecretMap[key][0]}},
                 {runValidators: true}
             );
         }
@@ -62,7 +62,7 @@ exports.clearMatches = async (req, res, next) => {
     const users = await PersonalInfo.find();
     for(var i = 0; i < users.length; i++){
         const user = users[i];
-        await PersonalInfo.findOneAndUpdate({email: user.email}, {matches: []});
+        await PersonalInfo.findOneAndUpdate({email: user.email}, {matchedEmailList: []});
         console.log('Matches cleared: ', i + 1, ' of ', users.length);
     }
 
@@ -76,6 +76,6 @@ exports.getMatches = async (req, res, next) => {
     const user = await PersonalInfo.findOne({ email: req.email });
     res.json({
         success: true,
-        matches: user.matches
+        matches: user.matchedEmailList,
     });
 };
