@@ -13,7 +13,10 @@ const PersonalInfo = require("../models/PersonalInfo.js");
 
 userRouter.delete('/user/remove/:email', authenticateToken, 
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
-
+userRouter.delete('/user/removeAll', authenticateToken, 
+    verifyAdmin, asyncErrorHandler(userController.removeAllUsersFromDB));
+userRouter.get('/user/all', authenticateToken, 
+    verifyAdmin, asyncErrorHandler(userController.listAllUsers));
 userRouter.post('/user/profile', authenticateToken,
     asyncErrorHandler(userController.createUserProfile)
 );
@@ -22,6 +25,9 @@ userRouter.put('/user/profile', authenticateToken,
 );
 userRouter.get('/user/profile/email/:email', authenticateToken, 
     asyncErrorHandler(userController.getUserProfile)
+);
+userRouter.delete('/user/profile/deactivate', authenticateToken, 
+    asyncErrorHandler(userController.deactivateUser)
 );
 userRouter.get('/user/profile/page/:pageNumber', authenticateToken, 
     asyncErrorHandler(userController.getUserProfilePages)
