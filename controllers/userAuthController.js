@@ -29,8 +29,9 @@ const pca = new msal.ConfidentialClientApplication(config);
 
 exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
+        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'Offline_Access'],
         redirectUri: REDIRECT_URI,
+        prompt: "consent"
     };
 
     const url = await pca.getAuthCodeUrl(authCodeUrlParameters);
@@ -40,8 +41,9 @@ exports.microsoftLogin = async (req, res) => {
 exports.microsoftLoginRedirect = async (req, res) => {
     const tokenRequest = {
         code: req.query.code,
-        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
-        redirectUri: REDIRECT_URI
+        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'Offline_Access'],
+        redirectUri: REDIRECT_URI,
+        prompt: "consent"
     };
 
     const response = await pca.acquireTokenByCode(tokenRequest);
