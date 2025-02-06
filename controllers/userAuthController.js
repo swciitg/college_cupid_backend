@@ -1,17 +1,17 @@
 const msal = require('@azure/msal-node');
-const request = require('request');
-const {createAccessToken, createRefreshToken} = require('../handlers/jwtHandler');
+const axios = require('axios');
+const { createAccessToken, createRefreshToken } = require('../handlers/jwtHandler');
 const { GuestEmails, GuestUserInfo } = require('../shared/constants');
 
 const clientId = process.env.MICROSOFT_GRAPH_CLIENT_ID;
-const tenantId = 'https://login.microsoftonline.com/' + process.env.MICROSOFT_GRAPH_TENANT_ID;
+const tenantId = process.env.MICROSOFT_GRAPH_TENANT_ID;
 const clientSecret = process.env.MICROSOFT_GRAPH_CLIENT_SECRET;
 const REDIRECT_URI = process.env.BASE_URL + '/auth/microsoft/redirect';
 
 const config = {
     auth: {
         clientId: clientId,
-        authority: tenantId,
+        authority: 'https://login.microsoftonline.com/' + tenantId,
         clientSecret: clientSecret
     },
     system: {
@@ -29,7 +29,7 @@ const pca = new msal.ConfidentialClientApplication(config);
 
 exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'Offline_Access'],
+        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
         redirectUri: REDIRECT_URI,
         prompt: "consent"
     };
@@ -39,79 +39,173 @@ exports.microsoftLogin = async (req, res) => {
 };
 
 exports.microsoftLoginRedirect = async (req, res) => {
-    const tokenRequest = {
-        code: req.query.code,
-        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'Offline_Access'],
-        redirectUri: REDIRECT_URI,
-        prompt: "consent"
-    };
+    const tokens = await getTokens(req.query.code);
 
-    const response = await pca.acquireTokenByCode(tokenRequest);
-    console.log(response);
-    console.log(response.refreshToken);
-    request.get({
-        url: 'https://graph.microsoft.com/v1.0/me',
-        headers: {
-            'Authorization': 'Bearer ' + response.accessToken
-        }
-    }, async function (err, resp, body) {
-        if(err){
-            console.log(err);
-            return res.render('authSuccessView.ejs', {
-                status: 'ERROR',
-                outlookInfo: JSON.stringify({
-                    accessToken: '', 
-                    refreshToken: '', 
-                    email: '',
-                    displayName: '',
-                    rollNumber: '',
-                    outlookAccessToken: '',
-                })
-            });
-        }
-
-        const userInfo = JSON.parse(body);
-
-        if(GuestEmails.includes(userInfo.mail)){
-            return res.render('authSuccessView.ejs', {
-                status: 'SUCCESS',
-                outlookInfo: JSON.stringify({
-                    accessToken: createAccessToken(userInfo.mail),
-                    refreshToken: createRefreshToken(userInfo.mail),
-                    email: userInfo.mail,
-                    outlookAccessToken: response.accessToken,
-                    ...GuestUserInfo
-                })
-            });
-        }
-
-        if(!userInfo.displayName || !userInfo.mail || !userInfo.surname){
-            return res.render('authSuccessView.ejs', {
-                status: 'ERROR',
-                outlookInfo: JSON.stringify({
-                    accessToken: '', 
-                    refreshToken: '', 
-                    email: '',
-                    displayName: '',
-                    rollNumber: '',
-                    outlookAccessToken: '',
-                })
-            });
-        }
-        
-        const accessToken = createAccessToken(userInfo.mail);
-        const refreshToken = createRefreshToken(userInfo.mail);
-
+    if(tokens == null){
         return res.render('authSuccessView.ejs', {
-            status: 'SUCCESS', 
+            status: 'ERROR',
             outlookInfo: JSON.stringify({
-                accessToken, 
-                refreshToken, 
-                email: userInfo.mail,
-                displayName: userInfo.displayName,
-                rollNumber: userInfo.surname,
-                outlookAccessToken: response.accessToken,
+                accessToken: '',
+                refreshToken: '',
+                email: '',
+                displayName: '',
+                rollNumber: '',
+                outlookAccessToken: '',
+                outlookRefreshToken: '',
             })
         });
+    }
+
+    const userResp = await axios.get(
+        'https://graph.microsoft.com/v1.0/me',
+        { headers: { Authorization: `Bearer ${tokens.outlookAccessToken}` } }
+    );
+    const userInfo = userResp.data;
+
+    if (GuestEmails.includes(userInfo.mail)) {
+        return res.render('authSuccessView.ejs', {
+            status: 'SUCCESS',
+            outlookInfo: JSON.stringify({
+                accessToken: createAccessToken(userInfo.mail),
+                refreshToken: createRefreshToken(userInfo.mail),
+                email: userInfo.mail,
+                ...tokens,
+                ...GuestUserInfo,
+            })
+        });
+    }
+
+    if (!userInfo.displayName || !userInfo.mail || !userInfo.surname) {
+        return res.render('authSuccessView.ejs', {
+            status: 'ERROR',
+            outlookInfo: JSON.stringify({
+                accessToken: '',
+                refreshToken: '',
+                email: '',
+                displayName: '',
+                rollNumber: '',
+                outlookAccessToken: '',
+                outlookRefreshToken: '',
+            })
+        });
+    }
+
+    const accessToken = createAccessToken(userInfo.mail);
+    const refreshToken = createRefreshToken(userInfo.mail);
+
+    return res.render('authSuccessView.ejs', {
+        status: 'SUCCESS',
+        outlookInfo: JSON.stringify({
+            accessToken,
+            refreshToken,
+            email: userInfo.mail,
+            displayName: userInfo.displayName,
+            rollNumber: userInfo.surname,
+            ...tokens,
+        })
     });
+
+    // const tokenRequest = {
+    //     code: req.query.code,
+    //     scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
+    //     redirectUri: REDIRECT_URI,
+    //     prompt: "consent"
+    // };
+
+    // const response = await pca.acquireTokenByCode(tokenRequest);
+    // request.get({
+    //     url: 'https://graph.microsoft.com/v1.0/me',
+    //     headers: {
+    //         'Authorization': 'Bearer ' + response.accessToken
+    //     }
+    // }, async function (err, resp, body) {
+    //     if (err) {
+    //         console.log(err);
+    //         return res.render('authSuccessView.ejs', {
+    //             status: 'ERROR',
+    //             outlookInfo: JSON.stringify({
+    //                 accessToken: '',
+    //                 refreshToken: '',
+    //                 email: '',
+    //                 displayName: '',
+    //                 rollNumber: '',
+    //                 outlookAccessToken: '',
+    //                 outlookRefreshToken: '',
+    //             })
+    //         });
+    //     }
+
+    //     const userInfo = JSON.parse(body);
+
+    //     if (GuestEmails.includes(userInfo.mail)) {
+    //         return res.render('authSuccessView.ejs', {
+    //             status: 'SUCCESS',
+    //             outlookInfo: JSON.stringify({
+    //                 accessToken: createAccessToken(userInfo.mail),
+    //                 refreshToken: createRefreshToken(userInfo.mail),
+    //                 email: userInfo.mail,
+    //                 outlookAccessToken: response.accessToken,
+    //                 outlookRefreshToken: req.query.refreshToken,
+    //                 ...GuestUserInfo
+    //             })
+    //         });
+    //     }
+
+    //     if (!userInfo.displayName || !userInfo.mail || !userInfo.surname) {
+    //         return res.render('authSuccessView.ejs', {
+    //             status: 'ERROR',
+    //             outlookInfo: JSON.stringify({
+    //                 accessToken: '',
+    //                 refreshToken: '',
+    //                 email: '',
+    //                 displayName: '',
+    //                 rollNumber: '',
+    //                 outlookAccessToken: '',
+    //                 outlookRefreshToken: '',
+    //             })
+    //         });
+    //     }
+
+    //     const accessToken = createAccessToken(userInfo.mail);
+    //     const refreshToken = createRefreshToken(userInfo.mail);
+
+    //     return res.render('authSuccessView.ejs', {
+    //         status: 'SUCCESS',
+    //         outlookInfo: JSON.stringify({
+    //             accessToken,
+    //             refreshToken,
+    //             email: userInfo.mail,
+    //             displayName: userInfo.displayName,
+    //             rollNumber: userInfo.surname,
+    //             outlookAccessToken: response.accessToken,
+    //             outlookRefreshToken: req.query.refreshToken,
+    //         })
+    //     });
+    // });
 };
+
+async function getTokens(authCode) {
+    try {
+        const response = await axios.post(
+            `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
+            new URLSearchParams({
+                client_id: clientId,
+                client_secret: clientSecret,
+                code: authCode,
+                redirect_uri: REDIRECT_URI,
+                grant_type: 'authorization_code',
+                scope: 'User.Read Files.ReadWrite.AppFolder offline_access'
+            }),
+            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        );
+
+        console.log("Token Response:", response.data);
+        return {
+            outlookAccessToken: response.data.access_token,
+            outlookRefreshToken: response.data.refresh_token,
+        };
+    } catch (error) {
+        console.error("Error getting tokens:", error.response?.data || error.message);
+        return null;
+    }
+}
