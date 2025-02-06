@@ -9,17 +9,17 @@ const personalInfoSchema = new Schema({
     'sharedSecretList': {
         type: [String],
         default: [],
-        validate: [crushArrayLimit, 'SharedSecrets must not exceed five!'],
+        validate: [crushArrayLimit, 'SharedSecrets must not exceed seven!'],
     },
     'matchedEmailList': {
         type: [String],
         default: [],
-        validate: [crushArrayLimit, 'MatchedEmails must not exceed five!']
+        validate: [crushArrayLimit, 'MatchedEmails must not exceed seven!']
     }
 });
 
 function crushArrayLimit(val) {
-    return val.length <= 5;
+    return val.length <= 7;
   }
 
 const PersonalInfo = model('PersonalInfo', personalInfoSchema);

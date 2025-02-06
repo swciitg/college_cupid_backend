@@ -8,10 +8,10 @@ exports.addCrush = async(req, res, next) => {
     // });
     const user = await PersonalInfo.findOne({email: req.email});
 
-    if(user.sharedSecretList.length === 5){
+    if(user.sharedSecretList.length === 7){
         return res.json({
             success: false, 
-            message: "You cannot add more than five crushes."
+            message: "You cannot add more than seven crushes."
         });
     } else {
         if(user.sharedSecretList.includes(req.body.sharedSecret)==false){
@@ -27,7 +27,7 @@ exports.addCrush = async(req, res, next) => {
         
         return res.json({
             success: true, 
-            message: "Crush added successfully"
+            message: "Crush added successfully!"
         });
     }
 };
