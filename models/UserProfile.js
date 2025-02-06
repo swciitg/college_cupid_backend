@@ -87,18 +87,16 @@ const userProfileSchema = new Schema({
     type: String,
     required: [true, "Public Key is a required field!"],
   },
-  shuffleOrder: {
-    type: [Number],
-    default: undefined,
-  },
-  lastShuffle: {
-    type: Number,
-    default: undefined,
-  },
+  // shuffleOrder: {
+  //   type: [Number],
+  //   default: undefined,
+  // },
+  // lastShuffle: {
+  //   type: Number,
+  //   default: undefined,
+  // },
 });
 function interestArrayLimit(val) {
-  console.log("i was called");
-  console.log(val);
   return val.length <= 20 && val.length >= 5;
 }
 

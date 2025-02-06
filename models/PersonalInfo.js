@@ -6,28 +6,11 @@ const personalInfoSchema = new Schema({
         required: [true, 'Email is a required field!'],
         unique: true
     },
-    // 'hashedPassword': {
-    //     type: String,
-    //     required: [true, 'Hashed Password is a required field!']
-    // },
-    // 'publicKey': {
-    //     type: String,
-    //     required: [true, 'Public key is a required field!'],
-    // },
-    // 'encryptedPrivateKey': {
-    //     type: String,
-    //     required: [true, 'Encrypted Private Key is a required field!'],
-    // },
     'sharedSecretList': {
         type: [String],
         default: [],
         validate: [crushArrayLimit, 'SharedSecrets must not exceed five!'],
     },
-    // 'encryptedCrushes': {
-    //     type: [String],
-    //     default: [],
-    //     validate: [crushArrayLimit, 'Encrypted crushes must not exceed five!']
-    // },
     'matchedEmailList': {
         type: [String],
         default: [],

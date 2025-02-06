@@ -45,6 +45,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
     };
 
     const response = await pca.acquireTokenByCode(tokenRequest);
+    console.log(response);
+    console.log(response.refreshToken);
     request.get({
         url: 'https://graph.microsoft.com/v1.0/me',
         headers: {
