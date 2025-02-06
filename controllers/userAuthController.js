@@ -31,7 +31,6 @@ exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
         scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
         redirectUri: REDIRECT_URI,
-        prompt: "consent"
     };
 
     const url = await pca.getAuthCodeUrl(authCodeUrlParameters);
