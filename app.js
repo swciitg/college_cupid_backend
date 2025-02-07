@@ -25,7 +25,7 @@ app.get('/terms', (_req, res) => {
     res.render('termsOfUse');
 });
 app.get('/csae', (_req, res) => {
-    res.render('termsOfUse');
+    res.render('csae');
 });
 app.get('/', (_req, res) => {
     res.send('<h1>Welcome to CollegeCupid 2.0</h1>');
