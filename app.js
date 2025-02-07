@@ -24,6 +24,9 @@ app.use(process.env.API_URL, router.imageRouter);
 app.get('/terms', (_req, res) => {
     res.render('termsOfUse');
 });
+app.get('/csae', (_req, res) => {
+    res.render('termsOfUse');
+});
 app.get('/', (_req, res) => {
     res.send('<h1>Welcome to CollegeCupid 2.0</h1>');
 });
