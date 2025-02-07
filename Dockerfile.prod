@@ -1,0 +1,8 @@
+FROM node:16-alpine
+WORKDIR /usr/src/app
+COPY package*.json process.yml ./
+RUN npm i -g pm2
+RUN npm ci
+COPY . .
+EXPOSE 3000
+ENTRYPOINT ["pm2","start", "./process.yml","--no-daemon"]

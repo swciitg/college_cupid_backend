@@ -1,0 +1,5 @@
+apps:
+  - name: college_cupid_backend_2025
+    script: ./app.js
+    exec_mode: cluster
+    instances: 3
