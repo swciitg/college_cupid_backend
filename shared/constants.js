@@ -27,11 +27,15 @@ exports.deactivatedUserProfile = {
 	},
 	profilePicUrls: [
 		{
-			Url: "https://swc.iitg.ac.in/test/collegeCupid/api/v2/getImage?photoId=25388381-a5a2-46cd-982c-a2f5634477bc-compressed",
+			Url: "https://swc.iitg.ac.in/collegeCupid/api/v2/getImage?photoId=68d951a0-dd6a-4b38-81b8-ebf58009d1bd-compressed",
 			blurHash: null,
 		},
 		{
-			Url: "https://swc.iitg.ac.in/test/collegeCupid/api/v2/getImage?photoId=25388381-a5a2-46cd-982c-a2f5634477bc-compressed",
+			Url: "https://swc.iitg.ac.in/collegeCupid/api/v2/getImage?photoId=68d951a0-dd6a-4b38-81b8-ebf58009d1bd-compressed",
+			blurHash: null,
+		},
+		{
+			Url: "https://swc.iitg.ac.in/collegeCupid/api/v2/getImage?photoId=68d951a0-dd6a-4b38-81b8-ebf58009d1bd-compressed",
 			blurHash: null,
 		},
 	],
