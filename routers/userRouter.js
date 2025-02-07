@@ -29,6 +29,9 @@ userRouter.get('/user/profile/email/:email', authenticateToken,
 userRouter.delete('/user/profile/deactivate', authenticateToken, 
     asyncErrorHandler(userController.deactivateUser)
 );
+userRouter.put('/user/profile/reactivate', authenticateToken, 
+    asyncErrorHandler(userController.reactivateUser)
+);
 userRouter.get('/user/profile/page/:pageNumber', authenticateToken, 
     asyncErrorHandler(userController.getUserProfilePages)
 );

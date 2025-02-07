@@ -118,6 +118,7 @@ exports.getUserProfile = async (req, res, next) => {
     userProfile: userProfile,
   });
 };
+
 exports.deactivateUser = async (req, res, next) => {
   const user = await DeactivatedUsers.findOne({ email: req.email });
   if (user) {
@@ -131,6 +132,22 @@ exports.deactivateUser = async (req, res, next) => {
     success: true,
     user: req.email,
     message: "User deactivated successfully",
+  });
+};
+
+exports.reactivateUser = async (req, res, next) => {
+  const user = await DeactivatedUsers.findOne({ email: req.email });
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "User already active!",
+    });
+  }
+  await DeactivatedUsers.deleteMany({ email: req.email });
+  res.json({
+    success: true,
+    user: req.email,
+    message: "User activated successfully",
   });
 };
 
