@@ -16,6 +16,7 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(corsMiddleware);
+app.use(express.static('assets'));
 
 // API Routers
 app.use('/', router.authRouter);
@@ -46,7 +47,6 @@ app.get('/pdf', (_req, res) => {
 });
 
 app.use(securityKeyMiddleware);
-app.use(express.static('assets'));
 
 // API Routers
 app.use(process.env.API_URL, router.userRouter);
