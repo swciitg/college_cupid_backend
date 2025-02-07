@@ -24,7 +24,7 @@ app.get('/terms', (_req, res) => {
     res.render('termsOfUse');
 });
 app.get('/', (_req, res) => {
-    res.send('<h1>Welcome to CollegeCupid</h1>');
+    res.send('<h1>Welcome to CollegeCupid 2.0</h1>');
 });
 
 app.get('/pdf', (_req, res) => {
