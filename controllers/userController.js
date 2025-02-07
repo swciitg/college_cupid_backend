@@ -1,8 +1,8 @@
-const shuffleArray = require("shuffle-array");
 const PersonalInfo = require("../models/PersonalInfo");
 const UserProfile = require("../models/UserProfile");
 const BlockedUserList = require("../models/BlockedUserList");
 const DeactivatedUsers = require("../models/DeactivatedUsers");
+const { deactivatedUserProfile } = require("../shared/constants");
 
 function sortByPositions(positions, objects) {
   let max = Math.max(...positions);
@@ -77,11 +77,6 @@ exports.listAllUsers = async (req, res, next) => {
 exports.createUserProfile = async (req, res, next) => {
   var userProfile = req.body;
   userProfile.email = req.email;
-  // if (req.imageUrl) {
-  //     userProfile.profilePicUrl = req.imageUrl;
-  // } else {
-  //     delete userProfile.imageUrl
-  // }
 
   const interests = new Set(userProfile.interests);
   userProfile.interests = Array.from(interests);
@@ -115,35 +110,7 @@ exports.getUserProfile = async (req, res, next) => {
   if (user) {
     return res.json({
       success: true,
-      userProfile: {
-        sexualOrientation: {
-          type: "STRAIGHT",
-          display: false,
-        },
-        relationshipGoals: {
-          goal: "LONGTERMPARTNER",
-          display: false,
-        },
-        name: "Deactivated User",
-        gender: "MALE",
-        email: req.params.email,
-        profilePicUrls: [
-          {
-            Url: "https://swc.iitg.ac.in/test/collegeCupid/api/v2/getImage?photoId=25388381-a5a2-46cd-982c-a2f5634477bc-compressed",
-            blurHash: null,
-          },
-          {
-            Url: "https://swc.iitg.ac.in/test/collegeCupid/api/v2/getImage?photoId=25388381-a5a2-46cd-982c-a2f5634477bc-compressed",
-            blurHash: null,
-          },
-        ],
-        program: "BTECH",
-        yearOfJoin: 24,
-        interests: [],
-        bio: " ",
-        publicKey: " ",
-        personalityType: "estj",
-      },
+      userProfile: deactivatedUserProfile,
     });
   }
   res.json({
@@ -167,48 +134,6 @@ exports.deactivateUser = async (req, res, next) => {
   });
 };
 
-// exports.getUserProfilePages = async (req, res, next) => {
-//     const { name, ...filters } = req.query;
-//     const newFilters = { name: { $regex: name, $options: 'i' }, ...filters };
-
-//     let userProfiles = (await UserProfile.find(newFilters))
-//         .filter(profile => profile.email !== req.email);
-
-//     let currTime = new Date();
-//     currTime = currTime.getTime();
-//     let currUser = await UserProfile.findOne({email: req.email});
-
-//     if(currUser.shuffleOrder == undefined || currTime - currUser.lastShuffle >= 1800000){
-//         let positions = Array(userProfiles.length).fill(0).map((_, i) => i);
-//         const shuffledPositions = shuffleArray(positions);
-//         await UserProfile.findOneAndUpdate({
-//             email: req.email}, {lastShuffle : currTime, shuffleOrder: shuffledPositions},
-//             {runValidators: true});
-
-//         userProfiles = sortByPositions(shuffledPositions, userProfiles);
-//     }else{
-//         userProfiles = sortByPositions(currUser.shuffleOrder, userProfiles);
-//     }
-
-//     const user = await BlockedUserList.findOne({ email: req.email });
-//     if (user) {
-//         userProfiles = userProfiles.filter(
-//             profile => user.blockedUsers.includes(profile.email) === false
-//         );
-//     }
-
-//     const startIndex = req.params.pageNumber * 10;
-//     const newUserProfiles = userProfiles.slice(startIndex, startIndex + 10).map((user) => {
-//         user.shuffleOrder = undefined;
-//         return user;
-//     });
-
-//     res.json({
-//         success: true,
-//         totalCount: newUserProfiles.length,
-//         users: newUserProfiles
-//     });
-// };
 exports.getUserProfilePages = async (req, res, next) => {
   const { name, ...filters } = req.query;
   const newFilters = { name: { $regex: name, $options: "i" }, ...filters };
