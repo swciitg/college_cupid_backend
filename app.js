@@ -46,6 +46,7 @@ app.get('/pdf', (_req, res) => {
 });
 
 app.use(securityKeyMiddleware);
+app.use(express.static('assets'));
 
 // API Routers
 app.use(process.env.API_URL, router.userRouter);
