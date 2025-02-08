@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+
 const userProfileSchema = new Schema({
   name: {
     type: String,
@@ -47,7 +48,6 @@ const userProfileSchema = new Schema({
       },
     },
   ],
-
   program: {
     type: String,
     required: [true, "Program is a required field!"],
@@ -64,11 +64,6 @@ const userProfileSchema = new Schema({
       "Interests must lie in the range of 5 to 20!",
     ],
   },
-  bio: {
-    type: String,
-    default: "",
-  },
-
   relationshipGoals: {
     goal: {
       type: String,
@@ -87,15 +82,8 @@ const userProfileSchema = new Schema({
     type: String,
     required: [true, "Public Key is a required field!"],
   },
-  // shuffleOrder: {
-  //   type: [Number],
-  //   default: undefined,
-  // },
-  // lastShuffle: {
-  //   type: Number,
-  //   default: undefined,
-  // },
 });
+
 function interestArrayLimit(val) {
   return val.length <= 20 && val.length >= 5;
 }
