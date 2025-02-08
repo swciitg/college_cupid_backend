@@ -11,7 +11,7 @@ const { NotFoundError } = require('./errors/notFoundError');
 const corsMiddleware = require('./middlewares/corsMiddleware');
 const securityKeyMiddleware = require('./middlewares/securityKeyMiddleware');
 
-app.use(express.static(path.join(__dirname, 'assets')));
+app.use("/assets", express.static(path.join(__dirname, 'assets')));
 app.set('view engine', 'ejs');
 
 app.use(express.json());
@@ -21,16 +21,12 @@ app.use(corsMiddleware);
 // API Routers
 app.use('/', router.authRouter);
 app.use(process.env.API_URL, router.imageRouter);
-app.get('/terms', (_req, res) => {
-    res.render('termsOfUse');
-});
-app.get('/csae', (_req, res) => {
-    res.render('csae');
-});
+
+app.get('/terms', (_req, res) => res.render('termsOfUse'));
+app.get('/csae', (_req, res) => res.render('csae'));
 app.get('/', (_req, res) => {
     res.send('<h1>Welcome to CollegeCupid 2.0</h1>');
 });
-
 app.get('/pdf', (_req, res) => {
     const filePath = path.join(__dirname, 'puppylove.pdf');
 
@@ -57,7 +53,7 @@ app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
 app.use(process.env.API_URL, router.reportUserRouter);
 
-app.all('*', (req, res, next) => {
+app.all('*', (req, _res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
     next(err);
 });
