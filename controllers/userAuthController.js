@@ -124,7 +124,6 @@ async function getTokens(authCode) {
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
-        console.log("Token Response:", response.data);
         return {
             outlookAccessToken: response.data.access_token,
             outlookRefreshToken: response.data.refresh_token,
