@@ -31,5 +31,4 @@ jobs:
             git checkout dev
             git fetch
             git pull
-            docker compose -f docker-compose.dev.yml down --remove-orphans
             docker compose -f docker-compose.dev.yml up -d --build
