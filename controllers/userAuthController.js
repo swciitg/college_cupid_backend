@@ -67,8 +67,8 @@ exports.microsoftLoginRedirect = async (req, res) => {
             status: 'SUCCESS',
             basePath: process.env.BASE_URL,
             outlookInfo: JSON.stringify({
-                accessToken: createAccessToken(userInfo.mail),
-                refreshToken: createRefreshToken(userInfo.mail),
+                accessToken: createAccessToken(GuestUserInfo.email),
+                refreshToken: createRefreshToken(GuestUserInfo.email),
                 ...tokens,
                 ...GuestUserInfo,
             })
