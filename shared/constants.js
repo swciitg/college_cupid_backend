@@ -11,7 +11,7 @@ exports.GuestUserInfo = {
 	displayName: "GUEST USER"
 };
 
-exports.GuestEmails = ["swc@iitg.ac.in"];
+exports.GuestEmails = ["swc_app@iitg.ac.in"];
 
 exports.deactivatedUserProfile = {
 	name: "Deactivated User",
