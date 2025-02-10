@@ -62,14 +62,13 @@ exports.microsoftLoginRedirect = async (req, res) => {
     );
     const userInfo = userResp.data;
 
-    if (GuestEmails.includes(userInfo.mail)) {
+    if (GuestEmails.includes(userInfo.mail) || (`${userInfo.mail}`).endsWith("@alumni.iitg.ac.in")) {
         return res.render('authSuccessView.ejs', {
             status: 'SUCCESS',
             basePath: process.env.BASE_URL,
             outlookInfo: JSON.stringify({
                 accessToken: createAccessToken(userInfo.mail),
                 refreshToken: createRefreshToken(userInfo.mail),
-                email: userInfo.mail,
                 ...tokens,
                 ...GuestUserInfo,
             })

@@ -2,7 +2,7 @@ const PersonalInfo = require("../models/PersonalInfo");
 const UserProfile = require("../models/UserProfile");
 const BlockedUserList = require("../models/BlockedUserList");
 const DeactivatedUsers = require("../models/DeactivatedUsers");
-const { deactivatedUserProfile } = require("../shared/constants");
+const { deactivatedUserProfile, GuestEmails, GuestUserInfo } = require("../shared/constants");
 
 function sortByPositions(positions, objects) {
   let max = Math.max(...positions);
@@ -170,7 +170,10 @@ exports.getUserProfilePages = async (req, res, next) => {
   const blockedUsers = await BlockedUserList.findOne({ email: req.email });
   if (blockedUsers) {
     userProfiles = userProfiles.filter(
-      (profile) => !blockedUsers.blockedUsers.includes(profile.email)
+      (profile) => !(
+        blockedUsers.blockedUsers.includes(profile.email) 
+        || profile.email === GuestUserInfo.email
+      )
     );
   }
   const deactivatedUsers = await DeactivatedUsers.find({});
