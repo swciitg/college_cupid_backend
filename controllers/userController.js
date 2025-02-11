@@ -170,10 +170,7 @@ exports.getUserProfilePages = async (req, res, next) => {
   const blockedUsers = await BlockedUserList.findOne({ email: req.email });
   if (blockedUsers) {
     userProfiles = userProfiles.filter(
-      (profile) => !(
-        blockedUsers.blockedUsers.includes(profile.email) 
-        || profile.email === GuestUserInfo.email
-      )
+      (profile) => !blockedUsers.blockedUsers.includes(profile.email)
     );
   }
   const deactivatedUsers = await DeactivatedUsers.find({});
@@ -186,6 +183,14 @@ exports.getUserProfilePages = async (req, res, next) => {
       (profile) => !deactivatedEmails.includes(profile.email)
     );
   }
+
+  userProfiles = userProfiles.filter(
+    (profile) => !(
+      GuestEmails.includes(profile.email) 
+      || (`${profile.email}`).endsWith("@alumni.iitg.ac.in")
+    )
+  );
+
   const computeDifference = (targetpersonalityType) => {
     let diff = 0;
     for (let i = 0; i < 4; i++) {

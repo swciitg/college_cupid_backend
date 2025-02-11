@@ -6,7 +6,6 @@ exports.AdminList = [
 ];
 
 exports.GuestUserInfo = {
-	email: "guest@iitg.ac.in",
 	rollNumber: "200000000",
 	displayName: "GUEST USER"
 };
