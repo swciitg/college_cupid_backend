@@ -10,13 +10,19 @@ const router = require('./routers/router');
 const { NotFoundError } = require('./errors/notFoundError');
 const corsMiddleware = require('./middlewares/corsMiddleware');
 const securityKeyMiddleware = require('./middlewares/securityKeyMiddleware');
+const cors = require('cors');
 
 app.use("/assets", express.static(path.join(__dirname, 'assets')));
 app.set('view engine', 'ejs');
 
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(corsMiddleware);
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+}));
 
 // API Routers
 app.use('/', router.authRouter);

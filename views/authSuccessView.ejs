@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,16 +33,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&family=Sedgwick+Ave&display=swap" rel="stylesheet">
 </head>
-
 <body>
     <div class="splash-text">
         <img src="<%= basePath %>/assets/text_icon.png" alt="CollegeCupid" style="max-width: 80%; height: auto;">
         <!-- <div>CollegeCupid</div> -->
         <div style="height: 10px;"></div>
-        <% if(status==="ERROR"){ %> <p> Oops!! Something went wrong :( </p> <% } else {%> <p> Successfully signed in. </p><%}%>
+        <% if(status==="ERROR"){ %>
+            <p>Oops!! Something went wrong :(</p>
+            <p>Please try again</p>
+        <% } else {%>
+            <p>Successfully signed in.</p>
+            <p>Redirecting to College Cupid...</p>
+        <%}%>
         <p id="status" hidden><%= status %></p>
         <p id="outlookInfo" hidden><%= outlookInfo %></p>
     </div>
-</body>
 
+    <!-- In your authSuccessView.ejs, replace the script section with: -->
+    <script>
+        setTimeout(() => {
+            const status = '<%= status %>';
+            // Use JSON.stringify in the template to ensure proper escaping
+            const outlookInfo = <%- JSON.stringify(outlookInfo) %>;
+
+            // Create URL parameters
+            const params = new URLSearchParams();
+            params.append('status', status);
+            params.append('outlookInfo', JSON.stringify(outlookInfo));
+
+            // Redirect to React app
+            window.location.href = 'http://localhost:3000/auth/callback?' + params.toString();
+        }, 2000);
+    </script>
+</body>
 </html>
