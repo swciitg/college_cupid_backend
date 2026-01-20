@@ -153,7 +153,8 @@ exports.reactivateUser = async (req, res, next) => {
 
 exports.getUserProfilePages = async (req, res, next) => {
   const { name, ...filters } = req.query;
-  const newFilters = { name: { $regex: name, $options: "i" }, ...filters };
+  let newFilters = { name: { $regex: name, $options: "i" }, ...filters };
+  newFilters = {}
 
   const currUser = await UserProfile.findOne({ email: req.email });
   if (!currUser || !currUser.personalityType) {
