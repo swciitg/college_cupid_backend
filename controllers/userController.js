@@ -186,7 +186,7 @@ exports.getUserProfilePages = async (req, res, next) => {
 
   userProfiles = userProfiles.filter(
     (profile) => !(
-      GuestEmails.includes(profile.email) 
+      GuestEmails.includes(profile.email)
       || (`${profile.email}`).endsWith("@alumni.iitg.ac.in")
     )
   );
@@ -257,6 +257,7 @@ exports.updateUserProfile = async (req, res, next) => {
 exports.postPersonalInfo = async (req, res, next) => {
   var info = req.body;
   info.email = req.email;
+  console.log(info)
 
   const user = await PersonalInfo.findOne({ email: req.email });
   if (user) {

@@ -11,11 +11,11 @@ const PersonalInfo = require("../models/PersonalInfo.js");
 // multer config
 
 
-userRouter.delete('/user/remove/:email', authenticateToken, 
+userRouter.delete('/user/remove/:email', authenticateToken,
     verifyAdmin, asyncErrorHandler(userController.removeUserFromDB));
-userRouter.delete('/user/removeAll', authenticateToken, 
+userRouter.delete('/user/removeAll', authenticateToken,
     verifyAdmin, asyncErrorHandler(userController.removeAllUsersFromDB));
-userRouter.get('/user/all', authenticateToken, 
+userRouter.get('/user/all', authenticateToken,
     verifyAdmin, asyncErrorHandler(userController.listAllUsers));
 userRouter.post('/user/profile', authenticateToken,
     asyncErrorHandler(userController.createUserProfile)
@@ -23,23 +23,23 @@ userRouter.post('/user/profile', authenticateToken,
 userRouter.put('/user/profile', authenticateToken,
     asyncErrorHandler(userController.updateUserProfile)
 );
-userRouter.get('/user/profile/email/:email', authenticateToken, 
+userRouter.get('/user/profile/email/:email', authenticateToken,
     asyncErrorHandler(userController.getUserProfile)
 );
-userRouter.delete('/user/profile/deactivate', authenticateToken, 
+userRouter.delete('/user/profile/deactivate', authenticateToken,
     asyncErrorHandler(userController.deactivateUser)
 );
-userRouter.put('/user/profile/reactivate', authenticateToken, 
+userRouter.put('/user/profile/reactivate', authenticateToken,
     asyncErrorHandler(userController.reactivateUser)
 );
-userRouter.get('/user/profile/page/:pageNumber', authenticateToken, 
+userRouter.get('/user/profile/page/:pageNumber', authenticateToken,
     asyncErrorHandler(userController.getUserProfilePages)
 );
 
-userRouter.post('/user/personalInfo', authenticateToken, 
+userRouter.post('/user/personalInfo', authenticateToken,
     asyncErrorHandler(userController.postPersonalInfo)
 );
-userRouter.get('/user/personalInfo', authenticateToken, 
+userRouter.get('/user/personalInfo', authenticateToken,
     asyncErrorHandler(userController.getPersonalInfo)
 );
 
