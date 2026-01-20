@@ -158,7 +158,7 @@ exports.getUserProfilePages = async (req, res, next) => {
   const currUser = await UserProfile.findOne({ email: req.email });
   if (!currUser || !currUser.personalityType) {
     return res
-      .status(400)
+      .status(400)      
       .json({ success: false, message: "User personalityType not found" });
   }
   const currentpersonalityType = currUser.personalityType.toUpperCase();
@@ -190,52 +190,117 @@ exports.getUserProfilePages = async (req, res, next) => {
       || (`${profile.email}`).endsWith("@alumni.iitg.ac.in")
     )
   );
+  const shuffleArray = (arr) => {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+};
+
+const pickWeightedArray = (groups, weights) => {
+  const available = Object.keys(weights).filter(
+    (k) => groups[k].length > 0
+  );
+
+  if (available.length === 0) return null;
+
+  const totalWeight = available.reduce(
+    (sum, k) => sum + weights[k],
+    0
+  );
+
+  let r = Math.random() * totalWeight;
+
+  for (const k of available) {
+    r -= weights[k];
+    if (r <= 0) return k;
+  }
+
+  return available[available.length - 1];
+};
 
   const computeDifference = (targetpersonalityType) => {
-    let diff = 0;
-    for (let i = 0; i < 4; i++) {
-      if (currentpersonalityType[i] !== targetpersonalityType[i]) diff++;
-    }
-    return diff;
-  };
+  let diff = 0;
+  for (let i = 0; i < 4; i++) {
+    if (currentpersonalityType[i] !== targetpersonalityType[i]) diff++;
+  }
+  return diff;
+};
 
-  const categorizedUsers = {
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-  };
+const categorizedUsers = {
+  0: [],
+  1: [],
+  2: [],
+  3: [],
+  4: [],
+}; //for more no of arrays 
 
-  userProfiles.forEach((user) => {
-    if (!user.personalityType) return;
-    const diff = computeDifference(user.personalityType.toUpperCase());
-    categorizedUsers[diff].push(user);
-  });
+userProfiles.forEach((user) => {
+  if (!user.personalityType) return;
+  const diff = computeDifference(user.personalityType.toUpperCase());
+  categorizedUsers[diff].push(user);
+});
+const priorityUsers = []; // 🔴 replace later
+let sincePriority = 0;
+let nextPriorityGap = Math.floor(Math.random() * 3) + 3; // 3–5
 
-  // Shuffle within each category
-  // Object.values(categorizedUsers).forEach(group => shuffleArray(group));
+const orderedUsers = [];
+const weights = {
+  0: 60,
+  1: 25,
+  2: 10,
+};
 
-  // Create priority ordered list
-  const orderedUsers = [
-    ...categorizedUsers[0],
-    ...categorizedUsers[1],
-    ...categorizedUsers[2],
-    ...categorizedUsers[3],
-    ...categorizedUsers[4],
-  ];
+const working = {
+  0: [...categorizedUsers[0]],
+  1: [...categorizedUsers[1]],
+  2: [...categorizedUsers[2]],
+};
+while (
+  working[0].length ||
+  working[1].length ||
+  working[2].length
+) {
+  if (
+    priorityUsers.length > 0 &&
+    sincePriority >= nextPriorityGap
+  ) {
+    orderedUsers.push(priorityUsers.shift());
+    sincePriority = 0;
+    nextPriorityGap = Math.floor(Math.random() * 3) + 3;
+    continue;
+  }
 
-  // Pagination
-  const pageNumber = parseInt(req.params.pageNumber) || 0;
-  const startIndex = pageNumber * 10;
-  const endIndex = startIndex + 10;
-  const paginatedUsers = orderedUsers.slice(startIndex, endIndex);
+  const key = pickWeightedArray(working, weights);
+  if (key === null) break;
 
-  res.json({
-    success: true,
-    totalCount: paginatedUsers.length,
-    users: paginatedUsers,
-  });
+  orderedUsers.push(working[key].shift());
+  sincePriority++;
+}
+
+if (categorizedUsers[3].length > 0) {
+  const arr3 = [...categorizedUsers[3]];
+  shuffleArray(arr3);
+  orderedUsers.push(...arr3);
+}
+
+if (categorizedUsers[4].length > 0) {
+  const arr4 = [...categorizedUsers[4]];
+  shuffleArray(arr4);
+  orderedUsers.push(...arr4);
+}
+
+const pageNumber = parseInt(req.params.pageNumber, 10) || 0;
+const pageSize = 10;
+const startIndex = pageNumber * pageSize;
+const endIndex = startIndex + pageSize;
+const paginatedUsers = orderedUsers.slice(startIndex, endIndex);
+
+res.json({
+  success: true,
+  totalCount: orderedUsers.length,
+  users: paginatedUsers,
+});
 };
 
 exports.updateUserProfile = async (req, res, next) => {
