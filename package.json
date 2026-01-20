@@ -14,6 +14,7 @@
     "@azure/msal-node": "^2.2.0",
     "argon2": "^0.44.0",
     "axios": "^1.7.9",
+    "bad-words": "^4.0.0",
     "college_cupid": "file:",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
