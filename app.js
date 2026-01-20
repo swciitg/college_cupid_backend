@@ -44,8 +44,8 @@ app.get('/pdf', (_req, res) => {
         fileStream.pipe(res);
     });
 });
-
-//app.use(securityKeyMiddleware);
+ 
+app.use(securityKeyMiddleware);
 
 // API Routers
 app.use(process.env.API_URL, router.userRouter);

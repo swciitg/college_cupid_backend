@@ -9,4 +9,4 @@ matchRouter.post('/match/find', authenticateToken, verifyAdmin, asyncErrorHandle
 matchRouter.delete('/match/clear', authenticateToken, verifyAdmin, asyncErrorHandler(matchController.clearMatches));
 matchRouter.get('/match', authenticateToken, asyncErrorHandler(matchController.getMatches));
 
-module.exports = {matchRouter};
+module.exports = {matchRouter}; 
