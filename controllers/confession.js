@@ -1,7 +1,7 @@
 const argon2 = require('argon2');
 const Confessions = require("../models/confession.js");
 const { CONFESSIONS_TYPE_ENUM , CONFESSIONS_REPORTS_ENUM } = require("../shared/constants.js");
-const {DetectToxicity , RemoveBadWords} = require("../utils/toxicityCheck.js");
+const {DetectToxicity , RemoveBadWords} = require("../utils/profanityCheck.js");
 const UserProfile = require('../models/UserProfile.js');
 
 exports.getConfession = async (req, res) => {
