@@ -23,12 +23,12 @@ const ConfessionsSchema = new Schema({
             }
         }
     ],
-    // replies : [
-    //     {
-    //         type : Schema.Types.ObjectId,
-    //         ref : 'replies'
-    //     }
-    // ] , 
+    replies : [
+        {
+            type : Schema.Types.ObjectId,
+            ref : 'Reply'
+        }
+    ] , 
     typeOfConfession : {
         type : String ,
         enum : CONFESSIONS_TYPE_ENUM,
@@ -45,7 +45,7 @@ const ConfessionsSchema = new Schema({
                 enum : CONFESSIONS_REPORTS_ENUM 
             } , 
             user : {
-                type:  mongoose.Schema.Types.ObjectId,
+                type:  Schema.Types.ObjectId,
                 ref: "UserProfile",
                 required: true
             }
