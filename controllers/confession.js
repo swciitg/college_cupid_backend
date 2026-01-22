@@ -88,7 +88,7 @@ exports.createConfession = async(req, res) => {
     */
     const { encryptedEmail, text, typeOfConfession } = req.body;
 
-    if (!encryptedEmail) {
+    if (typeof encryptedEmail !== "string" || encryptedEmail.trim().length === 0) {
         return res.status(400).json({
             success: false,
             message: "Encrypted email is required"
@@ -342,7 +342,7 @@ exports.deleteConfession = async(req, res) => {
     const { id } = req.params;
     const { encryptedEmail } = req.body;
 
-    if (!id || !encryptedEmail) {
+    if (!id || typeof encryptedEmail !== "string" || encryptedEmail.trim().length === 0) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
