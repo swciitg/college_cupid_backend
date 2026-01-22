@@ -1,8 +1,8 @@
-const argon2 = require('argon2');
 const Confessions = require("../models/confession.js");
 const { CONFESSIONS_TYPE_ENUM , CONFESSIONS_REPORTS_ENUM } = require("../shared/constants.js");
 const {DetectToxicity , RemoveBadWords} = require("../utils/profanityCheck.js");
 const UserProfile = require('../models/UserProfile.js');
+const { GenerateHash, VerifyHash } = require('../utils/hashing.js');
 
 exports.getConfession = async (req, res) => {
     /** 
@@ -59,17 +59,11 @@ exports.getMyConfession = async(req, res) => {
      */
     const { encryptedEmail } = req.body;
 
-    const allConfessions = await Confessions.find().sort({ createdAt: -1 });
+    const hashedEmail = await GenerateHash(encryptedEmail);
 
-    const myConfessions = [];
-
-    for (const confession of allConfessions) {
-        const match = await argon2.verify(
-        confession.encryptedEmail,
-        encryptedEmail
-        );
-        if (match) myConfessions.push(confession);
-    }
+    const myConfessions = await Confessions
+                                .find({ encryptedEmail : hashedEmail })
+                                .sort({createdAt : -1});
 
     res.status(200).json({
         success: true,
@@ -129,7 +123,7 @@ exports.createConfession = async(req, res) => {
 
     const cleanedText = RemoveBadWords(text);
 
-    const hashedEmail = await argon2.hash(encryptedEmail);
+    const hashedEmail = await GenerateHash(encryptedEmail);
 
     const confession = await Confessions.create({
         encryptedEmail: hashedEmail,
@@ -357,7 +351,7 @@ exports.deleteConfession = async(req, res) => {
       return res.status(404).json({ message: "Confession not found" });
     }
 
-    const isMatch = await argon2.verify(
+    const isMatch = await VerifyHash(
       confession.encryptedEmail,
       encryptedEmail
     );
