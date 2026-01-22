@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const userController = require('../controllers/userController.js');
+const voiceController = require("../controllers/voiceController.js");
 const userRouter = Router();
 const multer = require("multer");
 const { authenticateToken, verifyAdmin } = require('../middlewares/jwtAuthHandler.js');
@@ -41,6 +42,16 @@ userRouter.post('/user/personalInfo', authenticateToken,
 );
 userRouter.get('/user/personalInfo', authenticateToken, 
     asyncErrorHandler(userController.getPersonalInfo)
+);
+
+userRouter.post(
+  "/user/upload-temp", authenticateToken,
+  asyncErrorHandler(voiceController.uploadTempVoice)
+);
+
+userRouter.post(
+    "/user/save-voice", authenticateToken,
+    asyncErrorHandler(voiceController.saveVoiceRecording)
 );
 
 module.exports = { userRouter };

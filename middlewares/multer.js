@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     const userId = req.user?._id || "guest";
     const timestamp = Date.now();
     const random = Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
+    const ext = path.extname(file.originalname) || ".webm";
 
     cb(null, `${userId}_${timestamp}_${random}${ext}`);
   },
