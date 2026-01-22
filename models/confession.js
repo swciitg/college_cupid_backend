@@ -1,4 +1,4 @@
-const { Schema, model, default: mongoose } = require('mongoose');
+const { Schema, model } = require('mongoose');
 const { CONFESSIONS_REPORTS_ENUM, CONFESSIONS_TYPE_ENUM} = require("../shared/constants.js")
 
 const ConfessionsSchema = new Schema({
@@ -17,7 +17,7 @@ const ConfessionsSchema = new Schema({
                 required: true
             },
             user: {
-                type:  mongoose.Schema.Types.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: "UserProfile",
                 required: true
             }
@@ -25,7 +25,7 @@ const ConfessionsSchema = new Schema({
     ],
     // replies : [
     //     {
-    //         type :  mongoose.Schema.Types.ObjectId,
+    //         type : Schema.Types.ObjectId,
     //         ref : 'replies'
     //     }
     // ] , 
