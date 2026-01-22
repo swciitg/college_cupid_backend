@@ -53,9 +53,11 @@ exports.getConfession = async (req, res) => {
 
 exports.getMyConfession = async(req, res) => {
     /**
-     * GET request - expects the encrypted email to find and return the confessions made by this user's email
+     * POST request - expects the encrypted email to find and return the confessions made by this user's email
+     * /confessions/self
+     * body has the encrypted email
      */
-    const { encryptedEmail } = req.params;
+    const { encryptedEmail } = req.body;
 
     const allConfessions = await Confessions.find().sort({ createdAt: -1 });
 
@@ -167,7 +169,7 @@ exports.reactToConfession = async(req, res) => {
     const user = await UserProfile.findOne({ email:userEmail }).select("_id email");
     if(!user) {
         return res.json({
-            success: true ,
+            success: false ,
             message : "Email not valid"
         });
     } 
@@ -221,7 +223,7 @@ exports.removeReaction = async(req, res) => {
     const user = await UserProfile.findOne({ email:userEmail }).select("_id email");
     if(!user) {
         return res.json({
-            success: true ,
+            success: false ,
             message : "Email not valid"
         });
     } 
