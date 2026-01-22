@@ -352,3 +352,32 @@ exports.getPersonalInfo = async (req, res, next) => {
     personalInfo: user,
   });
 };
+
+exports.uploadVoice = async (req, res) => {
+  try {
+    if(!req.file) {
+      return res.status(400).json({ error: "No audio uploaded" });
+    }
+
+    const { question } = req.body;
+    const fileUrl = `/uploads/voice/${req.file.filename}`;
+    const recording = {
+      question: question || "",
+      answer: fileUrl,
+    };
+
+    await User.updateOne(
+      { _id: req.user._id },
+      { $push: { voiceRecordings: recording } },
+    );
+
+    return res.json({
+      success: true,
+      recording,
+      message: "Voice uploaded & saved",
+    });
+  } catch(err) {
+    console.error("VOICE UPLOAD ERROR:", err);
+    return res.status(500).json({ error: err.message });
+  }
+}
