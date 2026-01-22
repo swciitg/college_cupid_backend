@@ -45,7 +45,12 @@ app.get('/pdf', (_req, res) => {
     });
 });
  
-app.use(securityKeyMiddleware);
+// app.use(securityKeyMiddleware);
+
+app.use(
+  "/uploads/voice",
+  express.static(path.join(process.cwd(), "uploads/voice")),
+);
 
 // API Routers
 app.use(process.env.API_URL, router.userRouter);
