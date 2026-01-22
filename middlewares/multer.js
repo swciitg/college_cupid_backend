@@ -3,15 +3,15 @@ const path = require("path");
 const fs = require("fs");
 
 // create temp directory if not exists
-const tempDir = path.join(process.cwd(), "uploads", "temp");
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
+const voiceDir = path.join(process.cwd(), "uploads", "voice");
+if (!fs.existsSync(voiceDir)) {
+  fs.mkdirSync(voiceDir, { recursive: true });
 }
 
 // multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, tempDir);
+    cb(null, voiceDir);
   },
   filename: (req, file, cb) => {
     const userId = req.user?._id || "guest";

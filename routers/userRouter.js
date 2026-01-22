@@ -8,6 +8,7 @@ const uuid = require('uuid');
 const asyncErrorHandler = require("../handlers/asyncErrorHandler.js");
 const compressImage = require("../middlewares/compressImage.js");
 const PersonalInfo = require("../models/PersonalInfo.js");
+const upload = require("../middlewares/multer.js");
 
 // multer config
 
@@ -44,14 +45,8 @@ userRouter.get('/user/personalInfo', authenticateToken,
     asyncErrorHandler(userController.getPersonalInfo)
 );
 
-userRouter.post(
-  "/user/upload-temp", authenticateToken,
-  asyncErrorHandler(voiceController.uploadTempVoice)
-);
-
-userRouter.post(
-    "/user/save-voice", authenticateToken,
-    asyncErrorHandler(voiceController.saveVoiceRecording)
-);
+userRouter.post('/user/voice/upload', authenticateToken, 
+    upload.single('voice'), voiceController.uploadVoice
+)
 
 module.exports = { userRouter };

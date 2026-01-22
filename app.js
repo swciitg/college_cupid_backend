@@ -47,8 +47,9 @@ app.get('/pdf', (_req, res) => {
  
 // app.use(securityKeyMiddleware);
 
-app.use(process.env.API_URL, 
-    express.static(path.join(process.cwd(), "uploads", "voice"))
+app.use(
+  "/uploads/voice",
+  express.static(path.join(process.cwd(), "uploads/voice")),
 );
 
 // API Routers
