@@ -32,9 +32,6 @@ confessionRouter.get('/confession/admin/reported' , authenticateToken , verifyAd
 confessionRouter.delete('/confession/admin/:id' , authenticateToken , verifyAdmin , 
     asyncErrorHandler(confessionController.deleteConfessionAdmin)
 );
-confessionRouter.delete('/confession/delete/:id' , authenticateToken , verifyAdmin , 
-    asyncErrorHandler(confessionController.deleteConfession)
-);
 
 
 module.exports = {confessionRouter};

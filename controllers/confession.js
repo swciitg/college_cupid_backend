@@ -320,7 +320,7 @@ exports.getReportedConfession = async (req, res) => {
                 { $size: "$reports" }, 10
             ] 
         }
-    }).select("-encryptedEmail -reactions");
+    }).select("-encryptedEmail -reactions -replies");
 
     return res.json({
         success: true,
@@ -362,7 +362,10 @@ exports.deleteConfession = async(req, res) => {
 
     await Confessions.deleteOne({ _id: id });
 
-    return res.status(200).json({ message: "Confession deleted successfully" });
+    return res.status(200).json({ 
+        success:  true,
+        message: "Confession deleted successfully"
+    });
 }
 
 exports.deleteConfessionAdmin = async(req, res) => {
