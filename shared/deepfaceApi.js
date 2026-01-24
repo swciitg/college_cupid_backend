@@ -8,7 +8,7 @@ exports.callDeepFaceAPI = async (imgPath) => {
   form.append("img", fs.createReadStream(imgPath));
  
   const res = await axios.post(
-    "http://127.0.0.1:8000/face/verify/",
+    process.env.DEEPFACE_API_URL,
     form,
     { headers: form.getHeaders() }
   );
