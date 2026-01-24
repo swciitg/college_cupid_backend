@@ -1,4 +1,4 @@
-const { Schema, model, default: mongoose } = require('mongoose');
+const { Schema, model } = require('mongoose');
 const { CONFESSIONS_REPORTS_ENUM, CONFESSIONS_TYPE_ENUM} = require("../shared/constants.js")
 
 const ConfessionsSchema = new Schema({
@@ -12,23 +12,24 @@ const ConfessionsSchema = new Schema({
     } , 
     reactions: [
         {
+            _id : false,
             reaction: {
                 type: String,
                 required: true
             },
             user: {
-                type:  mongoose.Schema.Types.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: "UserProfile",
                 required: true
             }
         }
     ],
-    // replies : [
-    //     {
-    //         type :  mongoose.Schema.Types.ObjectId,
-    //         ref : 'replies'
-    //     }
-    // ] , 
+    replies : [
+        {
+            type : Schema.Types.ObjectId,
+            ref : 'Reply'
+        }
+    ] , 
     typeOfConfession : {
         type : String ,
         enum : CONFESSIONS_TYPE_ENUM,
@@ -40,12 +41,13 @@ const ConfessionsSchema = new Schema({
     } ,
     reports : [
         {
+            _id : false,
             category : {
                 type : String,
                 enum : CONFESSIONS_REPORTS_ENUM 
             } , 
             user : {
-                type:  mongoose.Schema.Types.ObjectId,
+                type:  Schema.Types.ObjectId,
                 ref: "UserProfile",
                 required: true
             }

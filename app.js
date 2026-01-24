@@ -47,14 +47,20 @@ app.get('/pdf', (_req, res) => {
  
 app.use(securityKeyMiddleware);
 
+app.use(
+  "/uploads/voice",
+  express.static(path.join(process.cwd(), "uploads/voice")),
+);
+
 // API Routers
 app.use(process.env.API_URL, router.userRouter);
 app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
 app.use(process.env.API_URL, router.reportUserRouter);
 app.use(process.env.API_URL, router.faceverifyRouter);
+app.use(process.env.API_URL, router.replyRouter);
+app.use(process.env.API_URL, router.confessionRouter);
 
-app.use(process.env.API_URL, router.confessionReplyRouter);
 
 app.all('*', (req, _res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);

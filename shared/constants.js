@@ -22,7 +22,7 @@ exports.deactivatedUserProfile = {
 		display: false,
 	},
 	relationshipGoals: {
-		goal: "LONGTERMPARTNER",
+		goal: "LONG TERM",
 		display: false,
 	},
 	profilePicUrls: [

@@ -5,10 +5,10 @@ const { authenticateToken, verifyAdmin } = require('../middlewares/jwtAuthHandle
 
 const confessionRouter = express.Router();
 
-confessionRouter.get('/confession/?page=&type=' , authenticateToken , 
+confessionRouter.get('/confession' , authenticateToken , 
     asyncErrorHandler(confessionController.getConfession)
 );
-confessionRouter.get('/confession/:encryptedEmail' , authenticateToken , 
+confessionRouter.post('/confession/self' , authenticateToken , 
     asyncErrorHandler(confessionController.getMyConfession)
 );
 confessionRouter.post('/confession' , authenticateToken , 
@@ -31,9 +31,6 @@ confessionRouter.get('/confession/admin/reported' , authenticateToken , verifyAd
 );
 confessionRouter.delete('/confession/admin/:id' , authenticateToken , verifyAdmin , 
     asyncErrorHandler(confessionController.deleteConfessionAdmin)
-);
-confessionRouter.delete('/confession/delete/:id' , authenticateToken , verifyAdmin , 
-    asyncErrorHandler(confessionController.deleteConfession)
 );
 
 
