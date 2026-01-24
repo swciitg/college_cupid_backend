@@ -34,10 +34,8 @@ exports.getConfession = async (req, res) => {
         });
     }
 
-    const maxPage = Math.floor(totalConfessions / LIMIT);
-    if (page > maxPage) {
-        page = page % (maxPage + 1);
-    }
+    const maxPage = Math.ceil(totalConfessions / LIMIT);
+    page = page % maxPage;
 
     const confessions = await Confessions.find(filter)
         .select("-encryptedEmail -reports -replies")
