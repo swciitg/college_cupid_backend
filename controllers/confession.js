@@ -2,7 +2,7 @@ const Confessions = require("../models/confession.js");
 const { CONFESSIONS_TYPE_ENUM , CONFESSIONS_REPORTS_ENUM } = require("../shared/constants.js");
 const {DetectToxicity , RemoveBadWords} = require("../utils/profanityCheck.js");
 const UserProfile = require('../models/UserProfile.js');
-const { GenerateHash, VerifyHash } = require('../utils/hashing.js');
+const { GenerateHash } = require('../utils/hashing.js');
 
 exports.getConfession = async (req, res) => {
     /** 
@@ -21,7 +21,7 @@ exports.getConfession = async (req, res) => {
     const LIMIT = 20;
 
     let filter = {};
-    if (CONFESSIONS_TYPE_ENUM.includes(type)) {
+    if (typeof type === "string" && CONFESSIONS_TYPE_ENUM.includes(type.trim()) && type.trim().length > 0) {
         filter.typeOfConfession = type;
     }
 
@@ -59,6 +59,13 @@ exports.getMyConfession = async(req, res) => {
      */
     const { encryptedEmail } = req.body;
 
+    if(typeof encryptedEmail !== "string" || encryptedEmail.trim().length === 0) {
+        return res.json({
+            success: false ,
+            message: "Missing valid fields"
+        })
+    }
+
     const hashedEmail = await GenerateHash(encryptedEmail);
 
     const myConfessions = await Confessions
@@ -86,7 +93,7 @@ exports.createConfession = async(req, res) => {
     * 
     * next upgrades - inclusion of songs used
     */
-    const { encryptedEmail, text, typeOfConfession } = req.body;
+    let { encryptedEmail, text, typeOfConfession } = req.body;
 
     if (typeof encryptedEmail !== "string" || encryptedEmail.trim().length === 0) {
         return res.status(400).json({
@@ -150,59 +157,68 @@ exports.reactToConfession = async(req, res) => {
      * else push the new reaction
      */ 
     const { id } = req.params;
-    
     const { reaction } = req.body;
-    if(typeof reaction !== "string" || reaction.trim().length === "") {
+    
+    if(typeof reaction !== "string" || reaction.trim().length === 0) {
         return res.json({
             success: false,
-            message : "Reaction is mandatory field"
+            message: "Reaction is mandatory field"
         });
     }
     
     const userEmail = req.email;
-    const user = await UserProfile.findOne({ email:userEmail }).select("_id email");
+    const user = await UserProfile.findOne({ email: userEmail }).select("_id email");
     if(!user) {
         return res.json({
-            success: false ,
-            message : "Email not valid"
+            success: false,
+            message: "Email not valid"
         });
-    } 
+    }
 
-    const findConfession = await Confessions.findById(id).select("-encryptedEmail -reports -replies");
-    if(!findConfession) {
+    let findConfession = await Confessions.findOneAndUpdate(
+        { 
+            _id: id,
+            "reactions.user": user._id 
+        },
+        { 
+            $set: { "reactions.$.reaction": reaction }
+        },
+        { 
+            new: true,
+            select: "-encryptedEmail -reports -replies"
+        }
+    );
+
+    if (!findConfession) {
+        findConfession = await Confessions.findByIdAndUpdate(
+            id,
+            { 
+                $push: { 
+                    reactions: {
+                        user: user._id,
+                        reaction
+                    }
+                }
+            },
+            { 
+                new: true,
+                select: "-encryptedEmail -reports -replies"
+            }
+        );
+    }
+
+    if (!findConfession) {
         return res.json({
             success: false,
-            message : "Confession Not Found"
+            message: "Confession Not Found"
         });
     }
-
-    let replaced = false;
-    findConfession.reactions = findConfession.reactions.map(reactionObj => {
-        if (reactionObj.user.toString() === user._id.toString()) {
-            replaced = true;
-            return {
-                user: user._id,
-                reaction
-            };
-        }
-        return reactionObj;
-    });
-
-    if (!replaced) {
-        findConfession.reactions.push({
-            user: user._id,
-            reaction
-        });
-    }
-
-    await findConfession.save();
 
     return res.json({
         success: true,
         message: "Reaction Successful",
         data: findConfession
     });
-
 }
 
 exports.removeReaction = async(req, res) => {
@@ -214,42 +230,40 @@ exports.removeReaction = async(req, res) => {
     const { id } = req.params;
     
     const userEmail = req.email;
-    const user = await UserProfile.findOne({ email:userEmail }).select("_id email");
+    const user = await UserProfile.findOne({ email: userEmail }).select("_id email");
     if(!user) {
         return res.json({
-            success: false ,
-            message : "Email not valid"
-        });
-    } 
-
-    const findConfession = await Confessions.findById(id).select("-encryptedEmail -reports -replies");
-    if(!findConfession) {
-        return res.json({
             success: false,
-            message : "Confession Not Found"
+            message: "Email not valid"
         });
     }
-    
-    const initialLength = findConfession.reactions.length;
-    findConfession.reactions = findConfession.reactions.filter(
-        reactionObj => reactionObj.user.toString() !== user._id.toString()
+
+    const findConfession = await Confessions.findByIdAndUpdate(
+        id,
+        { 
+            $pull: { 
+                reactions: { user: user._id }
+            }
+        },
+        { 
+            new: true,
+            select: "-encryptedEmail -reports -replies"
+        }
     );
 
-    if (findConfession.reactions.length === initialLength) {
+    if (!findConfession) {
         return res.json({
             success: false,
-            message: "No Reaction found"
+            message: "Confession Not Found"
         });
     }
 
-    await findConfession.save();
 
     return res.json({
-        success: true ,
-        message : "Reaction removed successfully",
+        success: true,
+        message: "Reaction removed successfully",
         data: findConfession
-    })
-
+    });
 }
 
 exports.reportConfession = async(req, res) => {
@@ -346,21 +360,19 @@ exports.deleteConfession = async(req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const confession = await Confessions.findById(id);
-    if (!confession) {
-      return res.status(404).json({ message: "Confession not found" });
+    const hashedEmail = await GenerateHash(encryptedEmail);
+
+    const deleteStatus = await Confessions.findOneAndDelete({
+        _id: id,
+        encryptedEmail: hashedEmail
+    });
+    
+    if(!deleteStatus) {
+        return res.json({
+            success: false,
+            message: "Could not Delete the Confession"
+        });
     }
-
-    const isMatch = await VerifyHash(
-      confession.encryptedEmail,
-      encryptedEmail
-    );
-
-    if (!isMatch) {
-      return res.status(403).json({ message: "Unauthorized" });
-    }
-
-    await Confessions.deleteOne({ _id: id });
 
     return res.status(200).json({ 
         success:  true,
@@ -375,7 +387,7 @@ exports.deleteConfessionAdmin = async(req, res) => {
      * has the :id in params 
      */
     const {id} = req.params;
-    const deleted = await Confessions.findByIdAndDelete({_id : id}) ;
+    const deleted = await Confessions.findByIdAndDelete(id) ;
     if(!deleted) {
         return res.json({
             success: false,

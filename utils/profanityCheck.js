@@ -1,6 +1,6 @@
-const {Filter} = require("bad-words");
+import { Filter } from "bad-words";
 
-exports.DetectToxicity = async (text) => {
+export const DetectToxicity = async (text) => {
     return false;
 }
 
@@ -11,7 +11,7 @@ const censorWord = (word) => {
   return word[0] + '*'.repeat(word.length - 2) + word[word.length - 1]
 }
 
-exports.RemoveBadWords = (text) => {
+export const RemoveBadWords = (text) => {
     const filter = new Filter();
     const cleanedText = text.split(' ')
                         .map(word => (filter.isProfane(word) ? censorWord(word) : word))

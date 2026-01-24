@@ -22,7 +22,6 @@ exports.authenticateToken = (req, res, next) => {
             console.log(err.message);
             return next(new AccessTokenError(err.message));
         }
-        console.log(user);
         req.email = user.email;
         next();
     });
