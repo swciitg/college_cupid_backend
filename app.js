@@ -45,7 +45,7 @@ app.get('/pdf', (_req, res) => {
     });
 });
  
-// app.use(securityKeyMiddleware);
+app.use(securityKeyMiddleware);
 
 app.use(
   "/uploads/voice",
@@ -61,6 +61,7 @@ app.use(process.env.API_URL, router.faceverifyRouter);
 
 app.use(process.env.API_URL, router.replyRouter);
 app.use(process.env.API_URL, router.confessionRouter);
+
 
 app.all('*', (req, _res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
