@@ -44,7 +44,7 @@ app.get('/pdf', (_req, res) => {
         fileStream.pipe(res);
     });
 });
-
+ 
 app.use(securityKeyMiddleware);
 
 // API Routers
@@ -54,6 +54,7 @@ app.use(process.env.API_URL, router.matchRouter);
 app.use(process.env.API_URL, router.reportUserRouter);
 app.use(process.env.API_URL, router.faceverifyRouter);
 
+app.use(process.env.API_URL, router.confessionReplyRouter);
 
 app.all('*', (req, _res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
