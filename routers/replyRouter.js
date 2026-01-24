@@ -10,7 +10,7 @@ replyRouter.post('/reply/add', authenticateToken,
 );
 
 replyRouter.post('/reply/updates', authenticateToken, 
-    asyncErrorHandler(replyController.getUpdates)
+    asyncErrorHandler(replyController.viewUpdates)
 );
 
 module.exports = { replyRouter };

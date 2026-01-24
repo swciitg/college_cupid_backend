@@ -23,10 +23,10 @@ exports.addReply = async (req, res) => {
     const senderEmail = req.email; 
     let { isConfession, confessionId, receiverEmail, replyContent } = req.body;
 
-    if (typeof replyContent === "string" || replyContent?.trim().length === 0) {
+    if (typeof replyContent !== "string" || replyContent?.trim().length === 0 || typeof isConfession === "undefined") {
         return res.json({ 
             success: false,
-            message: "Missing required fields" 
+            message: "Missing correct required fields" 
         });
     }
 
@@ -36,7 +36,7 @@ exports.addReply = async (req, res) => {
         if (confessionId === null || !confessionId) {
             return res.json({ 
                 success: false,
-                message: "Missing required fields" 
+                message: "Missing required fields : confessionId" 
             });
         }
 
@@ -54,7 +54,7 @@ exports.addReply = async (req, res) => {
     if (typeof receiverEmail !== "string" || receiverEmail?.trim().length === 0) {
         return res.json({ 
             success: false,
-            message: "Missing required fields" 
+            message: "Missing required fields : email" 
         });
     }
 
@@ -84,10 +84,13 @@ exports.addReply = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
+    const replyResponse = savedReply.toObject();
+    delete replyResponse.receiverEmail;
+
     res.json({ 
         success: true,
         message: "Reply sent successfully!",
-        data: savedReply
+        data: replyResponse
     });
 };
 
@@ -115,7 +118,8 @@ exports.viewUpdates = async (req, res) => {
     const updates = await Reply.find({
         receiverEmail: { $in: [email, hashedEmail] }
     })
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .select("-receiverEmail");
 
     res.json({
         success: true,
