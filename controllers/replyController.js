@@ -23,10 +23,10 @@ exports.addReply = async (req, res) => {
     const senderEmail = req.email; 
     let { isConfession, confessionId, receiverEmail, replyContent } = req.body;
 
-    if (replyContent === null || replyContent?.trim().length === 0) {
+    if (typeof replyContent === "string" || replyContent?.trim().length === 0) {
         return res.json({ 
             success: false,
-            message: "Missing required fields: replyContent." 
+            message: "Missing required fields" 
         });
     }
 
@@ -36,7 +36,7 @@ exports.addReply = async (req, res) => {
         if (confessionId === null || !confessionId) {
             return res.json({ 
                 success: false,
-                message: "Missing required fields: Confession ID." 
+                message: "Missing required fields" 
             });
         }
 
@@ -51,10 +51,10 @@ exports.addReply = async (req, res) => {
         receiverEmail = confession.encryptedEmail;
     }
 
-    if (receiverEmail === null || receiverEmail?.trim().length === 0) {
+    if (typeof receiverEmail !== "string" || receiverEmail?.trim().length === 0) {
         return res.json({ 
             success: false,
-            message: "Missing required fields: receiverEmail" 
+            message: "Missing required fields" 
         });
     }
 
@@ -102,6 +102,13 @@ exports.viewUpdates = async (req, res) => {
      */
     const email = req.email;
     const { encryptedEmail } = req.body;
+
+    if(typeof encryptedEmail !== "string" || encryptedEmail.trim().length === 0) {
+        return res.json({
+            success : false ,
+            message : "Mandatory fields missing"
+        });
+    }
 
     const hashedEmail = await GenerateHash(encryptedEmail);
 
