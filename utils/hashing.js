@@ -1,7 +1,7 @@
 const argon2 = require("argon2");
 const crypto = require("crypto");
 
-exports.GenerateSalt = (keyingMaterial) => {
+const GenerateSalt = (keyingMaterial) => {
     return crypto.createHmac(
                 "sha256" , 
                 process.env.SALT_SECRET_KEY
@@ -10,8 +10,8 @@ exports.GenerateSalt = (keyingMaterial) => {
             .digest();
 }
 
-exports.GenerateHash = async (value) => {
-    const salt = this.GenerateSalt(value);
+const GenerateHash = async (value) => {
+    const salt = GenerateSalt(value);
     const hash = await argon2.hash(value , {
         salt,
         memoryCost : 2 ** 14, // in kb
@@ -23,8 +23,8 @@ exports.GenerateHash = async (value) => {
     return hash;
 }
 
-exports.VerifyHash = async(raw , hash) => {
-    const new_hash = await this.GenerateHash(raw);
+const VerifyHash = async(raw , hash) => {
+    const new_hash = await GenerateHash(raw);
 
     return crypto.timingSafeEqual(
         Buffer.from(hash),
@@ -32,3 +32,4 @@ exports.VerifyHash = async(raw , hash) => {
     );
 }
 
+module.exports = {GenerateHash , VerifyHash};

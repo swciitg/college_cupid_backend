@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const faceverifyRouter = Router();
-const {faceverifyController} = require("../controllers/faceverifycontroller");
+const faceverifyController = require("../controllers/faceverifycontroller");
 
 faceverifyRouter.post('/faceverify', faceverifyController.verifyFace);
 
