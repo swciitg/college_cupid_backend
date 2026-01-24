@@ -12,6 +12,7 @@ const ConfessionsSchema = new Schema({
     } , 
     reactions: [
         {
+            _id : false,
             reaction: {
                 type: String,
                 required: true
@@ -40,6 +41,7 @@ const ConfessionsSchema = new Schema({
     } ,
     reports : [
         {
+            _id : false,
             category : {
                 type : String,
                 enum : CONFESSIONS_REPORTS_ENUM 

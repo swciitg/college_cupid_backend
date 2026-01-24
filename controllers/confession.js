@@ -70,6 +70,7 @@ exports.getMyConfession = async(req, res) => {
 
     const myConfessions = await Confessions
                                 .find({ encryptedEmail : hashedEmail })
+                                .select("-reports")
                                 .sort({createdAt : -1});
 
     res.status(200).json({
