@@ -44,18 +44,6 @@ const userProfileSchema = new Schema({
     required : true ,
     enum : TYPE_OF_RELATIONSHIP_ENUM
   },
-  clubs: {
-    type : [String] ,
-    default : []
-  },
-  boards: {
-    type : [String] ,
-    default : []
-  },
-  fests: {
-    type : [String] ,
-    default : []
-  },
   interests: {
     type: [String],
     default: [],
@@ -103,16 +91,6 @@ const userProfileSchema = new Schema({
   yearOfJoin: {
     type: Number,
     required: [true, "Year of join is a required field!"],
-  },
-  relationshipGoals: {
-    goal: {
-      type: String,
-      default: "",
-    },
-    display: {
-      type: Boolean,
-      default: false,
-    },
   },
   relationshipGoals: {
     goal: {

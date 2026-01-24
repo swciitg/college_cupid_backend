@@ -5,4 +5,5 @@ exports.matchRouter = require('./matchRouter').matchRouter;
 exports.imageRouter = require('./imageRouter').imageRouter;
 exports.reportUserRouter = require('./reportUserRouter').reportUserRouter;
 exports.faceverifyRouter = require('./faceverify').faceverifyRouter;
-exports.confessionReplyRouter = require('./confessionReplyRouter').confessionReplyRouter;
+exports.replyRouter = require('./replyRouter').replyRouter;
+exports.confessionRouter = require('./confessionRouter').confessionRouter;

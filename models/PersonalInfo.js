@@ -11,6 +11,12 @@ const personalInfoSchema = new Schema({
         default: [],
         validate: [crushArrayLimit, 'SharedSecrets must not exceed seven!'],
     },
+    // here add another field for storing the sharedSecretKey generated when someone else likes this user
+    // it will be an array and all the elements will be unique
+    // this will be updated in the increaseCount, the sharedSecretKey will be appended
+    // next when we need to find if a user has liked me or not in feed route - we simply compare the existence of the same key in thier this array and my secretKey
+    // similar principle will be used to remove the people i have liked already from my feed
+    // this will be fairly efficient as the complexity is at max 7*n and n is mostly less than 500
     'matchedEmailList': {
         type: [String],
         default: [],
