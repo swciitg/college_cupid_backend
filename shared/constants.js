@@ -22,7 +22,7 @@ exports.deactivatedUserProfile = {
 		display: false,
 	},
 	relationshipGoals: {
-		goal: "LONGTERMPARTNER",
+		goal: "LONG TERM",
 		display: false,
 	},
 	profilePicUrls: [
@@ -46,3 +46,61 @@ exports.deactivatedUserProfile = {
 	publicKey: " ",
 	personalityType: "estj",
 };
+
+exports.ZODIAC_ENUM = [
+      "ARIES",
+      "TAURUS",
+      "GEMINI",
+      "CANCER",
+      "LEO",
+      "VIRGO",
+      "LIBRA",
+      "SCORPIO",
+      "SAGITTARIUS",
+      "CAPRICORN",
+      "AQUARIUS",
+      "PISCES"
+    ];
+
+exports.TYPE_OF_RELATIONSHIP_ENUM = [
+      "LONG TERM" , 
+      "SHORT TERM",
+      "CASUAL" ,
+      "NOT LOOOKING TO DATE",
+      "CASUAL - OPEN TO LONG TERM"
+    ];
+
+exports.SEXUAL_ORIENTATIONS_ENUM = [
+      "STRAIGHT" ,
+      "BISEXUAL",
+      "LESBIAN",
+      "GAY",
+      "OTHERS"
+    ];
+
+
+exports.CONFESSIONS_REPORTS_ENUM = [
+		"SPAM",
+		"VULGAR",
+		"HARASSMENT",
+		"HATE_SPEECH",
+		"SEXUAL_CONTENT",
+		"VIOLENCE",
+		"FALSE_INFORMATION",
+		"IMPERSONATION",
+		"PRIVACY_VIOLATION",
+		"SELF_HARM",
+		"ILLEGAL_ACTIVITY",
+		"SCAM",
+		"BULLYING",
+		"THREATENING",
+		"OTHER"
+	];
+
+exports.CONFESSIONS_TYPE_ENUM = [
+            "SPOTTED_IN_CAMPUS" , 
+            "GOSSIP",
+			""
+        ]
+
+exports.CONFESSIONS_REPORTS_THRESHOLD = 5;
