@@ -1,11 +1,10 @@
 const Confessions = require('../models/confession.js');
 const Reply = require('../models/Reply.js');
-const mongoose = require("mongoose");
 const { GenerateHash } = require('../utils/hashing.js');
 
 exports.addReply = async (req, res) => {
     /**
-     * GET request
+     * POST request
      * /reply/add
      * add a reply either to a confession or directly to a user
      * sender email is extracted from auth middleware (req.email)
@@ -58,8 +57,8 @@ exports.addReply = async (req, res) => {
         });
     }
 
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    // const session = await mongoose.startSession();
+    // session.startTransaction();
 
     let savedReply;
 
@@ -71,18 +70,17 @@ exports.addReply = async (req, res) => {
     };
 
     const newReply = new Reply(replyObject);
-    savedReply = await newReply.save({ session });
+    savedReply = await newReply.save();
 
     if (isConfession) {
         await Confessions.findOneAndUpdate(
             { _id: confessionId },
-            { $push: { replies: savedReply._id } },
-            { session }
+            { $push: { replies: savedReply._id } }
         );
     }
 
-    await session.commitTransaction();
-    session.endSession();
+    // await session.commitTransaction();
+    // session.endSession();
 
     const replyResponse = savedReply.toObject();
     delete replyResponse.receiverEmail;
