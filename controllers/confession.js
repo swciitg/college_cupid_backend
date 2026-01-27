@@ -3,6 +3,7 @@ const { CONFESSIONS_TYPE_ENUM , CONFESSIONS_REPORTS_ENUM } = require("../shared/
 const {DetectToxicity , RemoveBadWords} = require("../utils/profanityCheck.js");
 const UserProfile = require('../models/UserProfile.js');
 const { GenerateHash } = require('../utils/hashing.js');
+const Reply = require("../models/Reply.js");
 
 exports.getConfession = async (req, res) => {
     /** 
@@ -373,6 +374,8 @@ exports.deleteConfession = async(req, res) => {
         });
     }
 
+    await Reply.deleteMany({confessionId : id});
+
     return res.status(200).json({ 
         success:  true,
         message: "Confession deleted successfully"
@@ -393,6 +396,7 @@ exports.deleteConfessionAdmin = async(req, res) => {
             message: "Confession not found"
         });
     }
+    await Reply.deleteMany({confessionId : id});
     return res.json({
         success:true,
         message : "Delete Successfull"
