@@ -110,6 +110,14 @@ const userProfileSchema = new Schema({
     type: String,
     required: [true, "Public Key is a required field!"],
   },
+  whatsappNumber : {
+    type: String , 
+    required : [true , "Whatsapp number is required field"]
+  },
+  instaUsername: {
+    type : String , 
+    required : [true , "Instagram Username is a required field"]
+  }
 });
 
 function interestArrayLimit(val) {
