@@ -114,7 +114,7 @@ const userProfileSchema = new Schema({
     type: String , 
     required : [true , "Whatsapp number is required field"]
   },
-  instaUsername: {
+  insta: {
     type : String , 
     required : [true , "Instagram Username is a required field"]
   }
