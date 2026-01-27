@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Socket Matchmaking Demo</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    #chat { display: none; }
+    #messages { border: 1px solid #ccc; height: 200px; overflow-y: auto; margin-bottom: 10px; padding: 5px; }
+  </style>
+</head>
+<body>
+
+<h2>Join Pool</h2>
+
+
+<label>Email:</label>
+<input id="email" /><br/><br/>
+
+<label>Gender:</label>
+<select id="gender">
+  <option value="0">Boy</option>
+  <option value="1">Girl</option>
+</select><br/><br/>
+
+<label>Interests (comma separated):</label>
+<input id="interests" /><br/><br/>
+
+<button onclick="joinPool()">Join Pool</button>
+
+<hr/>
+
+<div id="status"></div>
+
+<div id="chat">
+  <h3>Chat Room</h3>
+  <div id="messages"></div>
+  <input id="msgInput" placeholder="Type message..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  const socket = io("http://localhost:5000");
+
+  let currentRoom = null;
+
+  function joinPool() {
+    const user = {
+      email: document.getElementById("email").value,
+      gender: Number(document.getElementById("gender").value),
+      interests: document.getElementById("interests").value.split(","),
+      timejoined: Date.now(),
+      room: null,
+      chatStarted: null
+    };
+
+    socket.emit("join_pool", user);
+    document.getElementById("status").innerText = "Joined pool. Waiting for match...";
+  }
+
+  socket.on("matched", ({ roomId }) => {
+    currentRoom = roomId;
+    document.getElementById("status").innerText = "Matched! Room: " + roomId;
+    document.getElementById("chat").style.display = "block";
+  });
+
+  socket.on("questions", (questions) => {
+    questions.forEach(q => addMessage("[Question] " + q));
+  });
+
+  socket.on("chat_message", (msg) => {
+    addMessage("Partner: " + msg);
+  });
+
+  socket.on("continue_prompt", () => {
+    const answer = confirm("Do you want to continue chatting?");
+    socket.emit("continue_response", {
+      roomId: currentRoom,
+      answer: answer ? "yes" : "no"
+    });
+  });
+
+  socket.on("continue_response", (answer) => {
+    addMessage("Partner response: " + answer);
+  });
+
+  socket.on("chat_closed", () => {
+    addMessage("Chat closed by system.");
+    document.getElementById("chat").style.display = "none";
+  });
+
+  function sendMessage() {
+    const input = document.getElementById("msgInput");
+    const msg = input.value;
+    if (!msg) return;
+
+    socket.emit("chat_message", {
+      roomId: currentRoom,
+      message: msg
+    });
+
+    addMessage("You: " + msg);
+    input.value = "";
+  }
+
+  function addMessage(text) {
+    const div = document.getElementById("messages");
+    div.innerHTML += `<div>${text}</div>`;
+    div.scrollTop = div.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
