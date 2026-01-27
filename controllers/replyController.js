@@ -73,7 +73,9 @@ exports.addReply = async (req, res) => {
         senderEmail,
         replyContent,
         receiverEmail,
-        ...(isConfession && { confessionId })
+        ...(isConfession && { confessionId }),
+        ...(!isConfession && {entitySerial}),
+        ...(!isConfession && {entityType})
     };
 
     const newReply = new Reply(replyObject);
