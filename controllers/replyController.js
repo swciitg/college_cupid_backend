@@ -20,7 +20,7 @@ exports.addReply = async (req, res) => {
      * if any operation fails, the transaction is rolled back automatically
      */
     const senderEmail = req.email; 
-    let { isConfession, confessionId, receiverEmail, replyContent } = req.body;
+    let { isConfession, confessionId, receiverEmail, replyContent , entityType , entitySerial } = req.body;
 
     if (typeof replyContent !== "string" || replyContent?.trim().length === 0 || typeof isConfession === "undefined") {
         return res.json({ 
@@ -48,6 +48,13 @@ exports.addReply = async (req, res) => {
         }
 
         receiverEmail = confession.encryptedEmail;
+    } else {
+        if(!entitySerial || !["QUESTIONS" , "IMAGES"].includes(entityType)) {
+            return res.json({
+                success : false, 
+                message : "Missing required fields : entity"
+            });
+        }
     }
 
     if (typeof receiverEmail !== "string" || receiverEmail?.trim().length === 0) {

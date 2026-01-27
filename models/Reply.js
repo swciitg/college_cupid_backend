@@ -18,6 +18,13 @@ const replySchema = new Schema({
         required: [true, 'Reply content cannot be empty!'],
         trim: true
     },
+    entityType : {
+        type: String ,
+        enum: ["QUESTIONS" , "IMAGES"]
+    }, 
+    entitySerial : {
+        type : Number 
+    },
     isRead: {
         type: Boolean,
         default: false
