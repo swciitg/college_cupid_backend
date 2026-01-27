@@ -3,7 +3,6 @@ const { randomRoomId, getQuestions , calcScore } = require("../../utils/socket.j
 
 exports.matchMaking = (io) => {
   setInterval(() => {
-    console.log("making")
     if (boys.length < 1 || girls.length < 1) return;
 
     let scores = [];

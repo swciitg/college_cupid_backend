@@ -1,6 +1,6 @@
 function calcScore(boy, girl) {
     let score = 0;
-    let timeMultiplier = 0.2 * Math.max(1 , (Math.max(boy.timeJoined , girl.timeJoined) - Date.now())/10000);
+    let timeMultiplier = 0.05 * Math.max(1 , (Math.max(boy.timeJoined , girl.timeJoined) - Date.now())/10000);
 
     boy.interests.forEach(interest_b => {
         if(girl.interests.includes(interest_b)) {

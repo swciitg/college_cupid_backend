@@ -7,16 +7,12 @@ exports.socketHandlers = (io) => {
       user.room = null;
       user.chatStarted = null;
 
-      console.log("Someone joined " , socket)
-
       socket.join(POOL);
 
       if (user.gender === 0) {
         boys.push({ socketId: socket.id, user });
-        console.log(boys);
       } else {
         girls.push({ socketId: socket.id, user });
-        console.log(girls);
       }
     });
 
