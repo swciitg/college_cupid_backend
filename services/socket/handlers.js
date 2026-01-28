@@ -35,9 +35,46 @@ exports.socketHandlers = (io) => {
       }
     });
 
+    socket.on("leave" , () => {
+      boys.splice(boys.findIndex(b => b.socketId === socket.id), 1);
+      girls.splice(girls.findIndex(g => g.socketId === socket.id), 1);
+
+      for (const roomId in rooms) {
+        const room = rooms[roomId];
+
+        if (room.members.includes(socket.id)) {
+          room.members.forEach(memberId => {
+            if (memberId !== socket.id) {
+              io.to(memberId).emit("partner_left");
+            }
+          });
+
+          clearTimeout(room.timer);
+          delete rooms[roomId];
+          break;
+        }
+      }
+    })
+
     socket.on("disconnect", () => {
       boys.splice(boys.findIndex(b => b.socketId === socket.id), 1);
       girls.splice(girls.findIndex(g => g.socketId === socket.id), 1);
+
+      for (const roomId in rooms) {
+        const room = rooms[roomId];
+
+        if (room.members.includes(socket.id)) {
+          room.members.forEach(memberId => {
+            if (memberId !== socket.id) {
+              io.to(memberId).emit("partner_disconnected");
+            }
+          });
+
+          clearTimeout(room.timer);
+          delete rooms[roomId];
+          break;
+        }
+      }
     });
   });
 };
