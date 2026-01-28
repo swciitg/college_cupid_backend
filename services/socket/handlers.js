@@ -17,6 +17,10 @@ exports.socketHandlers = (io) => {
     });
 
     socket.on("chat_message", ({ roomId, message }) => {
+      const room = rooms[roomId];
+      if (!room || !room.members.includes(socket.id)) {
+        return;
+      }
       socket.to(roomId).emit("chat_message", message);
     });
 
@@ -36,9 +40,14 @@ exports.socketHandlers = (io) => {
     });
 
     socket.on("leave" , () => {
-      boys.splice(boys.findIndex(b => b.socketId === socket.id), 1);
-      girls.splice(girls.findIndex(g => g.socketId === socket.id), 1);
-
+      const boyIndex = boys.findIndex(b => b.socketId === socket.id);
+      if (boyIndex !== -1) {
+        boys.splice(boyIndex, 1);
+      }
+      const girlIndex = girls.findIndex(g => g.socketId === socket.id);
+      if (girlIndex !== -1) {
+        girls.splice(girlIndex, 1);
+      }
       for (const roomId in rooms) {
         const room = rooms[roomId];
 
@@ -57,9 +66,14 @@ exports.socketHandlers = (io) => {
     })
 
     socket.on("disconnect", () => {
-      boys.splice(boys.findIndex(b => b.socketId === socket.id), 1);
-      girls.splice(girls.findIndex(g => g.socketId === socket.id), 1);
-
+      const boyIndex = boys.findIndex(b => b.socketId === socket.id);
+      if (boyIndex !== -1) {
+        boys.splice(boyIndex, 1);
+      }
+      const girlIndex = girls.findIndex(g => g.socketId === socket.id);
+      if (girlIndex !== -1) {
+        girls.splice(girlIndex, 1);
+      }
       for (const roomId in rooms) {
         const room = rooms[roomId];
 

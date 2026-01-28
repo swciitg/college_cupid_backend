@@ -24,7 +24,7 @@ exports.matchMaking = (io) => {
     const pairs = [];
 
     for (const s of scores) {
-      if (usedBoys.has(s.bi) || usedGirls.has(s.gi) || s > 4) continue;
+      if (usedBoys.has(s.bi) || usedGirls.has(s.gi) || s.score < 5) continue;
       usedBoys.add(s.bi);
       usedGirls.add(s.gi);
       pairs.push({ boy: boys[s.bi], girl: girls[s.gi] });
