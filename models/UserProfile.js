@@ -35,9 +35,15 @@ const userProfileSchema = new Schema({
     enum: ZODIAC_ENUM
   },
   sexualOrientation: {
-    type:String , 
-    required:true ,
-    enum : SEXUAL_ORIENTATIONS_ENUM
+    type: {
+      type:String , 
+      required:true ,
+      enum : SEXUAL_ORIENTATIONS_ENUM
+    } , 
+    display : {
+      type:Boolean ,
+      required:true
+    }
   },
   typeOfRelationship : {
     type:String , 
