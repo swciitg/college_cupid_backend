@@ -16,15 +16,6 @@ function randomRoomId() {
   return "room_" + Math.random().toString(36).slice(2, 10);
 }
 
-function createUser(user) {
-    return {
-        email : user.email ,
-        gender : user.gender , 
-        timeJoined : null,
-        room : null,
-        chatStarted : null
-    };
-}
 
 const QUESTIONS = [
   "What’s your favorite hobby?",
@@ -58,4 +49,4 @@ function getQuestions() {
     return [QUESTIONS[arr[0]] , QUESTIONS[arr[1]] , QUESTIONS[arr[2]]];
 }
 
-module.exports = { calcScore, randomRoomId, createUser, getQuestions };
+module.exports = { calcScore, randomRoomId, getQuestions };
