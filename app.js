@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const http = require('http');
 const app = express();
+const server = http.createServer(app);
+const initSocket = require("./services/socket/index.js");
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
@@ -62,6 +65,7 @@ app.use(process.env.API_URL, router.faceverifyRouter);
 app.use(process.env.API_URL, router.replyRouter);
 app.use(process.env.API_URL, router.confessionRouter);
 
+initSocket(server) 
 
 app.all('*', (req, _res, next) => {
     const err = new NotFoundError(`Can't find ${req.originalUrl} on the server!`);
@@ -70,7 +74,7 @@ app.all('*', (req, _res, next) => {
 
 app.use(errorHandler);
 
-app.listen(process.env.PORT, async () => {
+server.listen(process.env.PORT, async () => {
     console.log('Server listening on port ' + process.env.PORT);
     await mongoose.connect(process.env.MONGO_URL + process.env.DB_NAME);
     console.log('Connected to database');
