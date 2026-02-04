@@ -14,11 +14,15 @@
             justify-content: center;
             text-align: center;
             height: 100vh;
-            background-color: #ffffff;
-            background-size: cover;
             font-family: 'Montserrat';
             color: #000000;
+
+            background-image: url("<%= basePath %>/assets/bg.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
+
         .splash-text p {
             margin: 0;
             font-size: 18px;
@@ -37,10 +41,12 @@
 
 <body>
     <div class="splash-text">
-        <img src="<%= basePath %>/assets/text_icon.png" alt="CollegeCupid" style="max-width: 80%; height: auto;">
-        <!-- <div>CollegeCupid</div> -->
         <div style="height: 10px;"></div>
-        <% if(status==="ERROR"){ %> <p> Oops!! Something went wrong :( </p> <% } else {%> <p> Successfully signed in. </p><%}%>
+        <% if(status==="ERROR"){ %>
+            <p style="color: white; font-weight: bold; margin-top: 200px; font-size: larger;">Oops!! Something went wrong :(</p>
+        <% } else { %>
+            <p style="color: white; font-weight: bold; margin-top: 200px; font-size: larger;">Successfully signed in.</p>
+        <% } %>
         <p id="status" hidden><%= status %></p>
         <p id="outlookInfo" hidden><%= outlookInfo %></p>
     </div>
