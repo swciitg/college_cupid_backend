@@ -163,6 +163,10 @@ exports.getUserProfilePages = async (req, res, next) => {
   }
   const currentpersonalityType = currUser.personalityType.toUpperCase();
 
+  const currPersonalInfo = await PersonalInfo.findOne({ email: req.email });
+  const mySharedSecrets = currPersonalInfo?.sharedSecretList || [];
+  const receivedLikesSecrets = currPersonalInfo?.receivedLikesSecrets || [];
+
   let userProfiles = (await UserProfile.find(newFilters)).filter(
     (profile) => profile.email !== req.email
   );
@@ -189,6 +193,49 @@ exports.getUserProfilePages = async (req, res, next) => {
       GuestEmails.includes(profile.email) 
       || (`${profile.email}`).endsWith("@alumni.iitg.ac.in")
     )
+  );
+   // Get personal info for all users in feed to check for mutual likes
+  const userEmails = userProfiles.map(p => p.email);
+  const allPersonalInfos = await PersonalInfo.find({ 
+    email: { $in: userEmails } 
+  });
+  
+  // Create a map for quick lookup
+  const personalInfoMap = {};
+  allPersonalInfos.forEach(info => {
+    personalInfoMap[info.email] = info;
+  });
+
+  // Identify priority users (mutual interest) and already liked users
+  const priorityUserProfiles = [];
+  const alreadyLikedEmails = new Set();
+  
+  userProfiles.forEach((profile) => {
+    const theirPersonalInfo = personalInfoMap[profile.email];
+    if (!theirPersonalInfo) return;
+    
+    const theirSharedSecrets = theirPersonalInfo.sharedSecretList || [];
+    
+    // Check if I've already liked them (my secret exists in their receivedLikes)
+    const iHaveLikedThem = (theirPersonalInfo.receivedLikesSecrets || [])
+      .some(secret => mySharedSecrets.includes(secret));
+    
+    if (iHaveLikedThem) {
+      alreadyLikedEmails.add(profile.email);
+    }
+    
+    // Check if they've liked me (their secret exists in my receivedLikes)
+    const theyHaveLikedMe = theirSharedSecrets
+      .some(secret => receivedLikesSecrets.includes(secret));
+    
+    if (theyHaveLikedMe) {
+      priorityUserProfiles.push(profile);
+    }
+  });
+
+  // Filter out users I've already liked
+  userProfiles = userProfiles.filter(
+    profile => !alreadyLikedEmails.has(profile.email)
   );
   const shuffleArray = (arr) => {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -237,10 +284,11 @@ const categorizedUsers = {
 
 userProfiles.forEach((user) => {
   if (!user.personalityType) return;
+   if (priorityUserProfiles.some(p => p.email === user.email)) return;
   const diff = computeDifference(user.personalityType.toUpperCase());
   categorizedUsers[diff].push(user);
 });
-const priorityUsers = []; // 🔴 replace later
+const priorityUsers = [...priorityUserProfiles];
 let sincePriority = 0;
 let nextPriorityGap = Math.floor(Math.random() * 3) + 3; // 3–5
 
@@ -272,7 +320,13 @@ while (
   }
 
   const key = pickWeightedArray(working, weights);
-  if (key === null) break;
+  if (key === null) {
+    if (priorityUsers.length > 0) {
+      orderedUsers.push(...priorityUsers);
+      priorityUsers.length = 0;
+    }
+    break;
+  }
 
   orderedUsers.push(working[key].shift());
   sincePriority++;
