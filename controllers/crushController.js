@@ -1,5 +1,6 @@
 const CrushesCount = require('../models/CrushesCount');
 const PersonalInfo = require('../models/PersonalInfo');
+const Reply = require('../models/Reply');
 
 exports.addCrush = async(req, res, next) => {
     // return res.json({
@@ -43,6 +44,23 @@ exports.addCrush = async(req, res, next) => {
             }
         );
         await PersonalInfo.findOneAndUpdate({email:req.email}, user, {runValidators: true});
+
+        
+        // remove this in main deployment
+        if(user.receivedLikesSecrets.includes(req.body.sharedSecret)) {
+            await Reply.create({
+                receiverEmail : req.email,
+                senderEmail : crushEmail,
+                replyContent : "Liked you"
+            });
+
+            await Reply.create({
+                senderEmail : req.email,
+                receiverEmail : crushEmail,
+                replyContent : "Liked you"
+            });
+        }
+
         
         return res.json({
             success: true, 
