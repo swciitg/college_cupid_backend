@@ -2,10 +2,10 @@ const CrushesCount = require('../models/CrushesCount');
 const PersonalInfo = require('../models/PersonalInfo');
 
 exports.addCrush = async(req, res, next) => {
-    return res.json({
-        success: false,
-        message: "You cannot add crushes anymore!"
-    });
+    // return res.json({
+    //     success: false,
+    //     message: "You cannot add crushes anymore!"
+    // });
     const user = await PersonalInfo.findOne({email: req.email});
 
     if(user.sharedSecretList.length === 7){
@@ -14,6 +14,14 @@ exports.addCrush = async(req, res, next) => {
             message: "You cannot add more than seven crushes."
         });
     } else {
+        const crushEmail = req.body.crushEmail;
+        if(typeof crushEmail !== "string" || crushEmail.trim().length === 0) {
+            return res.json({
+                success : false ,
+                message : "Crush Email is also a required field"
+            });
+        }
+
         if(user.sharedSecretList.includes(req.body.sharedSecret)==false){
             user.sharedSecretList.push(req.body.sharedSecret);
         }else{
@@ -23,6 +31,17 @@ exports.addCrush = async(req, res, next) => {
             });
         }
     
+        await PersonalInfo.findOneAndUpdate(
+            {
+                email : crushEmail
+            } , {
+                $push : {
+                    receivedLikesSecrets : req.body.sharedSecret
+                }
+            } , {
+                runValidators : true
+            }
+        );
         await PersonalInfo.findOneAndUpdate({email:req.email}, user, {runValidators: true});
         
         return res.json({
@@ -33,10 +52,10 @@ exports.addCrush = async(req, res, next) => {
 };
 
 exports.increaseCount = async(req, res, next) => {
-    return res.json({
-        success: false,
-        message: "You cannot add crushes anymore!"
-    });
+    // return res.json({
+    //     success: false,
+    //     message: "You cannot add crushes anymore!"
+    // });
     const user = await CrushesCount.findOne({email: req.query.crushEmail});
     if(user){
         await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
@@ -55,10 +74,10 @@ exports.increaseCount = async(req, res, next) => {
 }
 
 exports.decreaseCount = async(req, res, next) => {
-    return res.json({
-        success: false,
-        message: "You cannot remove crushes anymore!"
-    });
+    // return res.json({
+    //     success: false,
+    //     message: "You cannot remove crushes anymore!"
+    // });
     const user = await CrushesCount.findOne({email: req.query.crushEmail});
     if(user && user.crushesCount > 0){
         await CrushesCount.findOneAndUpdate({ email: req.query.crushEmail }, {
