@@ -33,7 +33,7 @@ exports.socketHandlers = (io) => {
       if(room.responses.find(response => response.socketId === socket.id)) return;
 
       const isYes = answer.toLowerCase() === "yes" ;
-      if(room.isMatch === null) 
+      if(room.isMatch === undefined) 
         room.isMatch = isYes;
       else 
         room.isMatch = room.isMatch && isYes;
@@ -41,9 +41,9 @@ exports.socketHandlers = (io) => {
       room.responses.push({socketId : socket.id , answer});
 
       if (room.responses.length === 2) {
-        const user1 = room.members[0];
-        const user2 = room.members[1];
-
+        const user1 = room.membersDetails[0];
+        const user2 = room.membersDetails[1];
+        
         if(room.isMatch) {
           io.to(user1.socketId).emit("continue_response" , user2.user.email);
           io.to(user2.socketId).emit("continue_response" , user1.user.email);
@@ -52,7 +52,7 @@ exports.socketHandlers = (io) => {
           io.to(user2.socketId).emit("continue_response" , null);
         }
 
-        io.to(roomId).emit("Chat Closed");
+        io.to(roomId).emit("chat_closed");
         clearTimeout(room.timer);
         delete rooms[roomId];
       }
