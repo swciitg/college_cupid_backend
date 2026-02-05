@@ -11,6 +11,10 @@ const personalInfoSchema = new Schema({
         default: [],
         validate: [crushArrayLimit, 'SharedSecrets must not exceed seven!'],
     },
+    'receivedLikesSecrets': {
+        type: [String],
+        default: [],
+    },
     // here add another field for storing the sharedSecretKey generated when someone else likes this user
     // it will be an array and all the elements will be unique
     // this will be updated in the increaseCount, the sharedSecretKey will be appended
@@ -29,4 +33,4 @@ function crushArrayLimit(val) {
   }
 
 const PersonalInfo = model('PersonalInfo', personalInfoSchema);
-module.exports = PersonalInfo;
+module.exports = PersonalInfo; 

@@ -25,14 +25,33 @@ exports.socketHandlers = (io) => {
     });
 
     socket.on("continue_response", ({ roomId, answer }) => {
-      socket.to(roomId).emit("continue_response", answer);
+      // socket.to(roomId).emit("continue_response", answer);
 
       const room = rooms[roomId];
       if (!room) return;
 
-      room.responses.push(answer);
+      if(room.responses.find(response => response.socketId === socket.id)) return;
+
+      const isYes = answer.toLowerCase() === "yes" ;
+      if(room.isMatch === undefined) 
+        room.isMatch = isYes;
+      else 
+        room.isMatch = room.isMatch && isYes;
+
+      room.responses.push({socketId : socket.id , answer});
 
       if (room.responses.length === 2) {
+        const user1 = room.membersDetails[0];
+        const user2 = room.membersDetails[1];
+        
+        if(room.isMatch) {
+          io.to(user1.socketId).emit("continue_response" , user2.user.email);
+          io.to(user2.socketId).emit("continue_response" , user1.user.email);
+        } else {
+          io.to(user1.socketId).emit("continue_response" , null);
+          io.to(user2.socketId).emit("continue_response" , null);
+        }
+
         io.to(roomId).emit("chat_closed");
         clearTimeout(room.timer);
         delete rooms[roomId];
