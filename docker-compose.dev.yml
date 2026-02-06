@@ -8,6 +8,7 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - college_cupid_images_dev:/usr/src/app/images
+      - college_cupid_voices_dev:/usr/src/app/uploads/voice
     ports:
       - '8068:3000'
     env_file:
@@ -18,6 +19,7 @@ services:
 
 volumes:
   college_cupid_images_dev:
+  college_cupid_voices_dev:
 
 networks:
   one-stop-2021_default:
