@@ -57,6 +57,7 @@ app.use(process.env.API_URL, router.crushRouter);
 app.use(process.env.API_URL, router.matchRouter);
 app.use(process.env.API_URL, router.reportUserRouter);
 app.use(process.env.API_URL, router.faceverifyRouter);
+app.use(process.env.API_URL, router.speeddatingRouter)
 
 app.use(process.env.API_URL, router.replyRouter);
 app.use(process.env.API_URL, router.confessionRouter);
