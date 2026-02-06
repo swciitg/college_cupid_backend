@@ -15,6 +15,7 @@ const corsMiddleware = require('./middlewares/corsMiddleware');
 const securityKeyMiddleware = require('./middlewares/securityKeyMiddleware');
 
 app.use("/assets", express.static(path.join(__dirname, 'assets')));
+app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
 
 app.use(express.json());
