@@ -420,8 +420,8 @@ exports.uploadVoice = async (req, res) => {
       answer: fileUrl,
     };
 
-    await User.updateOne(
-      { _id: req.user._id },
+    await UserProfile.updateOne(
+      { email: req.email },
       { $push: { voiceRecordings: recording } },
     );
 
