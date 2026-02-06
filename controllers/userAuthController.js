@@ -29,8 +29,8 @@ const pca = new msal.ConfidentialClientApplication(config);
 
 exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
-        //scopes: ['User.Read'],
+        //scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
+        scopes: ['User.Read'],
         redirectUri: REDIRECT_URI,
     };
 
@@ -120,8 +120,8 @@ async function getTokens(authCode) {
                 code: authCode,
                 redirect_uri: REDIRECT_URI,
                 grant_type: 'authorization_code',
-                scope: 'User.Read Files.ReadWrite.AppFolder offline_access'
-                //scope: 'User.Read'
+                //scope: 'User.Read Files.ReadWrite.AppFolder offline_access'
+                scope: 'User.Read'
                 
             }),
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
