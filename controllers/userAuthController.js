@@ -29,7 +29,8 @@ const pca = new msal.ConfidentialClientApplication(config);
 
 exports.microsoftLogin = async (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
+        // scopes: ['User.Read', 'Files.ReadWrite.AppFolder', 'offline_access'],
+        scopes: ['User.Read'],
         redirectUri: REDIRECT_URI,
     };
 

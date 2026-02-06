@@ -4,9 +4,9 @@ let boys = [];
 let girls = [];
 const rooms = {};
 
-const CHAT_TIME = 3 * 60 * 1000;
+const CHAT_TIME = 3 * 60 * 1000 + 5000;
 
-const MIN_SCORE = 5;
+const MIN_SCORE = 0;
 
 module.exports = {
   boys,
