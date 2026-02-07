@@ -5,7 +5,7 @@ const asyncErrorHandler = require("../handlers/asyncErrorHandler");
 const matchRouter = Router();
 
 
-matchRouter.post('/match/find', authenticateToken, verifyAdmin, asyncErrorHandler(matchController.findMatches));
+// matchRouter.post('/match/find', authenticateToken, verifyAdmin, asyncErrorHandler(matchController.findMatches));
 matchRouter.delete('/match/clear', authenticateToken, verifyAdmin, asyncErrorHandler(matchController.clearMatches));
 matchRouter.get('/match', authenticateToken, asyncErrorHandler(matchController.getMatches));
 
