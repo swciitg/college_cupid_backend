@@ -49,7 +49,7 @@ exports.addReply = async (req, res) => {
 
         receiverEmail = confession.encryptedEmail;
     } else {
-        if(!entitySerial || !["QUESTIONS" , "IMAGES"].includes(entityType)) {
+        if(!entitySerial || !["QUESTIONS" , "IMAGES" , "MATCHES"].includes(entityType)) {
             return res.json({
                 success : false, 
                 message : "Missing required fields : entity"
@@ -122,11 +122,19 @@ exports.viewUpdates = async (req, res) => {
 
     const hashedEmail = await GenerateHash(encryptedEmail);
 
-    const updates = await Reply.find({
-        receiverEmail: { $in: [email, hashedEmail] }
+    let updates = await Reply.find({
+        receiverEmail: { $in: [email, hashedEmail] } , 
+        
     })
     .sort({ createdAt: -1 })
     .select("-receiverEmail");
+
+    updates = updates.filter(
+        (update) => !(
+            update.entityType === "MATCHES" && 
+            (new Date() < new Date("2026-02-13T18:30:00Z"))
+        )
+    );
 
     res.json({
         success: true,

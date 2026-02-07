@@ -51,12 +51,16 @@ exports.findMatches = async (req, res, next) => {
             await Reply.create({
                 receiverEmail : sharedSecretMap[key][0] ,
                 senderEmail :  sharedSecretMap[key][1], 
-                replyContent : `You have a match`
+                replyContent : `You have a match` ,
+                entityType : "MATCHES" , 
+                entitySerial : 0
             })
             await Reply.create({
                 receiverEmail : sharedSecretMap[key][1] ,
                 senderEmail : sharedSecretMap[key][0] ,
-                replyContent : `You have a match`
+                replyContent : `You have a match` ,
+                entityType : "MATCHES" , 
+                entitySerial : 0
             });
         }
         console.log('Processed ', i + 1, ' of ', totalPairs, ' pairs.');

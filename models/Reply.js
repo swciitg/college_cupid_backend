@@ -20,7 +20,7 @@ const replySchema = new Schema({
     },
     entityType : {
         type: String ,
-        enum: ["QUESTIONS" , "IMAGES"]
+        enum: ["QUESTIONS" , "IMAGES" , "MATCHES"]
     }, 
     entitySerial : {
         type : Number 
