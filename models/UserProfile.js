@@ -133,6 +133,8 @@ const userProfileSchema = new Schema({
     type: String,
     default: null
   }
+}, {
+  timestamps : true
 });
 
 function interestArrayLimit(val) {
