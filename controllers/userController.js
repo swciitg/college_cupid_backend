@@ -435,3 +435,19 @@ exports.uploadVoice = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 }
+
+exports.searchUser = async(req, res) => {
+  const { searchQuery } = req.query;
+  
+  const userLists = await UserProfile.find({
+    name : {
+      $regex : searchQuery , 
+      $options : "i"
+    }
+  }).select("name email profilePicUrls gender age");
+
+  return res.json({
+    success: true , 
+    users : userLists
+  });
+}

@@ -46,7 +46,14 @@ userRouter.get('/user/personalInfo', authenticateToken,
 
 userRouter.post(
   "/user/voice/upload", authenticateToken,
-  upload.single("voice"), userController.uploadVoice,
+  upload.single("voice"), 
+  asyncErrorHandler(userController.uploadVoice),
+);
+
+userRouter.get(
+    "/user/search" , 
+    authenticateToken ,
+    asyncErrorHandler(userController.searchUser)
 );
 
 module.exports = { userRouter };
