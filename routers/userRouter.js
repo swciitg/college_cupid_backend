@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const userController = require('../controllers/userController.js');
+const feedController = require("../controllers/feedController.js");
 const userRouter = Router();
 const multer = require("multer");
 const { authenticateToken, verifyAdmin } = require('../middlewares/jwtAuthHandler.js');
@@ -54,6 +55,12 @@ userRouter.get(
     "/user/search" , 
     authenticateToken ,
     asyncErrorHandler(userController.searchUser)
+);
+
+userRouter.get(
+    "/user/profile/feed/:pageNumber/:lastFetchTimestamps" ,
+    authenticateToken , 
+    asyncErrorHandler(feedController.getFeed)
 );
 
 module.exports = { userRouter };
