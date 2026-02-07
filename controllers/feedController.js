@@ -1,57 +1,45 @@
 const BlockedUserList = require("../models/BlockedUserList.js");
 const DeactivatedUsers = require("../models/DeactivatedUsers.js");
-const PersonalInfo = require("../models/PersonalInfo.js");
+// const PersonalInfo = require("../models/PersonalInfo.js");
 const UserProfile = require("../models/UserProfile.js");
 const { GuestEmails } = require("../shared/constants.js");
-const { calculateMatchingScore, cumulateMatchingFactors } = require("../utils/feedAlgorithm.js");
+const { calculateMatchingScore, cumulateMatchingFactors, shuffleProfiles } = require("../utils/feedAlgorithm.js");
 
 async function cleanUserProfiles(userProfiles , email) {
-    // here we remove the profiles blocked by the user
     const blockedUsers = await BlockedUserList.findOne({ 
         email
     });
-    if(blockedUsers) {
-        userProfiles = userProfiles.filter(
-            (profile) => !blockedUsers.blockedUsers.includes(profile.email)
-        );
-    }
 
-    // here we remove the deactivted users
     const deactivatedUsers = await DeactivatedUsers.find();
     const deactivatedEmailSet = new Set(
         deactivatedUsers.map(u => u.email)
     );
-    userProfiles = userProfiles.filter(
-        profile => !deactivatedEmailSet.has(profile.email)
-    );
     
-    // here we removed the guests and alums
     const guestEmailSet = new Set(GuestEmails);
-    userProfiles = userProfiles.filter(
-    profile =>
-        !guestEmailSet.has(profile.email) &&
-        !profile.email.endsWith("@alumni.iitg.ac.in")
-    );
 
     // here we removed the profiles which the user has already liked previously
-    const currUserInfo = await PersonalInfo.findOne({ email });
+    // const currUserInfo = await PersonalInfo.findOne({ email });
 
-    if(currUserInfo.sharedSecretList.length === 0) {
-        return userProfiles;
-    }
+    // if(currUserInfo.sharedSecretList.length === 0) {
+    //     return userProfiles;
+    // }
 
-    const likedInfos = await PersonalInfo.find(
-        {
-            receivedLikesSecrets: {
-                $in: currUserInfo.sharedSecretList
-            }
-        }
-    );
+    // const likedInfos = await PersonalInfo.find(
+    //     {
+    //         receivedLikesSecrets: { // this won't work as receivedLikedSecrets will not be used now
+    //             $in: currUserInfo.sharedSecretList
+    //         }
+    //     }
+    // );
 
-    const alreadyLikedEmails = new Set(likedInfos.map(i => i.email));
+    // const alreadyLikedEmails = new Set(likedInfos.map(i => i.email));
 
     userProfiles = userProfiles.filter(
-        profile => !alreadyLikedEmails.has(profile.email)
+        profile => !blockedUsers?.blockedUsers.includes(profile.email) && 
+                   !deactivatedEmailSet.has(profile.email) && 
+                   !guestEmailSet.has(profile.email) &&
+                   !profile.email.endsWith("@alumni.iitg.ac.in")
+                //    !alreadyLikedEmails.has(profile.email)
     );
 
     return userProfiles;
@@ -126,10 +114,20 @@ exports.getFeed = async (req, res) => {
     const startIndex = pageNumber * pageSize;
     const endIndex = startIndex + pageSize;
 
-    const paginatedUsers = existingUsersProfilesWithScore.slice(startIndex, endIndex);
+    let paginatedUsers = existingUsersProfilesWithScore.slice(startIndex, endIndex);
+
+    if(existingUsersProfilesWithScore.length + newUsersProfilesWithScore.length <= startIndex) {
+        paginatedUsers = existingUsersProfilesWithScore.slice(0,10);
+    }
+
+    paginatedUsers.push(...newUsersProfilesWithScore);
+    paginatedUsers.sort((a,b) => b.score - a.score).slice(0, 10);
+
+    shuffleProfiles(paginatedUsers);
 
     return res.json({
-        success : true
+        success : true ,
+        users : paginatedUsers
     })
 }
 

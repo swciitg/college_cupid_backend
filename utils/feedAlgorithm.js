@@ -21,6 +21,9 @@ exports.cumulateMatchingFactors = (user) => {
 }
 
 
-exports.categorizeProfiles = (user) => {
-    
+exports.shuffleProfiles = (userProfiles) => {
+  for (let i = userProfiles.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [userProfiles[i], userProfiles[j]] = [userProfiles[j], userProfiles[i]];
+  }
 }

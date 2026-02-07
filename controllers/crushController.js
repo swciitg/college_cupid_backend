@@ -1,6 +1,6 @@
 const CrushesCount = require('../models/CrushesCount');
 const PersonalInfo = require('../models/PersonalInfo');
-const Reply = require('../models/Reply');
+// const Reply = require('../models/Reply');
 
 exports.addCrush = async(req, res, next) => {
     // return res.json({
@@ -15,14 +15,6 @@ exports.addCrush = async(req, res, next) => {
             message: "You cannot add more than seven crushes."
         });
     } else {
-        const crushEmail = req.body.crushEmail;
-        if(typeof crushEmail !== "string" || crushEmail.trim().length === 0) {
-            return res.json({
-                success : false ,
-                message : "Crush Email is also a required field"
-            });
-        }
-
         if(user.sharedSecretList.includes(req.body.sharedSecret)==false){
             user.sharedSecretList.push(req.body.sharedSecret);
         }else{
@@ -32,45 +24,26 @@ exports.addCrush = async(req, res, next) => {
             });
         }
     
-        await PersonalInfo.findOneAndUpdate(
-            {
-                email : crushEmail
-            } , {
-                $push : {
-                    receivedLikesSecrets : req.body.sharedSecret
-                }
-            } , {
-                runValidators : true
-            }
-        );
         await PersonalInfo.findOneAndUpdate({email:req.email}, user, {runValidators: true});
 
-        await Reply.create({
-            senderEmail : "SYSTEM",
-            receiverEmail : crushEmail,
-            replyContent : "You have an Admirer"
-        });
-        
-        // remove this in main deployment
-        // if(user.receivedLikesSecrets.includes(req.body.sharedSecret)) {
-        //     await Reply.create({
-        //         receiverEmail : req.email,
-        //         senderEmail : crushEmail,
-        //         replyContent : "Liked you"
-        //     });
+        let isMatch = false;
 
-        //     await Reply.create({
-        //         senderEmail : req.email,
-        //         receiverEmail : crushEmail,
-        //         replyContent : "Liked you"
-        //     });
-        // }
-        
+        const existingSecret = await SharedSecret.findOne({ sharedSecret: sharedSecretKey });
 
+        if (!existingSecret) {
+            await SharedSecret.create({ sharedSecret: sharedSecretKey });
+        } else {
+            const now = new Date();
+            const revealDate = new Date("2026-02-13T18:30:00Z"); 
+            if (now >= revealDate) {
+                isMatch = true;
+            }
+        }
         
         return res.json({
             success: true, 
-            message: "Crush added successfully!"
+            message: "Crush added successfully!",
+            isMatch
         });
     }
 };
