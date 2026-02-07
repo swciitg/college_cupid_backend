@@ -14,84 +14,81 @@ exports.addCrush = async(req, res, next) => {
             success: false, 
             message: "You cannot add more than seven crushes."
         });
-    } else {
-        const crushEmail = req.body.crushEmail;
-        if(typeof crushEmail !== "string" || crushEmail.trim().length === 0) {
-            return res.json({
-                success : false ,
-                message : "Crush Email is also a required field"
-            });
-        }
+    } 
 
-        if(user.sharedSecretList.includes(req.body.sharedSecret)) {
-            return res.json({
-                success: false, 
-                message: "User is already added as your crush."
-            });
-        }
+    const crushEmail = req.body.crushEmail;
+    if(typeof crushEmail !== "string" || crushEmail.trim().length === 0) {
+        return res.json({
+            success : false ,
+            message : "Crush Email is also a required field"
+        });
+    }
 
-        const otherUser = await PersonalInfo.findOne({
-            email : crushEmail ,
-            sharedSecretList : {
-                $in : user.sharedSecretList
-            }
-        })
+    if(user.sharedSecretList.includes(req.body.sharedSecret)) {
+        return res.json({
+            success: false, 
+            message: "User is already added as your crush."
+        });
+    }
+
+    const otherUser = await PersonalInfo.findOne({
+        email : crushEmail ,
+        sharedSecretList : req.body.sharedSecret
+    });
                 
-        if (otherUser) {
-            await Reply.create({
-                receiverEmail: crushEmail,
-                senderEmail: req.email,
-                replyContent: "You have a match",
-                entityType: "MATCHES",
-                entitySerial: 0
-            });
+    if (otherUser) {
+        await Reply.create({
+            receiverEmail: crushEmail,
+            senderEmail: req.email,
+            replyContent: "You have a match",
+            entityType: "MATCHES",
+            entitySerial: 0
+        });
 
-            await Reply.create({
-                receiverEmail: req.email,
-                senderEmail: crushEmail,
-                replyContent: "You have a match",
-                entityType: "MATCHES",
-                entitySerial: 0
-            });
+        await Reply.create({
+            receiverEmail: req.email,
+            senderEmail: crushEmail,
+            replyContent: "You have a match",
+            entityType: "MATCHES",
+            entitySerial: 0
+        });
 
-            user.matchedEmailList.push(crushEmail);
-            otherUser.matchedEmailList.push(req.email);
-
-            otherUser.sharedSecretList = otherUser.sharedSecretList.filter(
-                secret => secret !== req.body.sharedSecret
-            );
-
-            await Promise.all([
-                PersonalInfo.findOneAndUpdate(
-                    { email: req.email },
-                    {
-                        $push: { matchedEmailList: crushEmail }
-                    }
-                ),
-                PersonalInfo.findOneAndUpdate(
-                    { email: crushEmail },
-                    {
-                        $push: { matchedEmailList: req.email },
-                        $pull: { sharedSecretList: req.body.sharedSecret }
-                    }
-                )
-            ]);
-        } else {
-            await PersonalInfo.findOneAndUpdate(
+        await Promise.all([
+            PersonalInfo.findOneAndUpdate(
                 { email: req.email },
                 {
-                    $push: { sharedSecretList: req.body.sharedSecret }
-                },
-                { runValidators: true }
-            );
-        }
+                    $push: { matchedEmailList: crushEmail }
+                }
+            ),
+            PersonalInfo.findOneAndUpdate(
+                { email: crushEmail },
+                {
+                    $push: { matchedEmailList: req.email },
+                    $pull: { sharedSecretList: req.body.sharedSecret }
+                }
+            )
+        ]);
 
         return res.json({
             success: true, 
             message: "Crush added successfully!",
-            isMatch
+            isMatch : true
         });
-    }
+    } 
+            
+    await PersonalInfo.findOneAndUpdate(
+        { email: req.email },
+        {
+            $push: { sharedSecretList: req.body.sharedSecret }
+        },
+        { runValidators: true }
+    );
+
+    return res.json({
+        success: true, 
+        message: "Crush added successfully!",
+        isMatch : false
+    });
 };
 
 exports.increaseCount = async(req, res, next) => {
