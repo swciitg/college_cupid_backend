@@ -45,21 +45,27 @@ exports.addCrush = async(req, res, next) => {
         );
         await PersonalInfo.findOneAndUpdate({email:req.email}, user, {runValidators: true});
 
+        await Reply.create({
+            senderEmail : "SYSTEM",
+            receiverEmail : crushEmail,
+            replyContent : "You have an Admirer"
+        });
         
         // remove this in main deployment
-        if(user.receivedLikesSecrets.includes(req.body.sharedSecret)) {
-            await Reply.create({
-                receiverEmail : req.email,
-                senderEmail : crushEmail,
-                replyContent : "Liked you"
-            });
+        // if(user.receivedLikesSecrets.includes(req.body.sharedSecret)) {
+        //     await Reply.create({
+        //         receiverEmail : req.email,
+        //         senderEmail : crushEmail,
+        //         replyContent : "Liked you"
+        //     });
 
-            await Reply.create({
-                senderEmail : req.email,
-                receiverEmail : crushEmail,
-                replyContent : "Liked you"
-            });
-        }
+        //     await Reply.create({
+        //         senderEmail : req.email,
+        //         receiverEmail : crushEmail,
+        //         replyContent : "Liked you"
+        //     });
+        // }
+        
 
         
         return res.json({
