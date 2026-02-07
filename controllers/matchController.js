@@ -1,4 +1,5 @@
 const PersonalInfo = require("../models/PersonalInfo");
+const Reply = require("../models/Reply");
 
 exports.findMatches = async (req, res, next) => {
     const oldUsers = await PersonalInfo.find();
@@ -47,6 +48,16 @@ exports.findMatches = async (req, res, next) => {
                 {$push: {matchedEmailList: sharedSecretMap[key][0]}},
                 {runValidators: true}
             );
+            await Reply.create({
+                receiverEmail : sharedSecretMap[key][0] ,
+                senderEmail :  sharedSecretMap[key][1], 
+                replyContent : `You have a match`
+            })
+            await Reply.create({
+                receiverEmail : sharedSecretMap[key][1] ,
+                senderEmail : sharedSecretMap[key][0] ,
+                replyContent : `You have a match`
+            });
         }
         console.log('Processed ', i + 1, ' of ', totalPairs, ' pairs.');
     }
