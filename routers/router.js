@@ -8,3 +8,4 @@ exports.faceverifyRouter = require('./faceverify').faceverifyRouter;
 exports.replyRouter = require('./replyRouter').replyRouter;
 exports.confessionRouter = require('./confessionRouter').confessionRouter;
 exports.speeddatingRouter = require('./speeddatingRouter').speeddatingRouter;
+exports.eventsRouter = require("./eventsRouter").eventsRouter;
