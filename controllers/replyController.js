@@ -129,12 +129,12 @@ exports.viewUpdates = async (req, res) => {
     .sort({ createdAt: -1 })
     .select("-receiverEmail");
 
-    updates = updates.filter(
-        (update) => !(
-            update.entityType === "MATCHES" && 
-            (new Date() < new Date("2026-02-13T18:30:00Z"))
-        )
-    );
+    // updates = updates.filter(
+    //     (update) => !(
+    //         update.entityType === "MATCHES" && 
+    //         (new Date() < new Date("2026-02-13T18:30:00Z"))
+    //     )
+    // );
 
     res.json({
         success: true,
