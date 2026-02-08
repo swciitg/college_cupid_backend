@@ -1,7 +1,6 @@
 const SpeedDating = require("../models/SpeedDating");
 
 exports.updateSpeedDating = async (req, res) => {
-  try {
     const { active, startTime, endTime } = req.body;
 
     if (typeof active !== "boolean" || !startTime || !endTime) {
@@ -31,18 +30,9 @@ exports.updateSpeedDating = async (req, res) => {
       success: true,
       message: "Data updated successfully",
     });
-  } catch (error) {
-    console.error("UPDATE SPEED DATING DATA ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
 };
 
 exports.getSpeedDating = async (req, res) => {
-  try {
     const speedDating = await SpeedDating.findOne();
 
     if (!speedDating) {
@@ -58,13 +48,5 @@ exports.getSpeedDating = async (req, res) => {
       startTime: speedDating.startTime,
       endTime: speedDating.endTime,
     });
-  } catch (error) {
-    console.error("GET SPEED DATING ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
 };
   
