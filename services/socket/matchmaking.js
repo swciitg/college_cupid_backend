@@ -7,7 +7,7 @@ exports.matchMaking = (wss) => {
     if (boys.length < 1 || girls.length < 1) return;
     let scores = [];
 
-    // console.log("RUNNING...")
+    console.log("RUNNING...")
     for (let i = 0; i < boys.length; i++) {
       for (let j = 0; j < girls.length; j++) {
         scores.push({

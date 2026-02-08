@@ -75,8 +75,10 @@ exports.socketHandlers = (wss) => {
           u1.ws.send(JSON.stringify({ event: "partner_response", data: payload[0] }));
           u2.ws.send(JSON.stringify({ event: "partner_response", data: payload[1] }));
 
-          room.membersDetails.forEach(m =>
+          room.membersDetails.forEach(m =>{
+            console.log("CHAT CLOSED FOR " , roomId);
             m.ws.send(JSON.stringify({ event: "chat_closed" }))
+          }
           );
 
           clearTimeout(room.timer);
@@ -90,6 +92,7 @@ exports.socketHandlers = (wss) => {
     });
 
     ws.on("close", () => {
+      console.log("DISCONNECTED");
       cleanup(ws, wss, "partner_disconnected");
     });
   });
