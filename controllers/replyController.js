@@ -141,3 +141,24 @@ exports.viewUpdates = async (req, res) => {
         data: updates
     });
 };
+
+
+exports.deleteUpdates = async (req, res) => {
+    const email = req.email;
+
+    const deleteCount = await Reply.deleteMany({
+        email
+    });
+
+    if(deleteCount === 0)  {
+        return res.json({
+            success : true ,
+            message : "Nothing to delete"
+        });
+    }
+
+    return res.json({
+        success : true ,
+        message : "All replies and match updates deleted"
+    });
+}

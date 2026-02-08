@@ -13,4 +13,9 @@ replyRouter.post('/reply/updates', authenticateToken,
     asyncErrorHandler(replyController.viewUpdates)
 );
 
+replyRouter.delete('/reply' ,
+    authenticateToken ,
+    asyncErrorHandler(replyController.deleteUpdates)
+);
+
 module.exports = { replyRouter };
