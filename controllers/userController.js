@@ -112,7 +112,7 @@ exports.getUserProfile = async (req, res, next) => {
       message : "User not found"
     })
   }
-  
+
   const user = await DeactivatedUsers.findOne({ email: req.params.email });
   if (user) {
     return res.json({
@@ -451,12 +451,21 @@ exports.uploadVoice = async (req, res) => {
 exports.searchUser = async(req, res) => {
   const { searchQuery } = req.query;
   
-  const userLists = await UserProfile.find({
+  let userLists = await UserProfile.find({
     name : {
       $regex : searchQuery , 
       $options : "i"
     }
   }).select("name email profilePicUrls gender age");
+
+  const deactivatedUsers = await DeactivatedUsers.find();
+  const deactivatedEmailSet = new Set(
+      deactivatedUsers.map(u => u.email)
+  );
+
+  userLists = userLists.filter(
+    profile => !deactivatedEmailSet.has(profile.email) 
+  )
 
   return res.json({
     success: true , 
