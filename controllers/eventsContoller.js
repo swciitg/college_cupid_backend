@@ -10,10 +10,10 @@ exports.getEvents = async (req, res) => {
 },
 
 exports.createEvent = async (req, res) => {
-    const { name, title, description, startsAt, endsAt } = req.body;
+    const { name, title, description, startsAt, endsAt , route } = req.body;
     const event = await Event.create(
         { 
-            name, title, description, startsAt, endsAt 
+            name, title, description, startsAt, endsAt , route
         }
     );
 

@@ -12,6 +12,10 @@ const eventSchema = new Schema({
     description: {
         type: String
     },
+    route : {
+        type: String ,
+        default : null
+    } ,
     startsAt: {
         type: Date
     },
