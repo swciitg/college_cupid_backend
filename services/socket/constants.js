@@ -4,13 +4,18 @@ let boys = [];
 let girls = [];
 const rooms = {};
 
-const CHAT_TIME = 3 * 60 * 1000;
+const CHAT_TIME = 3 * 60 * 1000 + 5000;
 
 const MIN_SCORE = 0;
 
 const MATCH_INTERVAL = 5000
 
-let MATCH_COUNTER = 0
+let MATCH_COUNTER = 0;
+
+function incrementMatches() {
+  MATCH_COUNTER++;
+  console.log("MATCHED " , MATCH_COUNTER);
+}
 
 const QUESTIONS = [
   "What’s your go-to way to spend a free evening?",
@@ -54,5 +59,5 @@ module.exports = {
   MIN_SCORE,
   MATCH_INTERVAL,
   QUESTIONS,
-  MATCH_COUNTER
+  incrementMatches
 };

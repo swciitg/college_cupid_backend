@@ -1,5 +1,6 @@
-let { boys, girls, rooms, CHAT_TIME, MIN_SCORE, MATCH_INTERVAL , MATCH_COUNTER } = require("./constants.js")
-const { randomRoomId, getQuestions, calcScore } = require("../../utils/socket.js");
+const { boys, girls, rooms, CHAT_TIME, MIN_SCORE, MATCH_INTERVAL , incrementMatches } = require("./constants.js")
+const { randomRoomId, getQuestions, calcScore ,  } = require("../../utils/socket.js");
+
 
 exports.matchMaking = (wss) => {
   setInterval(() => {
@@ -26,11 +27,11 @@ exports.matchMaking = (wss) => {
 
     for (const s of scores) {
       if (usedBoys.has(s.bi) || usedGirls.has(s.gi) || s.score < MIN_SCORE) continue;
-      MATCH_COUNTER++;
-      console.log("MATCHED " , MATCH_COUNTER);
       usedBoys.add(s.bi);
       usedGirls.add(s.gi);
       pairs.push({ boy: boys[s.bi], girl: girls[s.gi] });
+
+      incrementMatches();
     }
 
     [...usedBoys].sort((a, b) => b - a).forEach(i => boys.splice(i, 1));
@@ -43,16 +44,16 @@ exports.matchMaking = (wss) => {
       return null;
     };
 
-    const emitTo = (socketId, event, payload) => {
+    const emitTo = (socketId, event, data) => {
       const socket = getSocketById(socketId);
       if (!socket) return;
-      socket.send(JSON.stringify({ event, payload }));
+      socket.send(JSON.stringify({ event, data }));
     };
 
-    const emitToRoom = (roomId, event, payload) => {
+    const emitToRoom = (roomId, event, data) => {
       const room = rooms[roomId];
       if (!room) return;
-      room.members.forEach(id => emitTo(id, event, payload));
+      room.members.forEach(id => emitTo(id, event, data));
     };
 
     pairs.forEach(({ boy, girl }) => {
