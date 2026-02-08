@@ -377,11 +377,17 @@ exports.updateUserProfile = async (req, res, next) => {
   await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges, {
     runValidators: true,
   });
-  const user = await UserProfile.findOne({ email: req.email });
+  let user = await UserProfile.findOne({ email: req.email });
+  
+  // Add isAdmin dynamically (same logic as getUserProfile)
+  const isAdmin = AdminList.includes(user.email) && req.email === user.email;
+  user = user.toObject();
+  user.isAdmin = isAdmin;
+  
   res.json({
     success: true,
     message: "Profile updated successfully",
-    profilePicUrl: user.profilePicUrl,
+    userProfile: user,
   });
 };
 
