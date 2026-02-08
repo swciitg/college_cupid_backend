@@ -1,113 +1,118 @@
-const { boys, girls, rooms, POOL } = require("./state");
+const { boys, girls, rooms, POOL } = require("./constants.js");
+const crypto = require("crypto");
 
-exports.socketHandlers = (io) => {
-  io.on("connection", socket => {
+exports.socketHandlers = (wss) => {
+  wss.on("connection", (ws) => {
+    ws.id = crypto.randomUUID();
+    ws.rooms = new Set();
 
-    socket.on("join_pool", user => {
-      user.room = null;
-      user.chatStarted = null;
-
-      socket.join(POOL);
-
-      if (user.gender === 0) {
-        boys.push({ socketId: socket.id, user });
-      } else {
-        girls.push({ socketId: socket.id, user });
-      }
-    });
-
-    socket.on("chat_message", ({ roomId, message }) => {
-      const room = rooms[roomId];
-      if (!room || !room.members.includes(socket.id)) {
+    ws.on("message", (raw) => {
+      let parsed;
+      try {
+        parsed = JSON.parse(raw.toString());
+      } catch {
         return;
       }
-      socket.to(roomId).emit("chat_message", message);
-    });
 
-    socket.on("continue_response", ({ roomId, answer }) => {
-      // socket.to(roomId).emit("continue_response", answer);
+      const { event, data } = parsed;
 
-      const room = rooms[roomId];
-      if (!room) return;
+      if (event === "join_pool") {
+        const user = data;
+        user.room = null;
+        user.chatStarted = null;
 
-      if(room.responses.find(response => response.socketId === socket.id)) return;
+        ws.rooms.add(POOL);
 
-      const isYes = answer.toLowerCase() === "yes" ;
-      if(room.isMatch === undefined) 
-        room.isMatch = isYes;
-      else 
-        room.isMatch = room.isMatch && isYes;
-
-      room.responses.push({socketId : socket.id , answer});
-
-      if (room.responses.length === 2) {
-        const user1 = room.membersDetails[0];
-        const user2 = room.membersDetails[1];
-        
-        if(room.isMatch) {
-          io.to(user1.socketId).emit("continue_response" , user2.user.email);
-          io.to(user2.socketId).emit("continue_response" , user1.user.email);
+        if (user.gender === 0) {
+          boys.push({ socketId: ws.id, user, ws });
         } else {
-          io.to(user1.socketId).emit("continue_response" , null);
-          io.to(user2.socketId).emit("continue_response" , null);
+          girls.push({ socketId: ws.id, user, ws });
         }
 
-        io.to(roomId).emit("chat_closed");
-        clearTimeout(room.timer);
-        delete rooms[roomId];
+        // console.log("BOYS:" , boys)
+        // console.log("GIRLS : " , girls)
+      }
+
+      if (event === "chat_message") {
+        const { roomId, message } = data;
+        const room = rooms[roomId];
+        if (!room || !room.members.includes(ws.id)) return;
+
+        room.members.forEach(id => {
+          if (id !== ws.id) {
+            const peer = room.membersDetails.find(m => m.socketId === id);
+            peer?.ws.send(JSON.stringify({
+              event: "chat_message",
+              data: message
+            }));
+          }
+        });
+      }
+
+      if (event === "continue_response") {
+        const { roomId, answer } = data;
+        const room = rooms[roomId];
+        if (!room) return;
+
+        if (room.responses.find(r => r.socketId === ws.id)) return;
+        // console.log(answer)
+
+        const isYes = answer.toLowerCase() === "yes";
+        if (room.isMatch === undefined) room.isMatch = isYes;
+        else room.isMatch = room.isMatch && isYes;
+
+        room.responses.push({ socketId: ws.id, answer });
+
+        if (room.responses.length === 2) {
+          const [u1, u2] = room.membersDetails;
+
+          const payload = room.isMatch
+            ? [u2.user.email, u1.user.email]
+            : [null, null];
+
+          
+
+          u1.ws.send(JSON.stringify({ event: "continue_response", data: payload[0] }));
+          u2.ws.send(JSON.stringify({ event: "continue_response", data: payload[1] }));
+
+          room.membersDetails.forEach(m =>
+            m.ws.send(JSON.stringify({ event: "chat_closed" }))
+          );
+
+          clearTimeout(room.timer);
+          delete rooms[roomId];
+        }
+      }
+
+      if (event === "leave") {
+        cleanup(ws, wss, "partner_left");
       }
     });
 
-    socket.on("leave" , () => {
-      const boyIndex = boys.findIndex(b => b.socketId === socket.id);
-      if (boyIndex !== -1) {
-        boys.splice(boyIndex, 1);
-      }
-      const girlIndex = girls.findIndex(g => g.socketId === socket.id);
-      if (girlIndex !== -1) {
-        girls.splice(girlIndex, 1);
-      }
-      for (const roomId in rooms) {
-        const room = rooms[roomId];
-
-        if (room.members.includes(socket.id)) {
-          room.members.forEach(memberId => {
-            if (memberId !== socket.id) {
-              io.to(memberId).emit("partner_left");
-            }
-          });
-
-          clearTimeout(room.timer);
-          delete rooms[roomId];
-          break;
-        }
-      }
-    })
-
-    socket.on("disconnect", () => {
-      const boyIndex = boys.findIndex(b => b.socketId === socket.id);
-      if (boyIndex !== -1) {
-        boys.splice(boyIndex, 1);
-      }
-      const girlIndex = girls.findIndex(g => g.socketId === socket.id);
-      if (girlIndex !== -1) {
-        girls.splice(girlIndex, 1);
-      }
-      for (const roomId in rooms) {
-        const room = rooms[roomId];
-
-        if (room.members.includes(socket.id)) {
-          room.members.forEach(memberId => {
-            if (memberId !== socket.id) {
-              io.to(memberId).emit("partner_disconnected");
-            }
-          });
-
-          clearTimeout(room.timer);
-          delete rooms[roomId];
-          break;
-        }
-      }
+    ws.on("close", () => {
+      cleanup(ws, wss, "partner_disconnected");
     });
   });
 };
+
+function cleanup(ws, wss, eventName) {
+  let i = boys.findIndex(b => b.socketId === ws.id);
+  if (i !== -1) boys.splice(i, 1);
+
+  i = girls.findIndex(g => g.socketId === ws.id);
+  if (i !== -1) girls.splice(i, 1);
+
+  for (const roomId in rooms) {
+    const room = rooms[roomId];
+    if (room.members.includes(ws.id)) {
+      room.membersDetails.forEach(m => {
+        if (m.socketId !== ws.id) {
+          m.ws.send(JSON.stringify({ event: eventName }));
+        }
+      });
+      clearTimeout(room.timer);
+      delete rooms[roomId];
+      break;
+    }
+  }
+}
