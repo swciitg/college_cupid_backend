@@ -50,7 +50,7 @@ exports.addReply = async (req, res) => {
 
         receiverEmail = confession.encryptedEmail;
     } else {
-        if(!entitySerial || !["QUESTIONS" , "IMAGES" , "MATCHES"].includes(entityType)) {
+        if(typeof entitySerial !== 'number' || !["QUESTIONS" , "IMAGES" , "MATCHES"].includes(entityType)) {
             return res.json({
                 success : false, 
                 message : "Missing required fields : entity"
