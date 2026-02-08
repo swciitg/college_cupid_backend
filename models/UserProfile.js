@@ -132,6 +132,10 @@ const userProfileSchema = new Schema({
   googleAccountEmail: {
     type: String,
     default: null
+  },
+  deviceId : {
+    type : String,
+    default : null
   }
 }, {
   timestamps : true

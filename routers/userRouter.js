@@ -25,7 +25,8 @@ userRouter.post('/user/profile', authenticateToken,
 userRouter.put('/user/profile', authenticateToken,
     asyncErrorHandler(userController.updateUserProfile)
 );
-userRouter.get('/user/profile/email/:email', authenticateToken, 
+userRouter.get('/user/profile/email/:email', 
+    // authenticateToken, 
     asyncErrorHandler(userController.getUserProfile)
 );
 userRouter.delete('/user/profile/deactivate', authenticateToken, 

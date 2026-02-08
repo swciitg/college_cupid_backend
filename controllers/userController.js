@@ -2,7 +2,7 @@ const PersonalInfo = require("../models/PersonalInfo");
 const UserProfile = require("../models/UserProfile");
 const BlockedUserList = require("../models/BlockedUserList");
 const DeactivatedUsers = require("../models/DeactivatedUsers");
-const { deactivatedUserProfile, GuestEmails, GuestUserInfo } = require("../shared/constants");
+const { deactivatedUserProfile, GuestEmails, GuestUserInfo, AdminList } = require("../shared/constants");
 
 function sortByPositions(positions, objects) {
   let max = Math.max(...positions);
@@ -105,7 +105,14 @@ exports.createUserProfile = async (req, res, next) => {
 };
 
 exports.getUserProfile = async (req, res, next) => {
-  const userProfile = await UserProfile.findOne({ email: req.params.email });
+  let userProfile = await UserProfile.findOne({ email: req.params.email });
+  if(!userProfile) {
+    return res.json({
+      success: false ,
+      message : "User not found"
+    })
+  }
+  
   const user = await DeactivatedUsers.findOne({ email: req.params.email });
   if (user) {
     return res.json({
@@ -113,6 +120,11 @@ exports.getUserProfile = async (req, res, next) => {
       userProfile: deactivatedUserProfile,
     });
   }
+
+  const isAdmin = AdminList.includes(userProfile.email) && req.email === userProfile.email;
+  userProfile = userProfile.toObject();
+  userProfile.isAdmin = isAdmin;
+
   res.json({
     success: true,
     userProfile: userProfile,

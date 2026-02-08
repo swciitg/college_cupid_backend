@@ -12,18 +12,21 @@ eventsRouter.get(
 
 eventsRouter.post(
     "/events/" ,
+    authenticateToken ,
     verifyAdmin ,
     asyncErrorHandler(eventsController.createEvent)
 );
 
 eventsRouter.put(
     "/events/:id" ,
+    authenticateToken ,
     verifyAdmin ,
     asyncErrorHandler(eventsController.updateEvent) 
 );
 
 eventsRouter.delete(
     "/events/:id" ,
+    authenticateToken ,
     verifyAdmin ,
     asyncErrorHandler(eventsController.deleteEvent)
 );
