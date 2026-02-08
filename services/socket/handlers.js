@@ -49,7 +49,7 @@ exports.socketHandlers = (wss) => {
         });
       }
 
-      if (event === "continue_response") {
+      if (event === "my_response") {
         const { roomId, answer } = data;
         const room = rooms[roomId];
         if (!room) return;
@@ -72,8 +72,8 @@ exports.socketHandlers = (wss) => {
 
           
 
-          u1.ws.send(JSON.stringify({ event: "continue_response", data: payload[0] }));
-          u2.ws.send(JSON.stringify({ event: "continue_response", data: payload[1] }));
+          u1.ws.send(JSON.stringify({ event: "partner_response", data: payload[0] }));
+          u2.ws.send(JSON.stringify({ event: "partner_response", data: payload[1] }));
 
           room.membersDetails.forEach(m =>
             m.ws.send(JSON.stringify({ event: "chat_closed" }))
