@@ -29,6 +29,8 @@ exports.socketHandlers = (wss) => {
           girls.push({ socketId: ws.id, user, ws });
         }
 
+        console.log("Joined " , user.email);
+
         // console.log("BOYS:" , boys)
         // console.log("GIRLS : " , girls)
       }
@@ -37,6 +39,8 @@ exports.socketHandlers = (wss) => {
         const { roomId, message } = data;
         const room = rooms[roomId];
         if (!room || !room.members.includes(ws.id)) return;
+
+        console.log(message)
 
         room.members.forEach(id => {
           if (id !== ws.id) {

@@ -78,6 +78,7 @@ exports.matchMaking = (wss) => {
         rooms[roomId].membersDetails.push(p);
 
         // console.log(p.socketId);
+        console.log(p.user.email)
 
         emitTo(p.socketId, "matched", { roomId });
       });
