@@ -3,6 +3,7 @@ const Event = require("../models/Events.js");
 exports.getEvents = async (req, res) => {
     const events = await Event.find()
                             .sort({ createdAt: -1 });
+    
     res.json({ 
         success: true, 
         events 
@@ -10,10 +11,10 @@ exports.getEvents = async (req, res) => {
 },
 
 exports.createEvent = async (req, res) => {
-    const { name, title, description, startsAt, endsAt , route } = req.body;
+    const { name, title, description, startTime, endTime, route, event_type } = req.body;
     const event = await Event.create(
         { 
-            name, title, description, startsAt, endsAt , route
+            name, title, description, startTime, endTime, route, event_type
         }
     );
 

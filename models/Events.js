@@ -15,15 +15,24 @@ const eventSchema = new Schema({
     route : {
         type: String ,
         default : null
-    } ,
-    startsAt: {
-        type: Date
     },
-    endsAt: {
-        type: Date
+    event_type: {
+        type: String,
+        enum: ['BLIND_DATING', 'OTHER'],
+        default: 'OTHER'
+    },
+    startTime: {
+        type: String, // Daily start time in 24-hour format like "23:00" for 11 PM
+        required: true,
+        match: /^([01]\d|2[0-3]):([0-5]\d)$/ // Validates HH:MM format
+    },
+    endTime: {
+        type: String, // Daily end time in 24-hour format like "02:00" for 2 AM
+        required: true,
+        match: /^([01]\d|2[0-3]):([0-5]\d)$/ // Validates HH:MM format
     }
 }, { 
-    timestamps: true 
+    timestamps: true
 });
 
 const Event = model('Event', eventSchema);
