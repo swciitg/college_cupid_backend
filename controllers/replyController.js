@@ -1,4 +1,5 @@
 const Confessions = require('../models/confession.js');
+const PersonalInfo = require('../models/PersonalInfo.js');
 const Reply = require('../models/Reply.js');
 const { GenerateHash } = require('../utils/hashing.js');
 
@@ -145,6 +146,14 @@ exports.viewUpdates = async (req, res) => {
 
 exports.deleteUpdates = async (req, res) => {
     const email = req.email;
+
+    await PersonalInfo.findOneAndUpdate({
+        email
+    } , {
+        $set : {
+            sharedSecretList : []
+        }
+    });
 
     const result = await Reply.deleteMany({
         receiverEmail: email
