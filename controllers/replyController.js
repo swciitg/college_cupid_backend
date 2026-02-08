@@ -146,11 +146,11 @@ exports.viewUpdates = async (req, res) => {
 exports.deleteUpdates = async (req, res) => {
     const email = req.email;
 
-    const deleteCount = await Reply.deleteMany({
-        email
+    const result = await Reply.deleteMany({
+        receiverEmail: email
     });
 
-    if(deleteCount === 0)  {
+    if(result.deletedCount === 0)  {
         return res.json({
             success : true ,
             message : "Nothing to delete"
@@ -159,6 +159,6 @@ exports.deleteUpdates = async (req, res) => {
 
     return res.json({
         success : true ,
-        message : "All replies and match updates deleted"
+        message : `All replies and match updates deleted (${result.deletedCount} items)`
     });
 }
