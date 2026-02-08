@@ -1,12 +1,11 @@
-const { Server } = require("socket.io");
+// const { Server } = require("socket.io");
 const { socketHandlers } = require("./handlers.js");
 const { matchMaking } = require("./matchmaking.js");
+const ws = require("ws");
 
 module.exports = function initSocket(server) {
-  const io = new Server(server, {
-    cors: { origin: "*" }
-  });
+  const wss = new ws.WebSocketServer({ server });
 
-  socketHandlers(io);
-  matchMaking(io);
+  socketHandlers(wss);
+  matchMaking(wss);
 };

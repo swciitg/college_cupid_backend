@@ -1,12 +1,12 @@
-const { boys, girls, rooms, POOL , CHAT_TIME , MIN_SCORE} = require("./state.js");
-const { randomRoomId, getQuestions , calcScore } = require("../../utils/socket.js");
+let { boys, girls, rooms, CHAT_TIME, MIN_SCORE, MATCH_INTERVAL , MATCH_COUNTER } = require("./constants.js")
+const { randomRoomId, getQuestions, calcScore } = require("../../utils/socket.js");
 
-exports.matchMaking = (io) => {
+exports.matchMaking = (wss) => {
   setInterval(() => {
     if (boys.length < 1 || girls.length < 1) return;
-
     let scores = [];
 
+    // console.log("RUNNING...")
     for (let i = 0; i < boys.length; i++) {
       for (let j = 0; j < girls.length; j++) {
         scores.push({
@@ -17,6 +17,7 @@ exports.matchMaking = (io) => {
       }
     }
 
+    // console.log("SCORES : " , scores);
     scores.sort((a, b) => b.score - a.score);
 
     const usedBoys = new Set();
@@ -25,6 +26,8 @@ exports.matchMaking = (io) => {
 
     for (const s of scores) {
       if (usedBoys.has(s.bi) || usedGirls.has(s.gi) || s.score < MIN_SCORE) continue;
+      MATCH_COUNTER++;
+      console.log("MATCHED " , MATCH_COUNTER);
       usedBoys.add(s.bi);
       usedGirls.add(s.gi);
       pairs.push({ boy: boys[s.bi], girl: girls[s.gi] });
@@ -33,29 +36,59 @@ exports.matchMaking = (io) => {
     [...usedBoys].sort((a, b) => b - a).forEach(i => boys.splice(i, 1));
     [...usedGirls].sort((a, b) => b - a).forEach(i => girls.splice(i, 1));
 
+    const getSocketById = (id) => {
+      for (const client of wss.clients) {
+        if (client.id === id && client.readyState === 1) return client;
+      }
+      return null;
+    };
+
+    const emitTo = (socketId, event, payload) => {
+      const socket = getSocketById(socketId);
+      if (!socket) return;
+      socket.send(JSON.stringify({ event, payload }));
+    };
+
+    const emitToRoom = (roomId, event, payload) => {
+      const room = rooms[roomId];
+      if (!room) return;
+      room.members.forEach(id => emitTo(id, event, payload));
+    };
+
     pairs.forEach(({ boy, girl }) => {
       const roomId = randomRoomId();
-      rooms[roomId] = { members: [], responses: [] , membersDetails : [] };
+
+      rooms[roomId] = {
+        members: [],
+        responses: [],
+        membersDetails: []
+      };
 
       [boy, girl].forEach(p => {
-        io.sockets.sockets.get(p.socketId)?.leave(POOL);
-        io.sockets.sockets.get(p.socketId)?.join(roomId);
+        const socket = getSocketById(p.socketId);
+        if (!socket) return;
+
+        socket.roomId = roomId;
 
         p.user.room = roomId;
         p.user.chatStarted = true;
 
         rooms[roomId].members.push(p.socketId);
         rooms[roomId].membersDetails.push(p);
-        io.to(p.socketId).emit("matched", { roomId });
-      });
 
-      const qReceiver = Math.random() < 0.5 ? boy.socketId : girl.socketId;
-      console.log(qReceiver)
-      io.to(qReceiver).emit("questions", getQuestions());
+        // console.log(p.socketId);
+
+        emitTo(p.socketId, "matched", { roomId });
+      });
+      const rd = Math.floor(Math.random() * 9 + 1);
+      const qReceiver = (rd % 2)? boy.socketId : girl.socketId;
+
+      emitTo(qReceiver, "questions", getQuestions());
 
       rooms[roomId].timer = setTimeout(() => {
-        io.to(roomId).emit("continue_prompt");
+        emitToRoom(roomId, "continue_prompt");
       }, CHAT_TIME);
     });
-  }, 5000);
+
+  }, MATCH_INTERVAL);
 };
