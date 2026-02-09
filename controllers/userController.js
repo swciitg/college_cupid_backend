@@ -115,14 +115,19 @@ exports.getUserProfile = async (req, res, next) => {
 
   const user = await DeactivatedUsers.findOne({ email: req.params.email });
   if (user) {
-    const deactivateUser = {
-      ...deactivatedUserProfile,
-      _id: userProfile._id
-    };
-    return res.json({
-      success: true,
-      userProfile: deactivateUser,
-    });
+    if (req.params.email === req.email) {
+      await DeactivatedUsers.deleteMany({ email: req.params.email });
+    } else {
+      // Return deactivated profile for other users viewing this profile
+      const deactivateUser = {
+        ...deactivatedUserProfile,
+        _id: userProfile._id
+      };
+      return res.json({
+        success: true,
+        userProfile: deactivateUser,
+      });
+    }
   }
 
   const isAdmin = AdminList.includes(userProfile.email) && req.email === userProfile.email;
