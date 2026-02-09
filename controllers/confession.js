@@ -78,6 +78,9 @@ exports.getMyConfession = async(req, res) => {
     });
 }
 
+const MAX_CONFESSIONS = 5;
+const WINDOW_HOURS = 24;
+
 exports.createConfession = async(req, res) => {
     /** 
     * POST - expects the encrypted email(NOT THE EXACT EMAIL), text !== undefined || text.trim().lenght > 0
@@ -89,6 +92,7 @@ exports.createConfession = async(req, res) => {
     * then check for the hate speeches/violatations 
     * if still allowed, then blur sussy words using bad-words
     * then hash email using argon2
+    * then check if the user has posted more than 5 confessions in last 24 hours using the hashed email and createdAt field
     * then create a new confession using the hashed encrypted email, text and type
     * 
     * next upgrades - inclusion of songs used
@@ -131,6 +135,20 @@ exports.createConfession = async(req, res) => {
     const cleanedText = RemoveBadWords(text);
 
     const hashedEmail = await GenerateHash(encryptedEmail);
+
+    const windowStart = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const confessionCount = await Confessions.countDocuments({
+      encryptedEmail: hashedEmail,
+      createdAt: { $gte: windowStart },
+    });
+
+    if (confessionCount >= MAX_CONFESSIONS) {
+      return res.status(429).json({
+        success: false,
+        message: "You can only post 5 confessions within 24 hours",
+      });
+    }
 
     const confession = await Confessions.create({
         encryptedEmail: hashedEmail,

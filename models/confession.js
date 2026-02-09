@@ -59,5 +59,7 @@ const ConfessionsSchema = new Schema({
     }
 );
 
+ConfessionsSchema.index({ encryptedEmail: 1, createdAt: 1 });
+
 const Confessions = model('Confessions', ConfessionsSchema);
 module.exports = Confessions;
