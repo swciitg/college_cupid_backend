@@ -10,3 +10,5 @@ blockedRouter.get(
   authenticateToken,
   asyncErrorHandler(blockedUserController.checkIfUserBlocked),
 );
+
+exports.blockedRouter = blockedRouter;
