@@ -23,7 +23,7 @@ exports.updateSpeedDating = async (req, res) => {
       speedDating.startTime = startTime;
       speedDating.timespan = timespan;
     }
-
+ 
     await speedDating.save();
 
     return res.status(200).json({

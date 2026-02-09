@@ -61,6 +61,7 @@ app.use(process.env.API_URL, router.speeddatingRouter)
 app.use(process.env.API_URL , router.eventsRouter);
 app.use(process.env.API_URL, router.replyRouter);
 app.use(process.env.API_URL, router.confessionRouter);
+app.use(process.env.API_URL, router.blockedRouter);
 
 initSocket(server) 
 
