@@ -10,5 +10,6 @@ crushRouter.put('/crush/decreaseCount', asyncErrorHandler(crushController.decrea
 crushRouter.get('/crush/getCount', authenticateToken, asyncErrorHandler(crushController.getCount));
 crushRouter.delete('/crush/remove', authenticateToken, asyncErrorHandler(crushController.removeCrush));
 crushRouter.post('/crush/check', authenticateToken, asyncErrorHandler(crushController.checkCrushExists));
+crushRouter.post('/crush/updateCrush', authenticateToken, asyncErrorHandler(crushController.updateCrushes));
 
 module.exports = { crushRouter };

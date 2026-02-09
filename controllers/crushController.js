@@ -91,6 +91,42 @@ exports.addCrush = async(req, res, next) => {
     });
 };
 
+exports.updateCrushes = async(req, res, next) => {
+    try {
+        const {sharedSecretList} = req.body;
+        if(!Array.isArray(sharedSecretList)) {
+            return res.json({
+                success: false,
+                message: "shared secret list must be an array"
+            });
+        }
+        if(sharedSecretList.length > 7) {
+            return res.json({
+                success: false,
+                message: "you cannot have more than seven crushes"
+            });
+        }
+        const updatedUser = await PersonalInfo.findOneAndUpdate(
+            {email: req.email},
+            {sharedSecretList},
+            {new: true, runValidators: true}
+        );
+        if(!updatedUser) {
+            return res.json({
+                success: false,
+                message: "user not found"
+            })
+        }
+        return res.json({
+            success: true,
+            message: "crush list updated successfully",
+            sharedSecretList: updatedUser.sharedSecretList,
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+
 exports.increaseCount = async(req, res, next) => {
     // return res.json({
     //     success: false,
@@ -175,7 +211,7 @@ exports.removeCrush = async(req, res, next) => {
         // Check if the shared secret exists
         if (!sharedSecretList.includes(sharedSecret)) {
             return res.json({
-                success: false,
+                success: true,
                 message: "Crush not found in your list"
             });
         }
@@ -196,7 +232,7 @@ exports.removeCrush = async(req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+}; 
 
 exports.checkCrushExists = async(req, res, next) => {
     try {
