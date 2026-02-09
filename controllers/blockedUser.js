@@ -1,4 +1,4 @@
-const BlockedUsersFromApp = require("../models/BlockedUsersFromApp");
+const BlockedUsersFromApp = require("../models/BlockedFromApp");
 
 exports.checkIfUserBlocked = async (req, res) => {
   try {
