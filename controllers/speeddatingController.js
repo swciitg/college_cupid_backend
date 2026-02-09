@@ -1,12 +1,12 @@
-const SpeedDating = require("../models/SpeedDating");
+const SpeedDating = require("../models/SpeedDating.js");
 
 exports.updateSpeedDating = async (req, res) => {
-    const { active, startTime, endTime } = req.body;
+    const { active, startTime, timespan } = req.body;
 
-    if (typeof active !== "boolean" || !startTime || !endTime) {
+    if (typeof active !== "boolean" || !startTime || !timespan) {
       return res.status(400).json({
         success: false,
-        message: "active, startTime and endTime are required",
+        message: "active, startTime and timespan are required",
       });
     }
 
@@ -16,12 +16,12 @@ exports.updateSpeedDating = async (req, res) => {
       speedDating = new SpeedDating({
         active,
         startTime,
-        endTime,
+        timespan,
       });
     } else {
       speedDating.active = active;
       speedDating.startTime = startTime;
-      speedDating.endTime = endTime;
+      speedDating.timespan = timespan;
     }
 
     await speedDating.save();
@@ -37,16 +37,18 @@ exports.getSpeedDating = async (req, res) => {
 
     if (!speedDating) {
       return res.status(200).json({
+        success: true ,
         active: false,
         startTime: null,
-        endTime: null,
+        timespan: null,
       });
     }
 
     return res.status(200).json({
+      success : true,
       active: speedDating.active,
       startTime: speedDating.startTime,
-      endTime: speedDating.endTime,
+      timespan: speedDating.timespan,
     });
 };
   

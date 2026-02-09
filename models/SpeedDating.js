@@ -10,9 +10,9 @@ const speedDatingSchema = new Schema(
       type: Date,
       required : [true, 'Start time is required!'],
     },
-    endTime: {
-      type: Date,
-      required : [true, 'End time is required!'],
+    timespan: {
+      type: Number, // storing in hourse
+      required : [true, 'Timespan is required!'],
     }
 },
 {timestamps :   true}

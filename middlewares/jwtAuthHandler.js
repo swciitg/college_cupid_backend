@@ -36,3 +36,17 @@ exports.verifyAdmin = (req, res, next) => {
     }
     next();
 }
+
+exports.authenticateWSToken = (req) => {
+    if (req.headers["security-key"] !== process.env.SECURITY_KEY){
+        throw new Error("Security-key is missing");
+    }
+    const auth = req.headers["authorization"];
+    if (!auth) throw new Error("Access token missing");
+
+    const token = auth.split(" ")[1];
+    if (!token) throw new Error("Access token missing");
+
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return decoded; 
+}

@@ -1,8 +1,18 @@
+const { authenticateWSToken } = require("../../middlewares/jwtAuthHandler.js");
+const Reply = require("../../models/Reply.js");
 const { boys, girls, rooms, POOL } = require("./constants.js");
 const crypto = require("crypto");
 
 exports.socketHandlers = (wss) => {
-  wss.on("connection", (ws) => {
+  wss.on("connection", (ws , req) => {
+    try {
+        const decoded = authenticateWSToken(req);
+        ws.email = decoded.email;
+    } catch (err) {
+        ws.close(1008, "Unauthorized"); 
+        return;
+    }
+
     ws.id = crypto.randomUUID();
     ws.rooms = new Set();
 
@@ -86,6 +96,29 @@ exports.socketHandlers = (wss) => {
           );
 
           clearTimeout(room.timer);
+
+          if(payload[0] && payload[1]) {
+            const updates = [
+              {
+                senderEmail : u2.user.email, 
+                receiverEmail : u1.user.email, 
+                replyContent : `${u2.user.name} and You both liked each other in Blind-dating!`,
+                entityType : "BLIND_DATING_MATCH",
+                entitySerial : 0
+              } , {
+                senderEmail : u1.user.email, 
+                receiverEmail : u2.user.email, 
+                replyContent : `${u1.user.name} and You both liked each other in Blind-dating!`,
+                entityType : "BLIND_DATING_MATCH",
+                entitySerial : 0
+              }
+            ];
+
+            Reply.insertMany(updates).catch(error => {
+              console.log("THE SPEED DATING PAIR WHERE NOT UPDATED IN DATABASE DUE TO INSERT FAIL");
+            });
+          }
+
           delete rooms[roomId];
         }
       }
