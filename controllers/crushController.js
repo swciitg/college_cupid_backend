@@ -197,3 +197,34 @@ exports.removeCrush = async(req, res, next) => {
         next(error);
     }
 };
+
+exports.checkCrushExists = async(req, res, next) => {
+    try {
+        const { sharedSecret } = req.body;
+
+        if (!sharedSecret) {
+            return res.json({
+                success: false,
+                message: "Shared secret is required"
+            });
+        }
+
+        const user = await PersonalInfo.findOne({email: req.email});
+        
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const exists = user.sharedSecretList.includes(sharedSecret);
+
+        res.json({
+            success: true,
+            exists: exists
+        });
+    } catch (error) {
+        next(error);
+    }
+};
