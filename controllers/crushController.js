@@ -216,13 +216,7 @@ exports.removeCrush = async(req, res, next) => {
             });
         }
 
-        // Find the other user who has this sharedSecret to identify match
-        const otherUser = await PersonalInfo.findOne({
-            email: { $ne: req.email },
-            sharedSecretList: sharedSecret
-        });
-
-        // Remove the shared secret ONLY from current user's list
+        // Remove the shared secret from the list
         const newSharedSecretList = sharedSecretList.filter(item => item !== sharedSecret);
 
         await PersonalInfo.findOneAndUpdate(
@@ -230,31 +224,6 @@ exports.removeCrush = async(req, res, next) => {
             {sharedSecretList: newSharedSecretList}, 
             {runValidators: true}
         );
-
-        // If there was a match (other user also had this sharedSecret), remove match updates
-        if (otherUser) {
-            // Delete all match-related Reply entries between these two users
-            await Reply.deleteMany({
-                entityType: "MATCHES",
-                $or: [
-                    { senderEmail: req.email, receiverEmail: otherUser.email },
-                    { senderEmail: otherUser.email, receiverEmail: req.email }
-                ]
-            });
-
-            // Remove from matchedEmailList for both users
-            await Promise.all([
-                PersonalInfo.findOneAndUpdate(
-                    { email: req.email },
-                    { $pull: { matchedEmailList: otherUser.email } }
-                ),
-                PersonalInfo.findOneAndUpdate(
-                    { email: otherUser.email },
-                    { $pull: { matchedEmailList: req.email } }
-                )
-            ]);
-            // Note: We keep the other user's sharedSecret intact - they can still see you in their crushes
-        }
 
         res.json({
             success: true,
