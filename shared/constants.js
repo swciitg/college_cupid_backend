@@ -1,9 +1,4 @@
-exports.AdminList = [
-	"r.hardik@iitg.ac.in", 
-	"swc@iitg.ac.in", 
-	"vineet.mech22@iitg.ac.in", 
-	"venkatesh.m@iitg.ac.in",
-];
+exports.AdminList = process.env.ADMIN_EMAILS.split(',').map(email => email.trim());
 
 exports.GuestUserInfo = {
 	rollNumber: "200000000",
