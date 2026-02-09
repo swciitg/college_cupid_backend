@@ -124,19 +124,6 @@ const userProfileSchema = new Schema({
     type : String , 
     required : [true , "Instagram Username is a required field"]
   },
-  storageType: {
-    type: String,
-    default: "LOCAL_STORAGE",
-    enum: ["LOCAL_STORAGE", "GOOGLE_DRIVE"]
-  },
-  googleAccountEmail: {
-    type: String,
-    default: null
-  },
-  deviceId : {
-    type : String,
-    default : null
-  }
 }, {
   timestamps : true
 });
