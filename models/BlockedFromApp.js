@@ -26,5 +26,5 @@ const blockedUsersListSchema = new Schema({
 });
 
 
-const BlockedUsersFromApp = model("BlockedUserList", blockedUsersListSchema);
+const BlockedUsersFromApp = model("BlockedUsers", blockedUsersListSchema);
 module.exports = BlockedUsersFromApp;
