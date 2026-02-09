@@ -151,27 +151,49 @@ exports.getCount = async(req, res, next) => {
 }
 
 exports.removeCrush = async(req, res, next) => {
-    return res.json({
-        success: false,
-        message: "You cannot remove crushes anymore!"
-    });
-    function arrayRemove(arr, value) {
-        return arr.filter(function (item) {
-            return item != value;
+    try {
+        const { sharedSecret } = req.body;
+
+        if (!sharedSecret) {
+            return res.json({
+                success: false,
+                message: "Shared secret is required"
+            });
+        }
+
+        const user = await PersonalInfo.findOne({email: req.email});
+        
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const sharedSecretList = user.sharedSecretList;
+        
+        // Check if the shared secret exists
+        if (!sharedSecretList.includes(sharedSecret)) {
+            return res.json({
+                success: false,
+                message: "Crush not found in your list"
+            });
+        }
+
+        // Remove the shared secret from the list
+        const newSharedSecretList = sharedSecretList.filter(item => item !== sharedSecret);
+
+        await PersonalInfo.findOneAndUpdate(
+            {email: req.email}, 
+            {sharedSecretList: newSharedSecretList}, 
+            {runValidators: true}
+        );
+
+        res.json({
+            success: true,
+            message: 'Crush removed successfully'
         });
+    } catch (error) {
+        next(error);
     }
-
-    const user = await PersonalInfo.findOne({email: req.email});
-    const sharedSecretList = user.sharedSecretList;
-
-    const newSharedSecretList = arrayRemove(sharedSecretList,sharedSecretList[req.query.index]);
-
-    await PersonalInfo.findOneAndUpdate({email: req.email}, {
-        sharedSecretList: newSharedSecretList,
-    }, {runValidators: true});
-
-    res.json({
-        success: true,
-        message: 'Crush deleted successfully'
-    });
 };
