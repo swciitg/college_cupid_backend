@@ -121,7 +121,8 @@ exports.getUserProfile = async (req, res, next) => {
       // Return deactivated profile for other users viewing this profile
       const deactivateUser = {
         ...deactivatedUserProfile,
-        _id: userProfile._id
+        _id: userProfile._id,
+        email: req.params.email
       };
       return res.json({
         success: true,
