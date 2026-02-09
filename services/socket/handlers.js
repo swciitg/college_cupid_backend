@@ -4,7 +4,41 @@ const { boys, girls, rooms, POOL } = require("./constants.js");
 const crypto = require("crypto");
 const BlockedUsersFromApp = require("../../models/BlockedFromApp.js");
 
+// Broadcast stats to all users in pool every 2 seconds
+const STATS_POLL_INTERVAL = 2000;
+let statsInterval = null;
+
+function broadcastPoolStats(wss) {
+  const boysCount = boys.length;
+  const girlsCount = girls.length;
+  const totalRooms = Object.keys(rooms).length;
+  
+  const statsMessage = JSON.stringify({
+    event: "pool_stats",
+    data: { boysCount, girlsCount, totalRooms },
+  });
+
+  boys.forEach(({ ws }) => {
+    if (ws.readyState === 1) {
+      ws.send(statsMessage);
+    }
+  });
+  
+  girls.forEach(({ ws }) => {
+    if (ws.readyState === 1) {
+      ws.send(statsMessage);
+    }
+  });
+}
+
 exports.socketHandlers = (wss) => {
+  // Start polling if not already started
+  if (!statsInterval) {
+    statsInterval = setInterval(() => {
+      broadcastPoolStats(wss);
+    }, STATS_POLL_INTERVAL);
+  }
+
   wss.on("connection", (ws, req) => {
     // try {
     //     const decoded = authenticateWSToken(req);
@@ -41,16 +75,7 @@ exports.socketHandlers = (wss) => {
         }
 
         console.log("Joined ", user.email);
-        // Send pool stats to the user who just joined
-        const boysCount = boys.length;
-        const girlsCount = girls.length;
-        const totalRooms = Object.keys(rooms).length;
-        ws.send(
-          JSON.stringify({
-            event: "pool_stats",
-            data: { boysCount, girlsCount, totalRooms },
-          }),
-        );
+        // Stats will be sent via polling interval
         // console.log("BOYS:" , boys)
         // console.log("GIRLS : " , girls)
       }
