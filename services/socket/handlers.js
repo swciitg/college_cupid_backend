@@ -1,17 +1,17 @@
-const { authenticateWSToken } = require("../../middlewares/jwtAuthHandler.js");
+// const { authenticateWSToken } = require("../../middlewares/jwtAuthHandler.js");
 const Reply = require("../../models/Reply.js");
 const { boys, girls, rooms, POOL } = require("./constants.js");
 const crypto = require("crypto");
 
 exports.socketHandlers = (wss) => {
   wss.on("connection", (ws , req) => {
-    try {
-        const decoded = authenticateWSToken(req);
-        ws.email = decoded.email;
-    } catch (err) {
-        ws.close(1008, "Unauthorized"); 
-        return;
-    }
+    // try {
+    //     const decoded = authenticateWSToken(req);
+    //     ws.email = decoded.email; 
+    // } catch (err) {
+    //     ws.close(1008, "Unauthorized"); 
+    //     return;
+    // }
 
     ws.id = crypto.randomUUID();
     ws.rooms = new Set();
