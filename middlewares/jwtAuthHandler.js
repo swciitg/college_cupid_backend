@@ -38,7 +38,14 @@ exports.verifyAdmin = (req, res, next) => {
 }
 
 exports.authenticateWSToken = (req) => {
+    console.log('[WS Auth] Starting authentication');
+    console.log('[WS Auth] Headers:', { 
+        hasSecurityKey: !!req.headers["security-key"],
+        hasAuthorization: !!req.headers["authorization"]
+    });
+    
     if (req.headers["security-key"] !== process.env.SECURITY_KEY){
+        console.log('[WS Auth] Security key validation failed');
         throw new Error("Security-key is missing");
     }
     // const auth = req.headers["authorization"];
