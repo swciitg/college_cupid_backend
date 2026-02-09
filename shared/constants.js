@@ -16,15 +16,17 @@ exports.deactivatedUserProfile = {
 	name: "Deactivated User",
 	gender: "MALE",
 	email: "deactivatedUser@iitg.ac.in",
-	rollNumber: "210102000",
+	age: 20,
+	hometown: "Unknown",
+	program: "BTECH",
+	zodiac: "ARIES",
 	sexualOrientation: {
 		type: "STRAIGHT",
 		display: false,
 	},
-	relationshipGoals: {
-		goal: "LONG TERM",
-		display: false,
-	},
+	typeOfRelationship: "NOT LOOOKING TO DATE",
+	interests: ["Reading", "Music", "Sports", "Travel", "Food"],
+	voiceRecordings: [],
 	profilePicUrls: [
 		{
 			Url: "https://swc.iitg.ac.in/collegeCupid/api/v2/getImage?photoId=68d951a0-dd6a-4b38-81b8-ebf58009d1bd-compressed",
@@ -39,12 +41,16 @@ exports.deactivatedUserProfile = {
 			blurHash: null,
 		},
 	],
-	program: "BTECH",
+	surpriseQuiz: [],
 	yearOfJoin: 24,
-	interests: [],
-	bio: " ",
-	publicKey: " ",
+	relationshipGoals: {
+		goal: "LONG TERM",
+		display: false,
+	},
 	personalityType: "estj",
+	publicKey: " ",
+	whatsappNumber: "0000000000",
+	insta: "deactivated_user",
 };
 
 exports.ZODIAC_ENUM = [

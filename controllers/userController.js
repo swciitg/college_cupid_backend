@@ -115,9 +115,13 @@ exports.getUserProfile = async (req, res, next) => {
 
   const user = await DeactivatedUsers.findOne({ email: req.params.email });
   if (user) {
+    const deactivateUser = {
+      ...deactivatedUserProfile,
+      _id: userProfile._id
+    };
     return res.json({
       success: true,
-      userProfile: deactivatedUserProfile,
+      userProfile: deactivateUser,
     });
   }
 
