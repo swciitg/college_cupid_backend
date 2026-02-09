@@ -41,7 +41,16 @@ exports.socketHandlers = (wss) => {
         }
 
         console.log("Joined ", user.email);
-
+        // Send pool stats to the user who just joined
+        const boysCount = boys.length;
+        const girlsCount = girls.length;
+        const totalRooms = Object.keys(rooms).length;
+        ws.send(
+          JSON.stringify({
+            event: "pool_stats",
+            data: { boysCount, girlsCount, totalRooms },
+          }),
+        );
         // console.log("BOYS:" , boys)
         // console.log("GIRLS : " , girls)
       }
