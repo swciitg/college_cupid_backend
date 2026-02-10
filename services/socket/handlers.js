@@ -135,13 +135,13 @@ exports.socketHandlers = (wss) => {
 
           clearTimeout(room.timer);
 
-          console.log(payload[0] && payload[1]);
+          // console.log(payload[0] && payload[1]);
 
           if (payload[0] && payload[1]) {
 
-            console.log('MATCH in Blind-dating')
-            console.log(payload[0])
-            console.log(payload[1])
+            // console.log('MATCH in Blind-dating')
+            // console.log(payload[0])
+            // console.log(payload[1])
 
             Reply.create([
               {
@@ -164,7 +164,7 @@ exports.socketHandlers = (wss) => {
               );
             });
 
-            console.log("Updates sent")
+            // console.log("Updates sent")
           }
 
           delete rooms[roomId];
