@@ -135,29 +135,36 @@ exports.socketHandlers = (wss) => {
 
           clearTimeout(room.timer);
 
-          if (payload[0] && payload[1]) {
-            const updates = [
-              {
-                senderEmail: u2.user.email,
-                receiverEmail: u1.user.email,
-                replyContent: `${u2.user.name} and You both liked each other in Blind-dating!`,
-                entityType: "BLIND_DATING_MATCH",
-                entitySerial: 0,
-              },
-              {
-                senderEmail: u1.user.email,
-                receiverEmail: u2.user.email,
-                replyContent: `${u1.user.name} and You both liked each other in Blind-dating!`,
-                entityType: "BLIND_DATING_MATCH",
-                entitySerial: 0,
-              },
-            ];
+          console.log(payload[0] && payload[1]);
 
-            Reply.insertMany(updates).catch((error) => {
+          if (payload[0] && payload[1]) {
+
+            console.log('MATCH in Blind-dating')
+            console.log(payload[0])
+            console.log(payload[1])
+
+            Reply.create([
+              {
+                senderEmail: payload[0],
+                receiverEmail: payload[1],
+                replyContent: `You found a Match in Blind-dating!`,
+                entityType: "BLIND_DATING_MATCH",
+                entitySerial: 0,
+              },
+              {
+                senderEmail: payload[1],
+                receiverEmail: payload[0],
+                replyContent: `You found a Match in Blind-dating!`,
+                entityType: "BLIND_DATING_MATCH",
+                entitySerial: 0,
+              },
+            ]).catch((error) => {
               console.log(
                 "THE SPEED DATING PAIR WHERE NOT UPDATED IN DATABASE DUE TO INSERT FAIL",
               );
             });
+
+            console.log("Updates sent")
           }
 
           delete rooms[roomId];
