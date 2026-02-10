@@ -32,26 +32,27 @@ exports.addCrush = async(req, res, next) => {
     }
 
     const otherUser = await PersonalInfo.findOne({
-        email : crushEmail ,
-        sharedSecretList : req.body.sharedSecret
+        email : crushEmail 
     });
                 
-    if (otherUser) {
-        await Reply.create({
-            receiverEmail: crushEmail,
-            senderEmail: req.email,
-            replyContent: "You have a match",
-            entityType: "MATCHES",
-            entitySerial: 0
-        });
+    if (otherUser && otherUser.sharedSecretList.includes(req.body.sharedSecret)) {
+        const updates = [
+            {
+                receiverEmail: crushEmail,
+                senderEmail: req.email,
+                replyContent: "You have a match",
+                entityType: "MATCHES",
+                entitySerial: 0
+            }, {
+                receiverEmail: req.email,
+                senderEmail: crushEmail,
+                replyContent: "You have a match",
+                entityType: "MATCHES",
+                entitySerial: 0
+            }
+        ];   
 
-        await Reply.create({
-            receiverEmail: req.email,
-            senderEmail: crushEmail,
-            replyContent: "You have a match",
-            entityType: "MATCHES",
-            entitySerial: 0
-        });
+        await Reply.insertMany(updates);
 
         await Promise.all([
             PersonalInfo.findOneAndUpdate(
