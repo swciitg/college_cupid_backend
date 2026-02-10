@@ -7,7 +7,11 @@ exports.addCrush = async(req, res, next) => {
     //     success: false,
     //     message: "You cannot add crushes anymore!"
     // });
-    const user = await PersonalInfo.findOne({email: req.email});
+    let user = await PersonalInfo.findOne({email: req.email});
+
+    if(!user) {
+        user = await PersonalInfo.create({email : req.email});
+    }
 
     if(user.sharedSecretList.length === 7){
         return res.json({
@@ -31,9 +35,13 @@ exports.addCrush = async(req, res, next) => {
         });
     }
 
-    const otherUser = await PersonalInfo.findOne({
+    let otherUser = await PersonalInfo.findOne({
         email : crushEmail 
     });
+
+    if(!otherUser) {
+        otherUser = await PersonalInfo.create({email:crushEmail});
+    }
                 
     if (otherUser && otherUser.sharedSecretList.includes(req.body.sharedSecret)) {
         const updates = [
