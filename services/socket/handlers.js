@@ -165,26 +165,44 @@ exports.socketHandlers = (wss) => {
       }
 
       if (event === "report") {
-        const { reportedEmail } = data;
-        try {
-          let doc = await BlockedUsersFromApp.findOne();
-          if (!doc) {
-            doc = await BlockedUsersFromApp.create({ blockedUsers: [] });
-          }
-          let user = doc.blockedUsers.find((u) => u.email === reportedEmail);
-          if (!user) {
-            doc.blockedUsers.push({
-              email: reportedEmail,
-              count: 1,
-              isPermanent: false,
-            });
-          } else {
-            user.count += 1;
-            if (user.count > 2) {
-              user.isPermanent = true;
+        const { reportedEmail, roomId } = data;
+
+        let foundRoomId = roomId;
+        
+        if (!foundRoomId) {
+          // Find the room where reportedEmail is present as a member
+          for (const rId in rooms) {
+            const room = rooms[rId];
+            const member = room.membersDetails.find(
+              (m) => m.user.email === reportedEmail
+            );
+            if (member) {
+              foundRoomId = rId;
+              console.log(`Found ${reportedEmail} in room ${rId}`);
+              break;
             }
           }
-          await doc.save();
+          
+          if (!foundRoomId) {
+            console.log(`Report failed: ${reportedEmail} not found in any room`);
+            return;
+          }
+        }
+
+        let blockEmail = rooms[foundRoomId].membersDetails.filter((u) => u.user.email !== reportedEmail)[0]?.user.email;
+        
+        try {
+          let doc = await BlockedUsersFromApp.findOne({email: blockEmail});
+          if (!doc) {
+            doc = await BlockedUsersFromApp.create({email: blockEmail, count: 1, isPermanent: false});
+          } else {
+            doc.count += 1;
+            if (doc.count > 2) {
+              doc.isPermanent = true;
+            }
+            await doc.save();
+          }
+          console.log(`Successfully blocked ${blockEmail}. Count: ${doc.count}`);
         } catch (error) {
           console.log("error in reporting user: ", error);
         }
