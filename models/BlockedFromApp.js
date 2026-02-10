@@ -18,13 +18,6 @@ const blockedUserSchema = new Schema(
   }
 );
 
-const blockedUsersListSchema = new Schema({
-  blockedUsers: {
-    type: [blockedUserSchema],
-    default: [],
-  },
-});
 
-
-const BlockedUsersFromApp = model("BlockedUsers", blockedUsersListSchema);
+const BlockedUsersFromApp = model("BlockedUsers", blockedUserSchema);
 module.exports = BlockedUsersFromApp;

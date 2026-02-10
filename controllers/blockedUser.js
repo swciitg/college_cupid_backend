@@ -10,21 +10,15 @@ exports.checkIfUserBlocked = async (req, res) => {
       });
     }
 
-    const doc = await BlockedUsersFromApp.findOne();
+    const doc = await BlockedUsersFromApp.findOne({email: email});
 
     if (!doc) {
       return res.json({ isBlocked: false });
     }
 
-    const user = doc.blockedUsers.find((u) => u.email === email.toLowerCase());
-
-    if (!user) {
-      return res.json({ isBlocked: false });
-    }
-
     return res.json({
-      isBlocked: user.isPermanent,
-      reportCount: user.count,
+      isBlocked: doc.isPermanent,
+      reportCount: doc.count,
     });
   } catch (err) {
     console.error("CHECK BLOCK ERROR:", err);
