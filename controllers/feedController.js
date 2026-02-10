@@ -52,20 +52,23 @@ exports.getFeed = async (req, res) => {
     const { name, ...filters } = req.query;
     const newFilters = { name: { $regex: name, $options: "i" }, ...filters };
 
-    let { lastFetchTimestamps } = req.params;
-    if(!lastFetchTimestamps) {
-        return res.json({
-            success : true ,
-            message : "Timestamps of last fetch not found"
-        })
-    }
+    // let { lastFetchTimestamps } = req.params;
+    // if(!lastFetchTimestamps) {
+    //     return res.json({
+    //         success : true ,
+    //         message : "Timestamps of last fetch not found"
+    //     })
+    // }
 
-    lastFetchTimestamps = new Date(lastFetchTimestamps);
+    // lastFetchTimestamps = new Date(lastFetchTimestamps);
 
     const currUser = await UserProfile.findOne({ 
         email: req.email 
     });
-    if (!currUser || !currUser.personalityType) {
+
+    if (!currUser 
+        // ||  !currUser.personalityType
+    ) {
         return res     
         .json({ 
             success: false, 
@@ -98,11 +101,11 @@ exports.getFeed = async (req, res) => {
             user : otherUser
         };
 
-        if(otherUser.createdAt < lastFetchTimestamps) {
+        // if(otherUser.createdAt < lastFetchTimestamps) {
             existingUsersProfilesWithScore.push(scoredProfile);
-        } else {
-            newUsersProfilesWithScore.push(scoredProfile);
-        }
+        // } else {
+        //     newUsersProfilesWithScore.push(scoredProfile);
+        // }
     });
 
     

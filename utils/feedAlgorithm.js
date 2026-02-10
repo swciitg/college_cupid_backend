@@ -11,10 +11,10 @@ exports.calculateMatchingScore = (curr_user_factors , other_user_factors) => {
 exports.cumulateMatchingFactors = (user) => {
     let scoreFactors = user.interests;
     scoreFactors.push(
-        currUser.sexualOrientation , 
-        currUser.hometown , 
-        currUser.relationshipGoals ,
-        ...currUser.personalityType.split()
+        user.sexualOrientation , 
+        user.hometown , 
+        user.relationshipGoals ,
+        // ...user.personalityType.split()
     );
 
     return scoreFactors

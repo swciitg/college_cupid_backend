@@ -35,9 +35,9 @@ userRouter.delete('/user/profile/deactivate', authenticateToken,
 userRouter.put('/user/profile/reactivate', authenticateToken, 
     asyncErrorHandler(userController.reactivateUser)
 );
-userRouter.get('/user/profile/page/:pageNumber', authenticateToken, 
-    asyncErrorHandler(userController.getUserProfilePages)
-);
+// userRouter.get('/user/profile/page/:pageNumber', authenticateToken, 
+//     asyncErrorHandler(userController.getUserProfilePages)
+// );
 
 userRouter.post('/user/personalInfo', authenticateToken, 
     asyncErrorHandler(userController.postPersonalInfo)
@@ -59,7 +59,7 @@ userRouter.get(
 );
 
 userRouter.get(
-    "/user/profile/feed/:pageNumber/:lastFetchTimestamps" ,
+    "/user/profile/page/:pageNumber" ,
     authenticateToken , 
     asyncErrorHandler(feedController.getFeed)
 );
