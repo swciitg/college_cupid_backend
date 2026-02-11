@@ -380,15 +380,22 @@ res.json({
 };
 
 exports.updateUserProfile = async (req, res, next) => {
-  const profileChanges = req.body;
+  let profileChanges = req.body;
   // if (req.imageUrl) {
   //     profileChanges.profilePicUrl = req.imageUrl;
   // }
-  await UserProfile.findOneAndUpdate({ email: req.email }, profileChanges, {
-    runValidators: true,
-  });
-  let user = await UserProfile.findOne({ email: req.email });
+  const _user = await UserProfile.findOne({email : req.email});
+  profileChanges.gender = _user.gender; // gender resets back to initial one always
   
+  const user = await UserProfile.findOneAndUpdate(
+    { email: req.email },
+    profileChanges,
+    {
+      new: true,          
+      runValidators: true
+    }
+  );
+
   // Add isAdmin dynamically (same logic as getUserProfile)
   const isAdmin = AdminList.includes(user.email) && req.email === user.email;
   user = user.toObject();

@@ -14,7 +14,7 @@ exports.cumulateMatchingFactors = (user) => {
         user.sexualOrientation , 
         user.hometown , 
         user.relationshipGoals ,
-        // ...user.personalityType.split()
+        ...user.personalityType.split()
     );
 
     return scoreFactors
@@ -27,3 +27,58 @@ exports.shuffleProfiles = (userProfiles) => {
     [userProfiles[i], userProfiles[j]] = [userProfiles[j], userProfiles[i]];
   }
 }
+
+
+exports.paginateCombined = (
+    moreArr,
+    lessArr,
+    start,
+    size
+) => {
+    const result = [];
+
+    let m = start;
+    let l = start;
+
+    const allowMoreCycle = Math.random() < 0.5;
+
+    while (result.length < size && (moreArr.length || lessArr.length)) {
+
+        const takeMore = result.length % 2 === 0;
+
+        if (takeMore) {
+
+            if (m < moreArr.length) {
+                result.push(moreArr[m++]);
+            } 
+            else if (allowMoreCycle && moreArr.length > 0) {
+                result.push(moreArr[m % moreArr.length]);
+                m++;
+            } 
+            else if (l < lessArr.length) {
+                result.push(lessArr[l++]);
+            } 
+            else {
+                break;
+            }
+
+        } else {
+
+            if (l < lessArr.length) {
+                result.push(lessArr[l++]);
+            } 
+            else if (m < moreArr.length) {
+                result.push(moreArr[m++]);
+            } 
+            else if (allowMoreCycle && moreArr.length > 0) {
+                result.push(moreArr[m % moreArr.length]);
+                m++;
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    return result;
+};

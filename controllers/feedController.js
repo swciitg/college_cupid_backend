@@ -3,7 +3,7 @@ const DeactivatedUsers = require("../models/DeactivatedUsers.js");
 // const PersonalInfo = require("../models/PersonalInfo.js");
 const UserProfile = require("../models/UserProfile.js");
 const { GuestEmails } = require("../shared/constants.js");
-const { calculateMatchingScore, cumulateMatchingFactors, shuffleProfiles } = require("../utils/feedAlgorithm.js");
+const { calculateMatchingScore, cumulateMatchingFactors, shuffleProfiles, paginateCombined } = require("../utils/feedAlgorithm.js");
 
 async function cleanUserProfiles(userProfiles , email) {
     const blockedUsers = await BlockedUserList.findOne({ 
@@ -47,7 +47,88 @@ async function cleanUserProfiles(userProfiles , email) {
 
 
 
+exports.getFeed = async(req, res) => {
+    const {name , ...filters} = req.query;
+    const newFilters = { name: { $regex: name, $options: "i" }, ...filters };
 
+    const currUser = await UserProfile.findOne({ 
+        email: req.email 
+    });
+
+    if (!currUser 
+        ||  !currUser.personalityType
+    ) {
+        return res     
+        .json({ 
+            success: false, 
+            message: "User personalityType not found" 
+        });
+    }
+
+    const currUserScoreFactors = cumulateMatchingFactors(currUser);
+
+    let userProfiles = await UserProfile.find({
+        ...newFilters , 
+        email : {
+            $ne : req.email
+        } 
+    });
+
+    userProfiles = await cleanUserProfiles(
+        userProfiles,
+        req.email
+    );
+
+    const morePreferredGenderUser = [];
+    const lessPreferredGenderUser = [];
+
+    userProfiles.forEach(otherUser => {
+        const otherUserScoreFactors = cumulateMatchingFactors(otherUser);
+        const scoredProfile =  {
+            score : calculateMatchingScore(currUserScoreFactors , otherUserScoreFactors) , 
+            ...(otherUser.toObject())
+        };
+
+        if(
+            (
+                currUser.gender !== otherUser.gender 
+                && currUser.gender.toLowerCase() !== "non-binary"
+            ) || ( 
+                currUser.gender.toLowerCase() === "non-binary"
+                && otherUser.gender.toLowerCase() === currUser.gender.toLowerCase()
+            )
+        ) {
+            morePreferredGenderUser.push(scoredProfile);
+        } else {
+            lessPreferredGenderUser.push(scoredProfile);
+        }
+    });
+
+    shuffleProfiles(morePreferredGenderUser);
+    shuffleProfiles(lessPreferredGenderUser);
+
+    const pageNumber = parseInt(req.params.pageNumber, 10) || 0;
+    const pageSize = 10;
+    const startIndex = pageNumber * pageSize;
+
+    const paginatedUsers = paginateCombined(
+        morePreferredGenderUser , 
+        lessPreferredGenderUser ,
+        startIndex ,
+        pageSize
+    );
+
+    shuffleProfiles(paginatedUsers);
+
+    return res.json({
+        success : true,
+        users : paginatedUsers
+    });
+}
+
+
+
+/** 
 exports.getFeed = async (req, res) => {
     const { name, ...filters } = req.query;
     const newFilters = { name: { $regex: name, $options: "i" }, ...filters };
@@ -133,6 +214,6 @@ exports.getFeed = async (req, res) => {
         users : paginatedUsers
     })
 }
-
+*/
 
 
