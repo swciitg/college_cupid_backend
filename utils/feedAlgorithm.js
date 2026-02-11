@@ -14,7 +14,7 @@ exports.cumulateMatchingFactors = (user) => {
         user.sexualOrientation , 
         user.hometown , 
         user.relationshipGoals ,
-        ...user.personalityType.split()
+        // ...user.personalityType.split()
     );
 
     return scoreFactors
@@ -29,56 +29,50 @@ exports.shuffleProfiles = (userProfiles) => {
 }
 
 
-exports.paginateCombined = (
-    moreArr,
-    lessArr,
-    start,
-    size
-) => {
-    const result = [];
+function getRandomConsecutiveSlice(arr, count) {
+  if (count <= 0 || arr.length === 0) return [];
 
-    let m = start;
-    let l = start;
+  if (arr.length <= count) return [...arr];
 
-    const allowMoreCycle = Math.random() < 0.5;
+  const maxStart = arr.length - count;
+  const start = Math.floor(Math.random() * (maxStart + 1));
+  return arr.slice(start, start + count);
+}
 
-    while (result.length < size && (moreArr.length || lessArr.length)) {
 
-        const takeMore = result.length % 2 === 0;
+exports.pickUsers = (morePreferredGenderUser, lessPreferredGenderUser) => {
+    const totalNeeded = 10;
 
-        if (takeMore) {
+    let moreCount = Math.floor(Math.random() * (totalNeeded + 1));
+    let lessCount = totalNeeded - moreCount;
 
-            if (m < moreArr.length) {
-                result.push(moreArr[m++]);
-            } 
-            else if (allowMoreCycle && moreArr.length > 0) {
-                result.push(moreArr[m % moreArr.length]);
-                m++;
-            } 
-            else if (l < lessArr.length) {
-                result.push(lessArr[l++]);
-            } 
-            else {
-                break;
-            }
-
-        } else {
-
-            if (l < lessArr.length) {
-                result.push(lessArr[l++]);
-            } 
-            else if (m < moreArr.length) {
-                result.push(moreArr[m++]);
-            } 
-            else if (allowMoreCycle && moreArr.length > 0) {
-                result.push(moreArr[m % moreArr.length]);
-                m++;
-            }
-            else {
-                break;
-            }
-        }
+    if (morePreferredGenderUser.length < moreCount) {
+        const deficit = moreCount - morePreferredGenderUser.length;
+        moreCount = morePreferredGenderUser.length;
+        lessCount = Math.min(
+            lessPreferredGenderUser.length,
+            lessCount + deficit
+        );
     }
 
-    return result;
-};
+    if (lessPreferredGenderUser.length < lessCount) {
+        const deficit = lessCount - lessPreferredGenderUser.length;
+        lessCount = lessPreferredGenderUser.length;
+        moreCount = Math.min(
+            morePreferredGenderUser.length,
+            moreCount + deficit
+        );
+    }
+
+    const pickedMore = getRandomConsecutiveSlice(
+            morePreferredGenderUser,
+            moreCount
+    );
+
+    const pickedLess = getRandomConsecutiveSlice(
+            lessPreferredGenderUser,
+            lessCount
+    );
+
+    return [...pickedMore, ...pickedLess];
+}

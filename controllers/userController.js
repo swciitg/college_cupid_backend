@@ -387,7 +387,7 @@ exports.updateUserProfile = async (req, res, next) => {
   const _user = await UserProfile.findOne({email : req.email});
   profileChanges.gender = _user.gender; // gender resets back to initial one always
   
-  const user = await UserProfile.findOneAndUpdate(
+  let user = await UserProfile.findOneAndUpdate(
     { email: req.email },
     profileChanges,
     {

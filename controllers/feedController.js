@@ -3,7 +3,7 @@ const DeactivatedUsers = require("../models/DeactivatedUsers.js");
 // const PersonalInfo = require("../models/PersonalInfo.js");
 const UserProfile = require("../models/UserProfile.js");
 const { GuestEmails } = require("../shared/constants.js");
-const { calculateMatchingScore, cumulateMatchingFactors, shuffleProfiles, paginateCombined } = require("../utils/feedAlgorithm.js");
+const { calculateMatchingScore, cumulateMatchingFactors, shuffleProfiles, pickUsers } = require("../utils/feedAlgorithm.js");
 
 async function cleanUserProfiles(userProfiles , email) {
     const blockedUsers = await BlockedUserList.findOne({ 
@@ -56,7 +56,7 @@ exports.getFeed = async(req, res) => {
     });
 
     if (!currUser 
-        ||  !currUser.personalityType
+        // ||  !currUser.personalityType
     ) {
         return res     
         .json({ 
@@ -65,7 +65,7 @@ exports.getFeed = async(req, res) => {
         });
     }
 
-    const currUserScoreFactors = cumulateMatchingFactors(currUser);
+    // const currUserScoreFactors = cumulateMatchingFactors(currUser);
 
     let userProfiles = await UserProfile.find({
         ...newFilters , 
@@ -83,11 +83,11 @@ exports.getFeed = async(req, res) => {
     const lessPreferredGenderUser = [];
 
     userProfiles.forEach(otherUser => {
-        const otherUserScoreFactors = cumulateMatchingFactors(otherUser);
-        const scoredProfile =  {
-            score : calculateMatchingScore(currUserScoreFactors , otherUserScoreFactors) , 
-            ...(otherUser.toObject())
-        };
+        // const otherUserScoreFactors = cumulateMatchingFactors(otherUser);
+        // const scoredProfile =  {
+            // score : calculateMatchingScore(currUserScoreFactors , otherUserScoreFactors) , 
+            // ...(otherUser.toObject())
+        // };
 
         if(
             (
@@ -98,25 +98,13 @@ exports.getFeed = async(req, res) => {
                 && otherUser.gender.toLowerCase() === currUser.gender.toLowerCase()
             )
         ) {
-            morePreferredGenderUser.push(scoredProfile);
+            morePreferredGenderUser.push(otherUser);
         } else {
-            lessPreferredGenderUser.push(scoredProfile);
+            morePreferredGenderUser.push(otherUser);
         }
     });
-
-    shuffleProfiles(morePreferredGenderUser);
-    shuffleProfiles(lessPreferredGenderUser);
-
-    const pageNumber = parseInt(req.params.pageNumber, 10) || 0;
-    const pageSize = 10;
-    const startIndex = pageNumber * pageSize;
-
-    const paginatedUsers = paginateCombined(
-        morePreferredGenderUser , 
-        lessPreferredGenderUser ,
-        startIndex ,
-        pageSize
-    );
+    
+    let paginatedUsers = pickUsers(morePreferredGenderUser, lessPreferredGenderUser);
 
     shuffleProfiles(paginatedUsers);
 
