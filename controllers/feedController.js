@@ -56,7 +56,6 @@ exports.getFeed = async(req, res) => {
     });
 
     if (!currUser 
-        // ||  !currUser.personalityType
     ) {
         return res     
         .json({ 
@@ -64,8 +63,6 @@ exports.getFeed = async(req, res) => {
             message: "User personalityType not found" 
         });
     }
-
-    // const currUserScoreFactors = cumulateMatchingFactors(currUser);
 
     let userProfiles = await UserProfile.find({
         ...newFilters , 
@@ -83,12 +80,6 @@ exports.getFeed = async(req, res) => {
     const lessPreferredGenderUser = [];
 
     userProfiles.forEach(otherUser => {
-        // const otherUserScoreFactors = cumulateMatchingFactors(otherUser);
-        // const scoredProfile =  {
-            // score : calculateMatchingScore(currUserScoreFactors , otherUserScoreFactors) , 
-            // ...(otherUser.toObject())
-        // };
-
         if(
             (
                 currUser.gender !== otherUser.gender 
@@ -100,11 +91,34 @@ exports.getFeed = async(req, res) => {
         ) {
             morePreferredGenderUser.push(otherUser);
         } else {
-            morePreferredGenderUser.push(otherUser);
+            lessPreferredGenderUser.push(otherUser);
         }
     });
+
+    shuffleProfiles(morePreferredGenderUser);
+    shuffleProfiles(lessPreferredGenderUser);
     
-    let paginatedUsers = pickUsers(morePreferredGenderUser, lessPreferredGenderUser);
+    const pageNumber = (parseInt(req.params.pageNumber, 10) || 0) % (morePreferredGenderUser.length + lessPreferredGenderUser.length);
+    const pageSize = 10;
+    const startIndex = pageNumber * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    let paginatedUsers = [];
+
+    const moreLength = morePreferredGenderUser.length;
+
+    if (startIndex < moreLength && endIndex <= moreLength) {
+        paginatedUsers = morePreferredGenderUser.slice(startIndex, endIndex);
+    } else if (startIndex < moreLength && endIndex > moreLength) {
+        const fromMore = morePreferredGenderUser.slice(startIndex, moreLength);
+        const remaining = endIndex - moreLength;
+        const fromLess = lessPreferredGenderUser.slice(0, remaining);
+        paginatedUsers = [...fromMore, ...fromLess];
+    } else {
+        const newStart = startIndex - moreLength;
+        const newEnd = endIndex - moreLength;
+        paginatedUsers = lessPreferredGenderUser.slice(newStart, newEnd);
+    }
 
     shuffleProfiles(paginatedUsers);
 

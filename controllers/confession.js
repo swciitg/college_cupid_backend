@@ -1,5 +1,5 @@
 const Confessions = require("../models/confession.js");
-const { CONFESSIONS_TYPE_ENUM , CONFESSIONS_REPORTS_ENUM } = require("../shared/constants.js");
+const { CONFESSIONS_TYPE_ENUM , CONFESSIONS_REPORTS_ENUM, AdminList } = require("../shared/constants.js");
 const {DetectToxicity , RemoveBadWords} = require("../utils/profanityCheck.js");
 const UserProfile = require('../models/UserProfile.js');
 const { GenerateHash } = require('../utils/hashing.js');
@@ -372,6 +372,19 @@ exports.deleteConfession = async(req, res) => {
      */
 
     const { id } = req.params;
+    
+    if(AdminList.includes(req.email)) {
+        await Promise.all([
+            Confessions.findByIdAndDelete(id) ,
+            Reply.deleteMany({confessionId : id})
+        ]);
+
+        return res.json({
+            success : true ,
+            message : "Confession deleted"
+        });
+    }
+
     const { encryptedEmail } = req.body;
 
     if (!id || typeof encryptedEmail !== "string" || encryptedEmail.trim().length === 0) {
