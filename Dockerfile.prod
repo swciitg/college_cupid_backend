@@ -1,8 +1,8 @@
 FROM node:22-alpine
 WORKDIR /usr/src/app
-COPY package*.json process.yml ./
+COPY package*.json process.prod.yml ./
 RUN npm i -g pm2
 RUN npm i
 COPY . .
 EXPOSE 3000
-ENTRYPOINT ["pm2","start", "./process.yml","--no-daemon"]
+ENTRYPOINT ["pm2","start", "./process.prod.yml","--no-daemon"]
