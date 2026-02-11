@@ -95,10 +95,10 @@ exports.getFeed = async(req, res) => {
         }
     });
 
-    shuffleProfiles(morePreferredGenderUser);
-    shuffleProfiles(lessPreferredGenderUser);
+    // shuffleProfiles(morePreferredGenderUser);
+    // shuffleProfiles(lessPreferredGenderUser);
     
-    const pageNumber = (parseInt(req.params.pageNumber, 10) || 0) % (morePreferredGenderUser.length + lessPreferredGenderUser.length);
+    const pageNumber = (parseInt(req.params.pageNumber, 10) || 0);
     const pageSize = 10;
     const startIndex = pageNumber * pageSize;
     const endIndex = startIndex + pageSize;
@@ -120,7 +120,7 @@ exports.getFeed = async(req, res) => {
         paginatedUsers = lessPreferredGenderUser.slice(newStart, newEnd);
     }
 
-    shuffleProfiles(paginatedUsers);
+    // shuffleProfiles(paginatedUsers);
 
     return res.json({
         success : true,
