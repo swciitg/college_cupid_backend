@@ -1,6 +1,6 @@
 // const { Server } = require("socket.io");
-const { socketHandlers } = require("./handlers.js");
-const { matchMaking } = require("./matchmaking.js");
+const { socketHandlers } = require("./handler.js");
+const { matchMaking } = require("./matchmakings.js");
 const ws = require("ws");
 
 module.exports = function initSocket(server) {

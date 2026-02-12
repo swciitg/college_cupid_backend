@@ -6,8 +6,6 @@ exports.matchMaking = (wss) => {
   setInterval(() => {
     if (boys.length < 1 || girls.length < 1) return;
     let scores = [];
-
-    console.log("RUNNING...")
     for (let i = 0; i < boys.length; i++) {
       for (let j = 0; j < girls.length; j++) {
         scores.push({
@@ -18,7 +16,6 @@ exports.matchMaking = (wss) => {
       }
     }
 
-    // console.log("SCORES : " , scores);
     scores.sort((a, b) => b.score - a.score);
 
     const usedBoys = new Set();
@@ -76,9 +73,6 @@ exports.matchMaking = (wss) => {
 
         rooms[roomId].members.push(p.socketId);
         rooms[roomId].membersDetails.push(p);
-
-        // console.log(p.socketId);
-        console.log(p.user.email)
 
         emitTo(p.socketId, "matched", { roomId });
       });

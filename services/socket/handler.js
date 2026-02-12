@@ -73,20 +73,12 @@ exports.socketHandlers = (wss) => {
         } else {
           girls.push({ socketId: ws.id, user, ws });
         }
-
-        console.log("Joined ", user.email);
-        // Stats will be sent via polling interval
-        // console.log("BOYS:" , boys)
-        // console.log("GIRLS : " , girls)
       }
 
       if (event === "chat_message") {
         const { roomId, message } = data;
         const room = rooms[roomId];
         if (!room || !room.members.includes(ws.id)) return;
-
-        console.log(message);
-
         room.members.forEach((id) => {
           if (id !== ws.id) {
             const peer = room.membersDetails.find((m) => m.socketId === id);
@@ -106,7 +98,6 @@ exports.socketHandlers = (wss) => {
         if (!room) return;
 
         if (room.responses.find((r) => r.socketId === ws.id)) return;
-        // console.log(answer)
 
         const isYes = answer.toLowerCase() === "yes";
         if (room.isMatch === undefined) room.isMatch = isYes;
@@ -129,19 +120,12 @@ exports.socketHandlers = (wss) => {
           );
 
           room.membersDetails.forEach((m) => {
-            console.log("CHAT CLOSED FOR ", roomId);
             m.ws.send(JSON.stringify({ event: "chat_closed" }));
           });
 
           clearTimeout(room.timer);
 
-          // console.log(payload[0] && payload[1]);
-
           if (payload[0] && payload[1]) {
-
-            // console.log('MATCH in Blind-dating')
-            // console.log(payload[0])
-            // console.log(payload[1])
 
             Reply.create([
               {
@@ -163,8 +147,6 @@ exports.socketHandlers = (wss) => {
                 "THE SPEED DATING PAIR WHERE NOT UPDATED IN DATABASE DUE TO INSERT FAIL",
               );
             });
-
-            // console.log("Updates sent")
           }
 
           delete rooms[roomId];
@@ -221,7 +203,6 @@ exports.socketHandlers = (wss) => {
     });
 
     ws.on("close", () => {
-      console.log("DISCONNECTED");
       cleanup(ws, wss, "partner_disconnected");
     });
   });
