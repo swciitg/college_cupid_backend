@@ -24,6 +24,7 @@ const userProfileSchema = new Schema({
   hometown : {
     type:String , 
     required:true,
+    default: "Unknown"
   },
   program: {
     type: String,
@@ -32,7 +33,8 @@ const userProfileSchema = new Schema({
   zodiac: {
     type: String,
     required: true,
-    enum: ZODIAC_ENUM
+    enum: ZODIAC_ENUM,
+    default: "ARIES"
   },
   sexualOrientation: {
     type: {
